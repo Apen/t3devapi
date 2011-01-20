@@ -1,0 +1,11 @@
+2011-01-20 CERDAN Yohann  <cerdanyohann@yahoo.fr>
+	* phpDocs & phpBeautifier
+	* Add method : loadTypoScriptForBEModule
+2010-12-28 CERDAN Yohann  <cerdanyohann@yahoo.fr>
+    * Bugfix : priority between flexform and typoscript
+2010-09-12 CERDAN Yohann  <cerdanyohann@yahoo.fr>
+	* initial upload to the TYPO3 forge
+	* clean some comments
+	* add a custom method "renderSelect" to generate a <select>
+2009-10-14 CERDAN Yohann  <cerdanyohann@yahoo.fr>
+	* initial release

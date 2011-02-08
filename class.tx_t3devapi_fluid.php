@@ -32,48 +32,49 @@
  * @copyright Copyright (c) 2011
  */
 
-class tx_t3devapi_fluid {
-    protected $template = null;
+class tx_t3devapi_fluid
+{
+	protected $template = null;
 
-    /**
-     * tx_t3devapi_fluid::__construct()
-     *
-     * @param mixed $template
-     */
+	/**
+	 * tx_t3devapi_fluid::__construct()
+	 *
+	 * @param mixed $template
+	 */
 
-    function __construct($template)
-    {
-        $this->template = $template;
-    }
+	function __construct($template)
+	{
+		$this->template = $template;
+	}
 
-    /**
-     * Loads a template file and generate the content
-     *
-     * @param array $context datas to send
-     * @return
-     */
+	/**
+	 * Loads a template file and generate the content
+	 *
+	 * @param array $context datas to send
+	 * @return
+	 */
 
-    function fluidView($context = array())
-    {
-        $renderer = t3lib_div::makeInstance('Tx_Fluid_View_TemplateView');
-        $controllerContext = t3lib_div::makeInstance('Tx_Extbase_MVC_Controller_ControllerContext');
-        $controllerContext->setRequest(t3lib_div::makeInstance('Tx_Extbase_MVC_Web_Request'));
-        $renderer->setControllerContext($controllerContext);
-        $renderer->setPartialRootPath(t3lib_extMgm::extPath($this->extKey) . "res/partials/");
-        $renderer->setTemplateRootPath(t3lib_extMgm::extPath($this->extKey) . "res/templates/");
-        $renderer->setLayoutRootPath(t3lib_extMgm::extPath($this->extKey) . "res/layouts");
-        $renderer->setTemplatePathAndFilename($this->template);
+	function fluidView($context = array())
+	{
+		$renderer = t3lib_div::makeInstance('Tx_Fluid_View_TemplateView');
+		$controllerContext = t3lib_div::makeInstance('Tx_Extbase_MVC_Controller_ControllerContext');
+		$controllerContext->setRequest(t3lib_div::makeInstance('Tx_Extbase_MVC_Web_Request'));
+		$renderer->setControllerContext($controllerContext);
+		$renderer->setPartialRootPath(t3lib_extMgm::extPath($this->extKey) . "res/partials/");
+		$renderer->setTemplateRootPath(t3lib_extMgm::extPath($this->extKey) . "res/templates/");
+		$renderer->setLayoutRootPath(t3lib_extMgm::extPath($this->extKey) . "res/layouts");
+		$renderer->setTemplatePathAndFilename($this->template);
 
-        foreach ($context as $key => $value) {
-            $renderer->assign($key, $value);
-        }
+		foreach ($context as $key => $value) {
+			$renderer->assign($key, $value);
+		}
 
-        return $renderer->render();
-    }
+		return $renderer->render();
+	}
 }
 
 if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_fluid.php']) {
-    include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_fluid.php']);
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_fluid.php']);
 }
 
 ?>

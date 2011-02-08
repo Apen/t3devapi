@@ -38,206 +38,207 @@
  * @copyright Copyright (c) 2011
  */
 
-class tx_t3devapi_html {
-    /**
-     *
-     * @var tag type
-     * @access protected
-     */
-    protected $_type;
-    /**
-     *
-     * @var tag attributes
-     * @access protected
-     */
-    protected $_attributes;
-    /**
-     *
-     * @var tag text
-     * @access protected
-     */
-    protected $_text = false;
-    /**
-     *
-     * @var tag closers
-     * @access protected
-     */
-    protected $_self_closers = array('input', 'img', 'hr', 'br', 'meta', 'link');
+class tx_t3devapi_html
+{
+	/**
+	 *
+	 * @var tag type
+	 * @access protected
+	 */
+	protected $_type;
+	/**
+	 *
+	 * @var tag attributes
+	 * @access protected
+	 */
+	protected $_attributes;
+	/**
+	 *
+	 * @var tag text
+	 * @access protected
+	 */
+	protected $_text = false;
+	/**
+	 *
+	 * @var tag closers
+	 * @access protected
+	 */
+	protected $_self_closers = array('input', 'img', 'hr', 'br', 'meta', 'link');
 
-    /**
-     * This is the class constructor.
-     * It allows to set up the tag type, attributes, childs and text
-     *
-     * @param string $type Tag type
-     * @param array $attribute Tag type
-     * @param array $objects Tag type
-     * @param string $text Tag type
-     */
+	/**
+	 * This is the class constructor.
+	 * It allows to set up the tag type, attributes, childs and text
+	 *
+	 * @param string $type Tag type
+	 * @param array $attribute Tag type
+	 * @param array $objects Tag type
+	 * @param string $text Tag type
+	 */
 
-    public function __construct($type = '', $attribute = '', $objects = '', $text = '')
-    {
-        // Set the type
-        $this->_type = strtolower($type);
-        $this->_attributes = array();
-        // Set attributes
-        if (is_array($attribute))
-            $this->setAttributes($attribute);
-        // Inject HTML into parent
-        if (is_array($objects))
-            $this->inject($objects);
-        // Set tag text
-        if ($text)
-            $this->setText($text);
-    }
+	public function __construct($type = '', $attribute = '', $objects = '', $text = '')
+	{
+		// Set the type
+		$this->_type = strtolower($type);
+		$this->_attributes = array();
+		// Set attributes
+		if (is_array($attribute))
+			$this->setAttributes($attribute);
+		// Inject HTML into parent
+		if (is_array($objects))
+			$this->inject($objects);
+		// Set tag text
+		if ($text)
+			$this->setText($text);
+	}
 
-    /**
-     * Returns the value of an attribute
-     *
-     * @param string $attribute
-     */
+	/**
+	 * Returns the value of an attribute
+	 *
+	 * @param string $attribute
+	 */
 
-    public function getAttributes($attribute)
-    {
-        return $this->_attributes[$attribute];
-    }
+	public function getAttributes($attribute)
+	{
+		return $this->_attributes[$attribute];
+	}
 
-    /**
-     * Set the value of an attribute
-     *
-     * @param array $attribute_arr
-     */
+	/**
+	 * Set the value of an attribute
+	 *
+	 * @param array $attribute_arr
+	 */
 
-    public function setAttributes($attribute_arr)
-    {
-        $this->_attributes = array_merge($this->_attributes, $attribute_arr);
-    }
+	public function setAttributes($attribute_arr)
+	{
+		$this->_attributes = array_merge($this->_attributes, $attribute_arr);
+	}
 
-    /**
-     * Set the text between opening and closing tag
-     * Tag must be text only
-     *
-     * @param string $attribute
-     * @param string $value
-     */
+	/**
+	 * Set the text between opening and closing tag
+	 * Tag must be text only
+	 *
+	 * @param string $attribute
+	 * @param string $value
+	 */
 
-    public function setText($text)
-    {
-        if (is_string($text)) {
-            $this->_text = $text;
-        }
-    }
+	public function setText($text)
+	{
+		if (is_string($text)) {
+			$this->_text = $text;
+		}
+	}
 
-    /**
-     * Remove an attribute
-     *
-     * @param string $attribute
-     */
+	/**
+	 * Remove an attribute
+	 *
+	 * @param string $attribute
+	 */
 
-    public function remove($attribute)
-    {
-        if (isset($this->_attributes[$attribute]))
-            unset($this->_attributes[$attribute]);
-    }
+	public function remove($attribute)
+	{
+		if (isset($this->_attributes[$attribute]))
+			unset($this->_attributes[$attribute]);
+	}
 
-    /**
-     * Clear all attributes
-     */
+	/**
+	 * Clear all attributes
+	 */
 
-    public function clear()
-    {
-        $this->_attributes = array();
-    }
+	public function clear()
+	{
+		$this->_attributes = array();
+	}
 
-    /**
-     * Insert an array of child nodes into parent.
-     * Format code with an indent of 2 whitespace for childs nodes
-     *
-     * @param array $object_arr
-     */
+	/**
+	 * Insert an array of child nodes into parent.
+	 * Format code with an indent of 2 whitespace for childs nodes
+	 *
+	 * @param array $object_arr
+	 */
 
-    public function inject($object_arr)
-    {
-        foreach ($object_arr as $object) {
-            if (get_class($object) == get_class($this)) {
-                $this->_attributes['text'] .= $object->build();
-            }
-        }
-    }
+	public function inject($object_arr)
+	{
+		foreach ($object_arr as $object) {
+			if (get_class($object) == get_class($this)) {
+				$this->_attributes['text'] .= $object->build();
+			}
+		}
+	}
 
-    /**
-     * Print the html
-     */
+	/**
+	 * Print the html
+	 */
 
-    public function output()
-    {
-        return $this->build();
-    }
+	public function output()
+	{
+		return $this->build();
+	}
 
-    /**
-     * Build the HTML node
-     */
+	/**
+	 * Build the HTML node
+	 */
 
-    protected function build()
-    {
-        // start
-        $build = '<' . $this->_type;
-        // add attributes
-        if (count($this->_attributes)) {
-            foreach ($this->_attributes as $key => $value) {
-                if ($key != 'text')
-                    $build .= ' ' . $key . '="' . $value . '"';
-            }
-        }
-        // closing
-        if (!in_array($this->_type, $this->_self_closers)) {
-            // Parent node cannot have text
-            if (is_string($this->_text)) {
-                $build .= ">" . $this->_text . '</' . $this->_type . ">";
-            } else {
-                $build .= ">" . $this->_attributes['text'] . '</' . $this->_type . ">";
-            }
-        } else {
-            $build .= " />";
-        }
-        // return it
-        return $build;
-    }
+	protected function build()
+	{
+		// start
+		$build = '<' . $this->_type;
+		// add attributes
+		if (count($this->_attributes)) {
+			foreach ($this->_attributes as $key => $value) {
+				if ($key != 'text')
+					$build .= ' ' . $key . '="' . $value . '"';
+			}
+		}
+		// closing
+		if (!in_array($this->_type, $this->_self_closers)) {
+			// Parent node cannot have text
+			if (is_string($this->_text)) {
+				$build .= ">" . $this->_text . '</' . $this->_type . ">";
+			} else {
+				$build .= ">" . $this->_attributes['text'] . '</' . $this->_type . ">";
+			}
+		} else {
+			$build .= " />";
+		}
+		// return it
+		return $build;
+	}
 
-    public function renderSelect($name , $content = array(), $value = '', $attributes = array())
-    {
-        $my_options = array();
-        $fill_selected = false;
-        foreach ($content as $key => $entry) {
-            $optionAttributes = array();
-            $optionAttributes['value'] = $key;
-            $select = '';
-            // aucune valeur de selectionné indiqué
-            if ($value == '' && ($fill_selected == false)) {
-                // $select = 'selected="selected"';
-                $optionAttributes['selected'] = 'selected';
-                $fill_selected = true;
-            }
-            // une valeur est selectionné
-            if (($value == $key) && ($fill_selected == false)) {
-                // $select = 'selected="selected"';
-                $optionAttributes['selected'] = 'selected';
-                $fill_selected = true;
-            }
-            $my_options[] = new tx_t3devapi_html('option', $optionAttributes, '', $entry);
-        }
-        if (!isset($attributes['name'])) {
-            $attributes['name'] = $name;
-        }
-        if (!isset($attributes['id'])) {
-            $attributes['id'] = $name;
-        }
-        $my_select = new tx_t3devapi_html('select', $attributes, $my_options);
-        return $my_select->output();
-    }
+	public function renderSelect($name, $content = array(), $value = '', $attributes = array())
+	{
+		$my_options = array();
+		$fill_selected = false;
+		foreach ($content as $key => $entry) {
+			$optionAttributes = array();
+			$optionAttributes['value'] = $key;
+			$select = '';
+			// aucune valeur de selectionné indiqué
+			if ($value == '' && ($fill_selected == false)) {
+				// $select = 'selected="selected"';
+				$optionAttributes['selected'] = 'selected';
+				$fill_selected = true;
+			}
+			// une valeur est selectionné
+			if (($value == $key) && ($fill_selected == false)) {
+				// $select = 'selected="selected"';
+				$optionAttributes['selected'] = 'selected';
+				$fill_selected = true;
+			}
+			$my_options[] = new tx_t3devapi_html('option', $optionAttributes, '', $entry);
+		}
+		if (!isset($attributes['name'])) {
+			$attributes['name'] = $name;
+		}
+		if (!isset($attributes['id'])) {
+			$attributes['id'] = $name;
+		}
+		$my_select = new tx_t3devapi_html('select', $attributes, $my_options);
+		return $my_select->output();
+	}
 }
 
 if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_htmlelement.php']) {
-    include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_htmlelement.php']);
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_htmlelement.php']);
 }
 
 ?>

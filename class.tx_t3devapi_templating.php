@@ -32,93 +32,94 @@
  * @copyright Copyright (c) 2011
  */
 
-class tx_t3devapi_templating {
-    // Template object for frontend functions
-    protected $templateContent = null;
-    // Parent object
-    protected $pObj = null;
+class tx_t3devapi_templating
+{
+	// Template object for frontend functions
+	protected $templateContent = null;
+	// Parent object
+	protected $pObj = null;
 
-    /**
-     * tx_t3devapi_templating::__construct()
-     *
-     * @param mixed $pObj
-     */
+	/**
+	 * tx_t3devapi_templating::__construct()
+	 *
+	 * @param mixed $pObj
+	 */
 
-    function __construct($pObj)
-    {
-        // Store parent object as a class variable
-        $this->pObj = $pObj;
-    }
+	function __construct($pObj)
+	{
+		// Store parent object as a class variable
+		$this->pObj = $pObj;
+	}
 
-    /**
-     * Loads a template file
-     *
-     * @param mixed $templateFile
-     * @param mixed $debug
-     * @return
-     */
+	/**
+	 * Loads a template file
+	 *
+	 * @param mixed $templateFile
+	 * @param mixed $debug
+	 * @return
+	 */
 
-    function initTemplate($templateFile, $debug = false)
-    {
-        $this->templateContent = $this->pObj->cObj->fileResource($templateFile);
+	function initTemplate($templateFile, $debug = false)
+	{
+		$this->templateContent = $this->pObj->cObj->fileResource($templateFile);
 
-        if ($debug == true) {
-            if ($this->templateContent === null) {
-                debug('Check the path template or the rights', 'Error');
-            }
-            debug($this->templateContent, 'Content of ' . $templateFile);
-        }
+		if ($debug == true) {
+			if ($this->templateContent === null) {
+				debug('Check the path template or the rights', 'Error');
+			}
+			debug($this->templateContent, 'Content of ' . $templateFile);
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Template rendering for subdatas and principal datas
-     *
-     * @param mixed $templateMarkers
-     * @param mixed $templateSection
-     * @return
-     */
+	/**
+	 * Template rendering for subdatas and principal datas
+	 *
+	 * @param mixed $templateMarkers
+	 * @param mixed $templateSection
+	 * @return
+	 */
 
-    function renderAllTemplate($templateMarkers, $templateSection)
-    {
-        // Check if the template is loaded
-        if (!$this->templateContent) {
-            return false;
-        }
-        // Check argument
-        if (!is_array($templateMarkers)) {
-            return false;
-        }
-        // Templating
-        $content = '';
+	function renderAllTemplate($templateMarkers, $templateSection)
+	{
+		// Check if the template is loaded
+		if (!$this->templateContent) {
+			return false;
+		}
+		// Check argument
+		if (!is_array($templateMarkers)) {
+			return false;
+		}
+		// Templating
+		$content = '';
 
-        if (is_array($templateMarkers[0])) { // Subdatas
-            foreach ($templateMarkers as $key => $val) {
-                $subParts = $this->pObj->cObj->getSubpart($this->templateContent, $templateSection);
-                $content .= $this->pObj->cObj->substituteMarkerArray($subParts, $val);
-            }
+		if (is_array($templateMarkers[0])) { // Subdatas
+			foreach ($templateMarkers as $key => $val) {
+				$subParts = $this->pObj->cObj->getSubpart($this->templateContent, $templateSection);
+				$content .= $this->pObj->cObj->substituteMarkerArray($subParts, $val);
+			}
 
-            return $content;
-        } else { // Principal datas
-            $subParts = $this->pObj->cObj->getSubpart($this->templateContent, $templateSection);
+			return $content;
+		} else { // Principal datas
+			$subParts = $this->pObj->cObj->getSubpart($this->templateContent, $templateSection);
 
-            foreach ($templateMarkers as $subPart => $subContent) {
-                if (preg_match_all('/(<!--).*?' . $subPart . '.*?(-->)/', $subParts, $matches) >= 2) { // subpart
-                    $subParts_temp = $this->pObj->cObj->getSubpart($subParts, $subPart);
-                    $subParts = $this->pObj->cObj->substituteSubpart($subParts, $subPart, $subContent);
-                }
-            }
+			foreach ($templateMarkers as $subPart => $subContent) {
+				if (preg_match_all('/(<!--).*?' . $subPart . '.*?(-->)/', $subParts, $matches) >= 2) { // subpart
+					$subParts_temp = $this->pObj->cObj->getSubpart($subParts, $subPart);
+					$subParts = $this->pObj->cObj->substituteSubpart($subParts, $subPart, $subContent);
+				}
+			}
 
-            $content = $this->pObj->cObj->substituteMarkerArray($subParts, $templateMarkers);
+			$content = $this->pObj->cObj->substituteMarkerArray($subParts, $templateMarkers);
 
-            return $content;
-        }
-    }
+			return $content;
+		}
+	}
 }
 
 if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_templating.php']) {
-    include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_templating.php']);
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_templating.php']);
 }
 
 ?>

@@ -1,3 +1,6 @@
+2011-02-08 CERDAN Yohann  <cerdanyohann@yahoo.fr>
+    * Some improvements
+    * Add class.tx_t3devapi_befunc.php & class.tx_t3devapi_export.php
 2011-01-20 CERDAN Yohann  <cerdanyohann@yahoo.fr>
 	* phpDocs & phpBeautifier
 	* Add method : loadTypoScriptForBEModule

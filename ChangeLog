@@ -1,4 +1,6 @@
 2011-02-08 CERDAN Yohann  <cerdanyohann@yahoo.fr>
+    * Add the tx_t3devapi_database class that allow you to get all the data according to the TCA (datetime,relation, etc...) from a sql ressource
+2011-02-08 CERDAN Yohann  <cerdanyohann@yahoo.fr>
     * Some improvements
     * Add class.tx_t3devapi_befunc.php & class.tx_t3devapi_export.php
 2011-01-20 CERDAN Yohann  <cerdanyohann@yahoo.fr>

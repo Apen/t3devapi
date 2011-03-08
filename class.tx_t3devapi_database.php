@@ -32,129 +32,135 @@
  * @copyright Copyright (c) 2011
  */
 
-class tx_t3devapi_database {
-    /**
-     * tx_t3devapi_database::__construct()
-     */
+class tx_t3devapi_database
+{
+	/**
+	 * tx_t3devapi_database::__construct()
+	 */
 
-    function __construct()
-    {
-    }
+	function __construct()
+	{
+	}
 
-    /**
-     * Get all the data according to the TCA (time,relation, etc...) from a sql ressource.
-     *
-     * Example :
-     * $result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($query);
-     * $records = t3lib_div::makeInstance('tx_t3devapi_database');
-     * $rows = $records->getAllResults($result, $query['FROM']);
-     *
-     * @param  $res
-     * @param  $table
-     * @return array
-     */
+	/**
+	 * Get all the data according to the TCA (time,relation, etc...) from a sql ressource.
+	 *
+	 * Example :
+	 * $result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($query);
+	 * $records = t3lib_div::makeInstance('tx_t3devapi_database');
+	 * $rows = $records->getAllResults($result, $query['FROM']);
+	 *
+	 * @param  $res
+	 * @param  $table
+	 * @return array
+	 */
 
-    function getAllResults($res, $table)
-    {
-        $first = 1;
-        $recordList = array();
-        while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
-            if ($first) {
-                $first = 0;
-                $recordList [] = self::getResultRowTitles($row, $table);
-            }
-            $recordList [] = self::getResultRow($row, $table);
-        }
-        return $recordList;
-    }
+	function getAllResults($res, $table)
+	{
+		$first = 1;
+		$recordList = array();
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+			if ($first) {
+				$first = 0;
+				$recordList [] = self::getResultRowTitles($row, $table);
+			}
+			$recordList [] = self::getResultRow($row, $table);
+		}
+		$GLOBALS['TYPO3_DB']->sql_free_result($res);
+		return $recordList;
+	}
 
-    /**
-     * Get all the data according to the TCA (time,relation, etc...) from a sql ressource.
-     * With the List view style
-     *
-     * Example :
-     * $result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($query);
-     * $records = t3lib_div::makeInstance('tx_t3devapi_database');
-     * $rows = $records->getAllResults($result, $query['FROM']);
-     *
-     * @param  $res
-     * @param  $table
-     * @return array
-     */
+	/**
+	 * Get all the data according to the TCA (time,relation, etc...) from a sql ressource.
+	 * With the List view style
+	 *
+	 * Example :
+	 * $result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($query);
+	 * $records = t3lib_div::makeInstance('tx_t3devapi_database');
+	 * $rows = $records->getAllResults($result, $query['FROM']);
+	 *
+	 * @param  $res
+	 * @param  $table
+	 * @return array
+	 */
 
-    function formatAllResults($res, $table, $title)
-    {
-        $content = '';
+	function formatAllResults($res, $table, $title)
+	{
+		$content = '';
 
-        $content .= '<table cellspacing="1" cellpadding="2" border="0" class="typo3-dblist">';
-        $content .= '<tr class="t3-row-header"><td colspan="100">';
-        $content .= $title;
-        $content .= '</td></tr>';
+		$content .= '<table cellspacing="1" cellpadding="2" border="0" class="typo3-dblist">';
+		$content .= '<tr class="t3-row-header"><td colspan="100">';
+		$content .= $title;
+		$content .= '</td></tr>';
 
-        $first = 1;
+		$first = 1;
 
-        while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
-            if ($first) {
-                $first = 0;
-                $headers = self::getResultRowTitles($row, $table);
-                $content .= '<tr class="c-headLine">';
-                foreach ($headers as $header) {
-                    $content .= '<td class="cell">' . $header . '</td>';
-                }
-                $content .= '</tr>';
-            }
-            $records = self::getResultRow($row, $table);
-            $content .= '<tr class="db_list_normal">';
-            foreach ($records as $record) {
-                $content .= '<td class="cell">' . $record . '</td>';
-            }
-            $content .= '</tr>';
-        }
-        $content .= '</table>';
-        return $content;
-    }
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+			if ($first) {
+				$first = 0;
+				$headers = self::getResultRowTitles($row, $table);
+				$content .= '<tr class="c-headLine">';
+				foreach ($headers as $header) {
+					$content .= '<td class="cell">' . $header . '</td>';
+				}
+				$content .= '</tr>';
+			}
+			$records = self::getResultRow($row, $table);
+			$content .= '<tr class="db_list_normal">';
+			foreach ($records as $record) {
+				$content .= '<td class="cell">' . $record . '</td>';
+			}
+			$content .= '</tr>';
+		}
 
-    /**
-     *
-     * @param  $row
-     * @param  $table
-     * @return array
-     */
+		$content .= '</table>';
 
-    function getResultRowTitles($row, $table)
-    {
-        global $TCA;
-        $tableHeader = array();
-        $conf = $TCA[$table];
-        foreach ($row as $fieldName => $fieldValue) {
-            $title = $GLOBALS['LANG']->sL($conf['columns'][$fieldName]['label'] ? $conf['columns'][$fieldName]['label'] : $fieldName, 1);
-            $tableHeader[$fieldName] = $title;
-        }
-        return $tableHeader;
-    }
+		$GLOBALS['TYPO3_DB']->sql_free_result($res);
 
-    /**
-     *
-     * @param  $row
-     * @param  $table
-     * @return array
-     */
+		return $content;
+	}
 
-    function getResultRow($row, $table)
-    {
-        $record = array();
-        foreach ($row as $fieldName => $fieldValue) {
-            if ((TYPO3_MODE == 'FE')) {
-                $GLOBALS['TSFE']->includeTCA();
-            }
-            $record[$fieldName] = t3lib_BEfunc::getProcessedValueExtra($table, $fieldName, $fieldValue, 0, $row['uid']);
-        }
-        return $record;
-    }
+	/**
+	 *
+	 * @param  $row
+	 * @param  $table
+	 * @return array
+	 */
+
+	function getResultRowTitles($row, $table)
+	{
+		global $TCA;
+		$tableHeader = array();
+		$conf = $TCA[$table];
+		foreach ($row as $fieldName => $fieldValue) {
+			$title = $GLOBALS['LANG']->sL($conf['columns'][$fieldName]['label'] ? $conf['columns'][$fieldName]['label'] : $fieldName, 1);
+			$tableHeader[$fieldName] = $title;
+		}
+		return $tableHeader;
+	}
+
+	/**
+	 *
+	 * @param  $row
+	 * @param  $table
+	 * @return array
+	 */
+
+	function getResultRow($row, $table)
+	{
+		$record = array();
+		foreach ($row as $fieldName => $fieldValue) {
+			if ((TYPO3_MODE == 'FE')) {
+				$GLOBALS['TSFE']->includeTCA();
+			}
+			$record[$fieldName] = t3lib_BEfunc::getProcessedValueExtra($table, $fieldName, $fieldValue, 0, $row['uid']);
+		}
+		return $record;
+	}
 }
 
 if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class..tx_t3devapi_database.php']) {
-    include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class..tx_t3devapi_database.php']);
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class..tx_t3devapi_database.php']);
 }
 
 ?>

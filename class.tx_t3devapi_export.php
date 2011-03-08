@@ -60,6 +60,7 @@ class tx_t3devapi_export
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($query['SELECT'], $query['FROM'], $query['WHERE'], $query['GROUPBY'], $query['ORDERBY'], $query['LIMIT']);
 		$xmlObj->renderRecords($query['FROM'], $res);
 		$xmlObj->renderFooter();
+		$GLOBALS['TYPO3_DB']->sql_free_result($res);
 		return $xmlObj->getResult();
 	}
 

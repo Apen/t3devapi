@@ -35,7 +35,7 @@
 class tx_t3devapi_miscellaneous
 {
 	// Parent object
-	protected $cObj = null;
+	protected $cpObj = null;
 
 	/**
 	 * Class constructor
@@ -43,7 +43,7 @@ class tx_t3devapi_miscellaneous
 
 	function __construct($pObj)
 	{
-		$this->cObj = $pObj->cObj;
+		$this->pObj = $pObj;
 	}
 
 	/**
@@ -101,7 +101,7 @@ class tx_t3devapi_miscellaneous
 		$conf['returnLast'] = 'url';
 		$conf['parameter'] = $altPageId ? $altPageId : $GLOBALS['TSFE']->id;
 		$conf['additionalParams'] = t3lib_div::implodeArrayForUrl('', $additionalParamsArray, '', 1);
-		return $this->cObj->typolink('', $conf);
+		return $this->pObj->cObj->typolink('', $conf);
 	}
 
 	/**
@@ -121,7 +121,7 @@ class tx_t3devapi_miscellaneous
 		$conf['no_cache'] = 0;
 		$conf['parameter'] = $altPageId ? $altPageId : $GLOBALS['TSFE']->id;
 		$conf['additionalParams'] = t3lib_div::implodeArrayForUrl('', $additionalParamsArray, '', 1);
-		return $this->cObj->typolink($label, $conf);
+		return $this->pObj->cObj->typolink($label, $conf);
 	}
 
 	/**
@@ -166,7 +166,7 @@ class tx_t3devapi_miscellaneous
 			$lConf['file.']['width'] = $maxW . 'c';
 		}
 
-		return $this->cObj->cImage($img["file"], $lConf);
+		return $this->pObj->cObj->cImage($img["file"], $lConf);
 	}
 
 	/**
@@ -192,7 +192,7 @@ class tx_t3devapi_miscellaneous
 			$lConf['longdescURL'] = $londDesc;
 		}
 		$lConf['emptyTitleHandling'] = 'removeAttr';
-		return $this->cObj->cImage($img["file"], $lConf);
+		return $this->pObj->cObj->cImage($img["file"], $lConf);
 	}
 
 	/**
@@ -222,7 +222,7 @@ class tx_t3devapi_miscellaneous
 
 	function formatRTE($value)
 	{
-		return $this->cObj->parseFunc($value, array(), '< lib.parseFunc_RTE');
+		return $this->pObj->cObj->parseFunc($value, array(), '< lib.parseFunc_RTE');
 	}
 
 	/**
@@ -234,7 +234,7 @@ class tx_t3devapi_miscellaneous
 
 	function renderLinkType($value)
 	{
-		return $this->cObj->getTypoLink_URL($value);
+		return $this->pObj->cObj->getTypoLink_URL($value);
 	}
 
 	/**
@@ -247,7 +247,7 @@ class tx_t3devapi_miscellaneous
 
 	function getMailto($email, $conf = array())
 	{
-		return $this->cObj->mailto_makelinks('mailto:' . $email, $conf);
+		return $this->pObj->cObj->mailto_makelinks('mailto:' . $email, $conf);
 	}
 
 	/**
@@ -355,7 +355,7 @@ class tx_t3devapi_miscellaneous
 	{
 		$temp = array();
 		foreach ($array as $key => $val) {
-			$temp["###" . strtoupper($marker_prefix . $key) . "###"] = $val;
+			$temp[self::convertToMarker($key, $marker_prefix)] = $val;
 		}
 		return $temp;
 	}
@@ -380,7 +380,7 @@ class tx_t3devapi_miscellaneous
 	 * @return
 	 */
 
-	function getPiVars($exclude)
+	function getPiVars($exclude = '')
 	{
 		foreach ($this->pObj->piVars as $piVar => $piVarvalue) {
 			if (t3lib_div::inList($exclude, $piVar)) {
@@ -388,6 +388,22 @@ class tx_t3devapi_miscellaneous
 			}
 		}
 		return $this->pObj->piVars;
+	}
+
+	/**
+	 * This function return a piVars Array
+	 *
+	 * @param mixed $exclude
+	 * @return
+	 */
+
+	function makePiVars($parameters)
+	{
+		foreach ($parameters as $parameter) {
+			if (t3lib_div::inList($exclude, $piVar)) {
+				unset($this->pObj->piVars[$piVar]);
+			}
+		}
 	}
 
 	/**
@@ -400,7 +416,24 @@ class tx_t3devapi_miscellaneous
 	function getGeneratedContent($uid)
 	{
 		$objContent = array('tables' => 'tt_content', 'source' => 'tt_content_' . $uid);
-		return $this->cObj->RECORDS($objContent);
+		return $this->pObj->cObj->RECORDS($objContent);
+	}
+
+	/**
+	 * Load a TS string
+	 *
+	 */
+
+	function loadTS($conf, $content)
+	{
+		require_once(PATH_t3lib . 'class.t3lib_tsparser.php');
+		$tsparser = t3lib_div::makeInstance('t3lib_tsparser');
+		// Copy conf into existing setup
+		$tsparser->setup = $conf;
+		// Parse the new Typoscript
+		$tsparser->parse($content);
+		// Copy the resulting setup back into conf
+		return $tsparser->setup;
 	}
 
 	/**
@@ -598,7 +631,22 @@ class tx_t3devapi_miscellaneous
 
 	function debugQuery()
 	{
-		debug($GLOBALS['TYPO3_DB']->debug_lastBuiltQuery, 'SQL');
+		t3lib_div::debug($GLOBALS['TYPO3_DB']->debug_lastBuiltQuery, 'SQL');
+	}
+
+	/**
+	 * Replace the XCLASS statement at end of a class file
+	 *
+	 * @param string $file
+	 * @access static
+	 * @return void
+	 */
+	function XCLASS($file)
+	{
+		global $TYPO3_CONF_VARS;
+		if (defined('TYPO3_MODE') && isset($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS'][$file]) && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS'][$file]) {
+			include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS'][$file]);
+		}
 	}
 
 	/**
@@ -617,11 +665,9 @@ class tx_t3devapi_miscellaneous
 	{
 		if (trim($recipient) && trim($content)) {
 			$subject = $title;
-
 			$Typo3_htmlmail = t3lib_div::makeInstance('t3lib_htmlmail');
 			$Typo3_htmlmail->start();
 			$Typo3_htmlmail->useBase64();
-
 			$Typo3_htmlmail->subject = $subject;
 			$Typo3_htmlmail->from_email = $fromEmail;
 			$Typo3_htmlmail->from_name = $fromName;
@@ -644,10 +690,29 @@ class tx_t3devapi_miscellaneous
 			$Typo3_htmlmail->setHeaders();
 			$Typo3_htmlmail->setContent();
 			$Typo3_htmlmail->setRecipient($recipient);
-
 			return $Typo3_htmlmail->sendtheMail();
 		}
 	}
+
+	function get_caller_method($rank = 1)
+	{
+		$traces = debug_backtrace();
+		if (isset($traces[$rank])) {
+			return array(
+				'file' => $traces[$rank]['file'],
+				'line' => $traces[$rank]['line'],
+				'function' => $traces[$rank]['function']
+			);
+		}
+		return null;
+	}
+
+	function getMemoryUsage()
+	{
+		return (integer)((memory_get_usage() + 512) / 1024);
+	}
+	
+
 }
 
 if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_miscellaneous.php']) {

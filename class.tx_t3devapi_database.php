@@ -42,6 +42,51 @@ class tx_t3devapi_database
 	{
 	}
 
+
+	/**
+	 * Executes a select based on input query parts array
+	 *
+	 * @param	array		Query parts array
+	 * @return	pointer		MySQL select result pointer / DBAL object
+	 * @see exec_SELECTquery()
+	 */
+
+	function exec_SELECT_queryArray($queryParts, $debug)
+	{
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
+
+		if (($GLOBALS['TYPO3_DB']->sql_error()) || ($debug === true)) {
+			$debug = array();
+			$debug['queryParts'] = $queryParts;
+			$debug['sql'] = self::SELECT_queryArray($queryParts);
+			$debug['error'] = $GLOBALS['TYPO3_DB']->sql_error();
+			$debug['php'] = tx_t3devapi_miscellaneous::get_caller_method();
+			t3lib_div::debug($debug, $GLOBALS['TYPO3_DB']->sql_error());
+		}
+
+		return $res;
+	}
+
+	/**
+	 * Return a select based on input query parts array
+	 *
+	 * @param	array		Query parts array
+	 * @return	pointer		MySQL select result pointer / DBAL object
+	 * @see exec_SELECTquery()
+	 */
+
+	function SELECT_queryArray($queryParts)
+	{
+		return $GLOBALS['TYPO3_DB']->SELECTquery(
+			$queryParts['SELECT'],
+			$queryParts['FROM'],
+			$queryParts['WHERE'],
+			$queryParts['GROUPBY'],
+			$queryParts['ORDERBY'],
+			$queryParts['LIMIT']
+		);
+	}
+
 	/**
 	 * Get all the data according to the TCA (time,relation, etc...) from a sql ressource.
 	 *
@@ -157,10 +202,11 @@ class tx_t3devapi_database
 		}
 		return $record;
 	}
+
 }
 
-if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class..tx_t3devapi_database.php']) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class..tx_t3devapi_database.php']);
+if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_database.php']) {
+	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_database.php']);
 }
 
 ?>

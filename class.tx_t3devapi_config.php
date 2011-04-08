@@ -61,6 +61,7 @@ class tx_t3devapi_config
 	{
 		// TYPOSCRIPT = template with plugin.tx_xxxx_pi1.xxxx = xxxx
 		$arrayConfig = $this->conf;
+		
 		// FLEXFORM
 		$this->pi_initPIflexForm(); // Init and get the flexform data of the plugin
 		$flexConfig = array(); // Setup our storage array...

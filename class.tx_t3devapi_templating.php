@@ -62,14 +62,12 @@ class tx_t3devapi_templating
 	function initTemplate($templateFile, $debug = false)
 	{
 		$this->templateContent = $this->pObj->cObj->fileResource($templateFile);
-
-		if ($debug == true) {
+		if ($debug === true) {
 			if ($this->templateContent === null) {
-				debug('Check the path template or the rights', 'Error');
+				t3lib_div::debug('Check the path template or the rights', 'Error');
 			}
-			debug($this->templateContent, 'Content of ' . $templateFile);
+			t3lib_div::debug($this->templateContent, 'Content of ' . $templateFile);
 		}
-
 		return true;
 	}
 
@@ -81,7 +79,7 @@ class tx_t3devapi_templating
 	 * @return
 	 */
 
-	function renderAllTemplate($templateMarkers, $templateSection)
+	function renderAllTemplate($templateMarkers, $templateSection, $debug = false)
 	{
 		// Check if the template is loaded
 		if (!$this->templateContent) {
@@ -91,6 +89,11 @@ class tx_t3devapi_templating
 		if (!is_array($templateMarkers)) {
 			return false;
 		}
+
+		if ($debug == true) {
+			t3lib_div::debug($templateMarkers, 'Markers for ' . $templateSection);
+		}
+
 		// Templating
 		$content = '';
 

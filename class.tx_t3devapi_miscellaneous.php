@@ -694,6 +694,10 @@ class tx_t3devapi_miscellaneous
 		}
 	}
 
+	/**
+	 * Get the name of the caller function
+	 */
+
 	function get_caller_method($rank = 1)
 	{
 		$traces = debug_backtrace();
@@ -707,16 +711,138 @@ class tx_t3devapi_miscellaneous
 		return null;
 	}
 
+	/**
+	 * Get the current memory usage
+	 */
+
 	function getMemoryUsage()
 	{
 		return (integer)((memory_get_usage() + 512) / 1024);
 	}
-	
+
+	/**
+	 * Load an xml locallang file
+	 */
+
+	function loadLL($LLFile, $langKey = null)
+	{
+		$tsfeLoaded = isset($GLOBALS['TSFE']) && is_object($GLOBALS['TSFE']);
+		$langLoaded = isset($GLOBALS['LANG']) && is_object($GLOBALS['LANG']);
+
+		// Lang detection
+		if (is_null($langKey)) {
+			if ($tsfeLoaded) {
+				$langKey = $GLOBALS['TSFE']->lang;
+			} elseif ($langLoaded) {
+				$langKey = $GLOBALS['LANG']->lang;
+			}
+		}
+
+		// Render Charset
+		if ($langLoaded) {
+			$renderCharset = $GLOBALS['LANG']->charSet;
+		} elseif ($tsfeLoaded) {
+			$renderCharset = $GLOBALS['TSFE']->renderCharset;
+		}
+
+		// Language list
+		$LLArray = array();
+		$langLoadList = array_unique(array('default', $langKey));
+
+		// Loads locallang file
+		if (@is_file($LLFile)) {
+			$LOCAL_LANG = t3lib_div::readLLXMLfile($LLFile, end($langLoadList), $renderCharset);
+		} else {
+			$LOCAL_LANG = array();
+		}
+
+		// Process default langage and requested langage
+		foreach ($langLoadList as $tLangKey) {
+			if (isset($LOCAL_LANG[$tLangKey]) && is_array($LOCAL_LANG[$tLangKey])) {
+				$LLArray[$tLangKey] = count($LLArray[$tLangKey]) ? array_merge($LLArray[$tLangKey], $LOCAL_LANG[$tLangKey]) : $LOCAL_LANG[$tLangKey];
+			}
+		}
+
+		// Merge arrays (requested langage(s) overrides default language)
+		$finalRes = array();
+		foreach ($langLoadList as $v) {
+			$finalRes = array_merge($finalRes, $LLArray[$v]);
+			unset($LLArray[$v]);
+		}
+		unset($LLArray);
+
+		return $finalRes;
+	}
+
+	/**
+	 * Determines the rootpage ID for a given page.
+	 *
+	 * @param	integer	A page ID somewhere in a tree.
+	 * @return	integer	The page's tree branch's root page ID
+	 */
+
+	public static function getRootPageId($pageId)
+	{
+		$rootPageId = $pageId;
+		$rootline = t3lib_BEfunc::BEgetRootLine($pageId);
+
+		$rootline = array_reverse($rootline);
+		foreach ($rootline as $page) {
+			if ($page['is_siteroot']) {
+				$rootPageId = $page['uid'];
+			}
+		}
+
+		return $rootPageId;
+	}
+
+	/**
+	 * Build the TSFE (for the BE for example)
+	 */
+
+	function buildTSFE($pid)
+	{
+		require_once(PATH_t3lib . 'class.t3lib_timetrack.php');
+		require_once(PATH_t3lib . 'class.t3lib_tsparser_ext.php');
+		require_once(PATH_t3lib . 'class.t3lib_page.php');
+		require_once(PATH_t3lib . 'class.t3lib_stdgraphic.php');
+		require_once(PATH_site . 'typo3/sysext/cms/tslib/class.tslib_fe.php');
+		require_once(PATH_site . 'typo3/sysext/cms/tslib/class.tslib_content.php');
+		require_once(PATH_site . 'typo3/sysext/cms/tslib/class.tslib_gifbuilder.php');
+		require_once(PATH_site . 'typo3/sysext/cms/tslib/class.tslib_content.php');
+		require_once(PATH_t3lib . 'class.t3lib_div.php');
+
+		$temp_TSFEclassName = t3lib_div::makeInstanceClassName('tslib_fe');
+
+		if (!is_object($GLOBALS['TT'])) {
+			$GLOBALS['TT'] = new t3lib_timeTrack;
+			$GLOBALS['TT']->start();
+		}
+
+		if (!is_object($GLOBALS['TSFE']) && $pid) {
+			$GLOBALS['TSFE'] = new $temp_TSFEclassName($GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0, 0, 0, 0, 0);
+			$GLOBALS['TSFE']->tmpl = t3lib_div::makeInstance('t3lib_tsparser_ext');
+			$GLOBALS['TSFE']->sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
+			$GLOBALS['TSFE']->tmpl->tt_track = 0; // Do not log time-performance information
+			$GLOBALS['TSFE']->tmpl->init();
+			$rootLine = $GLOBALS['TSFE']->sys_page->getRootLine($pid);
+			$GLOBALS['TSFE']->tmpl->runThroughTemplates($rootLine, $template_uid);
+			$GLOBALS['TSFE']->tmpl->generateConfig();
+			$GLOBALS['TSFE']->tmpl->loaded = 1;
+			$GLOBALS['TSFE']->getConfigArray();
+			$GLOBALS['TSFE']->linkVars = '' . $GLOBALS['TSFE']->config['config']['linkVars'];
+			if ($GLOBALS['TSFE']->config['config']['simulateStaticDocuments_pEnc_onlyP']) {
+				foreach (t3lib_div::trimExplode(',', $GLOBALS['TSFE']->config['config']['simulateStaticDocuments_pEnc_onlyP'], 1) as $temp_p)
+				{
+					$GLOBALS['TSFE']->pEncAllowedParamNames[$temp_p] = 1;
+				}
+			}
+			$GLOBALS['TSFE']->newCObj();
+		}
+	}
 
 }
 
-if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_miscellaneous.php']) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_miscellaneous.php']);
-}
+tx_t3devapi_miscellaneous::XCLASS('ext/t3devapi/class.tx_t3devapi_miscellaneous.php');
 
 ?>

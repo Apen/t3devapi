@@ -101,8 +101,6 @@ class tx_t3devapi_config
 	}
 }
 
-if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_config.php']) {
-	include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/t3devapi/class.tx_t3devapi_config.php']);
-}
+tx_t3devapi_miscellaneous::XCLASS('ext/t3devapi/class.tx_t3devapi_config.php');
 
 ?>

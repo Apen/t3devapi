@@ -37,13 +37,12 @@ class tx_t3devapi_fluid
 	protected $template = null;
 
 	/**
-	 * tx_t3devapi_fluid::__construct()
+	 * Constructor
 	 *
 	 * @param mixed $template
 	 */
 
-	function __construct($template)
-	{
+	function __construct($template) {
 		$this->template = $template;
 	}
 
@@ -54,8 +53,7 @@ class tx_t3devapi_fluid
 	 * @return
 	 */
 
-	function fluidView($context = array())
-	{
+	function fluidView($context = array()) {
 		$renderer = t3lib_div::makeInstance('Tx_Fluid_View_TemplateView');
 		$controllerContext = t3lib_div::makeInstance('Tx_Extbase_MVC_Controller_ControllerContext');
 		$controllerContext->setRequest(t3lib_div::makeInstance('Tx_Extbase_MVC_Web_Request'));

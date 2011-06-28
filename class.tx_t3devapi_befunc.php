@@ -35,25 +35,43 @@
 class tx_t3devapi_befunc
 {
 	/**
-	 * tx_t3devapi_befunc::__construct()
+	 * Constructor
 	 */
 
-	function __construct()
-	{
+	function __construct() {
 	}
 
-	function drawDBListTable($content)
-	{
+	/**
+	 * drawDBListTable
+	 *
+	 * @param  $content
+	 * @return string
+	 */
+
+	function drawDBListTable($content) {
 		return '<table cellspacing="1" cellpadding="2" border="0" class="typo3-dblist">' . $content . '</table>';
 	}
 
-	function drawDBListTitle($content, $colspan = 100)
-	{
+	/**
+	 * drawDBListTitle
+	 *
+	 * @param  $content
+	 * @param int $colspan
+	 * @return string
+	 */
+
+	function drawDBListTitle($content, $colspan = 100) {
 		return '<tr class="t3-row-header"><td colspan="' . $colspan . '">' . $content . '</td></tr>';
 	}
 
-	function drawDBListHeader($headers)
-	{
+	/**
+	 * drawDBListHeader
+	 *
+	 * @param  $headers
+	 * @return string
+	 */
+
+	function drawDBListHeader($headers) {
 		$content = '';
 		$content .= '<tr class="c-headLine">';
 		foreach ($headers as $header) {
@@ -63,8 +81,14 @@ class tx_t3devapi_befunc
 		return $content;
 	}
 
-	function drawDBListRows($rows)
-	{
+	/**
+	 * drawDBListRows
+	 *
+	 * @param  $rows
+	 * @return string
+	 */
+
+	function drawDBListRows($rows) {
 		$content = '';
 		$content .= '<tr class="db_list_normal">';
 		foreach ($rows as $row) {
@@ -75,24 +99,23 @@ class tx_t3devapi_befunc
 	}
 
 	/**
-	 * tx_t3devapi_befunc::renderListNavigation()
+	 * renderListNavigation
 	 * Creates a typo3 backend pagebrowser for tables with many records
 	 *
 	 * Example (use limit in your SQL) :
 	 * $pointer = t3lib_div::_GP('pointer');
-	 * $limit = ($pointer !== null) ? $pointer . ',' . $nbElementsPerPage : '0,' . $nbElementsPerPage;
-	 * $current = ($pointer !== null) ? intval($pointer) : 0;
+	 * $limit = ($pointer !== NULL) ? $pointer . ',' . $nbElementsPerPage : '0,' . $nbElementsPerPage;
+	 * $current = ($pointer !== NULL) ? intval($pointer) : 0;
 	 * $pageBrowser = $this->renderListNavigation($nbTotalRecords, $this->nbElementsPerPage, $current, $nbElementsPerPage);
 	 */
 
-	function renderListNavigation($totalItems, $iLimit, $firstElementNumber, $alwaysShow = false)
-	{
+	function renderListNavigation($totalItems, $iLimit, $firstElementNumber, $alwaysShow = FALSE) {
 		$totalPages = ceil($totalItems / $iLimit);
 
 		$content = '';
 		$returnContent = '';
 		// Show page selector if not all records fit into one page
-		if ($totalPages > 1 || $alwaysShow == true) {
+		if ($totalPages > 1 || $alwaysShow == TRUE) {
 			$first = $previous = $next = $last = $reload = '';
 			$listURLOrig = t3lib_div::getIndpEnv('TYPO3_REQUEST_DIR') . 'mod.php?M=' . t3lib_div::_GP('M');
 			$listURL = t3lib_div::getIndpEnv('TYPO3_REQUEST_DIR') . 'mod.php?M=' . t3lib_div::_GP('M');

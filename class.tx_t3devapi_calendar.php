@@ -35,11 +35,10 @@
 class tx_t3devapi_calendar
 {
 	/**
-	 * tx_t3devapi_calendar::__construct()
+	 * Constructor
 	 */
 
-	function __construct()
-	{
+	function __construct() {
 	}
 
 	/**
@@ -58,8 +57,7 @@ class tx_t3devapi_calendar
 	 * @return
 	 */
 
-	function generateCalendar($year, $month, $days = array(), $day_name_length = 3, $month_href = null, $first_day = 0, $pn = array())
-	{
+	function generateCalendar($year, $month, $days = array(), $day_name_length = 3, $month_href = null, $first_day = 0, $pn = array()) {
 		$first_of_month = gmmktime(0, 0, 0, $month, 1, $year);
 		// remember that mktime will automatically correct if invalid dates are entered
 		// for instance, mktime(0,0,0,12,32,1997) will be the date for Jan 1, 1998

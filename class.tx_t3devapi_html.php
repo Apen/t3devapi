@@ -75,8 +75,7 @@ class tx_t3devapi_html
 	 * @param string $text Tag type
 	 */
 
-	public function __construct($type = '', $attribute = '', $objects = '', $text = '')
-	{
+	public function __construct($type = '', $attribute = '', $objects = '', $text = '') {
 		// Set the type
 		$this->_type = strtolower($type);
 		$this->_attributes = array();
@@ -97,8 +96,7 @@ class tx_t3devapi_html
 	 * @param string $attribute
 	 */
 
-	public function getAttributes($attribute)
-	{
+	public function getAttributes($attribute) {
 		return $this->_attributes[$attribute];
 	}
 
@@ -108,8 +106,7 @@ class tx_t3devapi_html
 	 * @param array $attribute_arr
 	 */
 
-	public function setAttributes($attribute_arr)
-	{
+	public function setAttributes($attribute_arr) {
 		$this->_attributes = array_merge($this->_attributes, $attribute_arr);
 	}
 
@@ -121,8 +118,7 @@ class tx_t3devapi_html
 	 * @param string $value
 	 */
 
-	public function setText($text)
-	{
+	public function setText($text) {
 		if (is_string($text)) {
 			$this->_text = $text;
 		}
@@ -134,8 +130,7 @@ class tx_t3devapi_html
 	 * @param string $attribute
 	 */
 
-	public function remove($attribute)
-	{
+	public function remove($attribute) {
 		if (isset($this->_attributes[$attribute]))
 			unset($this->_attributes[$attribute]);
 	}
@@ -144,8 +139,7 @@ class tx_t3devapi_html
 	 * Clear all attributes
 	 */
 
-	public function clear()
-	{
+	public function clear() {
 		$this->_attributes = array();
 	}
 
@@ -156,8 +150,7 @@ class tx_t3devapi_html
 	 * @param array $object_arr
 	 */
 
-	public function inject($object_arr)
-	{
+	public function inject($object_arr) {
 		foreach ($object_arr as $object) {
 			if (get_class($object) == get_class($this)) {
 				$this->_attributes['text'] .= $object->build();
@@ -169,8 +162,7 @@ class tx_t3devapi_html
 	 * Print the html
 	 */
 
-	public function output()
-	{
+	public function output() {
 		return $this->build();
 	}
 
@@ -178,8 +170,7 @@ class tx_t3devapi_html
 	 * Build the HTML node
 	 */
 
-	protected function build()
-	{
+	protected function build() {
 		// start
 		$build = '<' . $this->_type;
 		// add attributes
@@ -204,21 +195,20 @@ class tx_t3devapi_html
 		return $build;
 	}
 
-	public function renderSelect($name, $content = array(), $value = '', $attributes = array())
-	{
+	public function renderSelect($name, $content = array(), $value = '', $attributes = array()) {
 		$my_options = array();
 		$fill_selected = false;
 		foreach ($content as $key => $entry) {
 			$optionAttributes = array();
 			$optionAttributes['value'] = $key;
 			$select = '';
-			// aucune valeur de selectionné indiqué
+			// aucune valeur de selectionnï¿½ indiquï¿½
 			if ($value == '' && ($fill_selected == false)) {
 				// $select = 'selected="selected"';
 				$optionAttributes['selected'] = 'selected';
 				$fill_selected = true;
 			}
-			// une valeur est selectionné
+			// une valeur est selectionnï¿½
 			if (($value == $key) && ($fill_selected == false)) {
 				// $select = 'selected="selected"';
 				$optionAttributes['selected'] = 'selected';

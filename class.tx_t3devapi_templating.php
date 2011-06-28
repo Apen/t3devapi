@@ -45,8 +45,7 @@ class tx_t3devapi_templating
 	 * @param mixed $pObj
 	 */
 
-	function __construct($pObj)
-	{
+	public function __construct($pObj) {
 		// Store parent object as a class variable
 		$this->pObj = $pObj;
 	}
@@ -59,8 +58,7 @@ class tx_t3devapi_templating
 	 * @return
 	 */
 
-	function initTemplate($templateFile, $debug = false)
-	{
+	public function initTemplate($templateFile, $debug = false) {
 		$this->templateContent = $this->pObj->cObj->fileResource($templateFile);
 		if ($debug === true) {
 			if ($this->templateContent === null) {
@@ -79,8 +77,7 @@ class tx_t3devapi_templating
 	 * @return
 	 */
 
-	function renderAllTemplate($templateMarkers, $templateSection, $debug = false)
-	{
+	public function renderAllTemplate($templateMarkers, $templateSection, $debug = false) {
 		// Check if the template is loaded
 		if (!$this->templateContent) {
 			return false;
@@ -91,7 +88,7 @@ class tx_t3devapi_templating
 		}
 
 		if ($debug == true) {
-			t3lib_div::debug($templateMarkers, 'Markers for ' . $templateSection);
+			tx_t3devapi_miscellaneous::debug($templateMarkers, 'Markers for ' . $templateSection);
 		}
 
 		// Templating
@@ -103,7 +100,7 @@ class tx_t3devapi_templating
 				$content .= $this->pObj->cObj->substituteMarkerArray($subParts, $val);
 			}
 
-			return $content;
+			return $this->cleanTemplate($content);
 		} else { // Principal datas
 			$subParts = $this->pObj->cObj->getSubpart($this->templateContent, $templateSection);
 
@@ -116,8 +113,19 @@ class tx_t3devapi_templating
 
 			$content = $this->pObj->cObj->substituteMarkerArray($subParts, $templateMarkers);
 
-			return $content;
+			return $this->cleanTemplate($content);
 		}
+	}
+
+	/**
+	 * Clean a template string (remove blank lines...)
+	 *
+	 * @param  $content
+	 * @return mixed
+	 */
+
+	public function cleanTemplate($content) {
+		return preg_replace('/^[\t\s\r]*\n+/m', '', $content);
 	}
 }
 

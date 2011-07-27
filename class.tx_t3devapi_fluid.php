@@ -4,7 +4,7 @@
 *
 * Copyright notice
 *
-* (c) 2010 Yohann CERDAN <ycerdan@onext.fr>
+* (c) 2011 Yohann CERDAN <ycerdan@onext.fr>
 * All rights reserved
 *
 * This script is part of the TYPO3 project. The TYPO3 project is
@@ -34,7 +34,7 @@
 
 class tx_t3devapi_fluid
 {
-	protected $template = null;
+	protected $template = NULL;
 
 	/**
 	 * Constructor
@@ -42,7 +42,7 @@ class tx_t3devapi_fluid
 	 * @param mixed $template
 	 */
 
-	function __construct($template) {
+	public function __construct($template) {
 		$this->template = $template;
 	}
 
@@ -53,7 +53,7 @@ class tx_t3devapi_fluid
 	 * @return
 	 */
 
-	function fluidView($context = array()) {
+	public function fluidView($context = array()) {
 		$renderer = t3lib_div::makeInstance('Tx_Fluid_View_TemplateView');
 		$controllerContext = t3lib_div::makeInstance('Tx_Extbase_MVC_Controller_ControllerContext');
 		$controllerContext->setRequest(t3lib_div::makeInstance('Tx_Extbase_MVC_Web_Request'));

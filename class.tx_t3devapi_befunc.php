@@ -38,7 +38,7 @@ class tx_t3devapi_befunc
 	 * Constructor
 	 */
 
-	function __construct() {
+	public function __construct() {
 	}
 
 	/**
@@ -48,7 +48,7 @@ class tx_t3devapi_befunc
 	 * @return string
 	 */
 
-	function drawDBListTable($content) {
+	public function drawDBListTable($content) {
 		return '<table cellspacing="1" cellpadding="2" border="0" class="typo3-dblist">' . $content . '</table>';
 	}
 
@@ -60,7 +60,7 @@ class tx_t3devapi_befunc
 	 * @return string
 	 */
 
-	function drawDBListTitle($content, $colspan = 100) {
+	public function drawDBListTitle($content, $colspan = 100) {
 		return '<tr class="t3-row-header"><td colspan="' . $colspan . '">' . $content . '</td></tr>';
 	}
 
@@ -71,7 +71,7 @@ class tx_t3devapi_befunc
 	 * @return string
 	 */
 
-	function drawDBListHeader($headers) {
+	public function drawDBListHeader($headers) {
 		$content = '';
 		$content .= '<tr class="c-headLine">';
 		foreach ($headers as $header) {
@@ -88,7 +88,7 @@ class tx_t3devapi_befunc
 	 * @return string
 	 */
 
-	function drawDBListRows($rows) {
+	public function drawDBListRows($rows) {
 		$content = '';
 		$content .= '<tr class="db_list_normal">';
 		foreach ($rows as $row) {
@@ -107,9 +107,15 @@ class tx_t3devapi_befunc
 	 * $limit = ($pointer !== NULL) ? $pointer . ',' . $nbElementsPerPage : '0,' . $nbElementsPerPage;
 	 * $current = ($pointer !== NULL) ? intval($pointer) : 0;
 	 * $pageBrowser = $this->renderListNavigation($nbTotalRecords, $this->nbElementsPerPage, $current, $nbElementsPerPage);
+	 *
+	 * @param $totalItems
+	 * @param $iLimit
+	 * @param $firstElementNumber
+	 * @param bool $alwaysShow
+	 * @return string
 	 */
 
-	function renderListNavigation($totalItems, $iLimit, $firstElementNumber, $alwaysShow = FALSE) {
+	public function renderListNavigation($totalItems, $iLimit, $firstElementNumber, $alwaysShow = FALSE) {
 		$totalPages = ceil($totalItems / $iLimit);
 
 		$content = '';

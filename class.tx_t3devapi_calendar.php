@@ -4,7 +4,7 @@
 *
 * Copyright notice
 *
-* (c) 2010 Yohann CERDAN <ycerdan@onext.fr>
+* (c) 2011 Yohann CERDAN <ycerdan@onext.fr>
 * All rights reserved
 *
 * This script is part of the TYPO3 project. The TYPO3 project is
@@ -38,7 +38,7 @@ class tx_t3devapi_calendar
 	 * Constructor
 	 */
 
-	function __construct() {
+	public function __construct() {
 	}
 
 	/**
@@ -57,7 +57,7 @@ class tx_t3devapi_calendar
 	 * @return
 	 */
 
-	function generateCalendar($year, $month, $days = array(), $day_name_length = 3, $month_href = null, $first_day = 0, $pn = array()) {
+	public function generateCalendar($year, $month, $days = array(), $day_name_length = 3, $month_href = NULL, $first_day = 0, $pn = array()) {
 		$first_of_month = gmmktime(0, 0, 0, $month, 1, $year);
 		// remember that mktime will automatically correct if invalid dates are entered
 		// for instance, mktime(0,0,0,12,32,1997) will be the date for Jan 1, 1998
@@ -72,17 +72,22 @@ class tx_t3devapi_calendar
 		@list($p, $pl) = each($pn);
 		@list($n, $nl) = each($pn); //previous and next links, if applicable
 		if ($p)
-			$p = '<span class="calendar-prev">' . ($pl ? '<a href="' . htmlspecialchars($pl) . '">' . $p . '</a>' : $p) . '</span>&nbsp;';
+			$p = '<span class="calendar-prev">' . ($pl ? '<a href="' . htmlspecialchars($pl) . '">' . $p . '</a>'
+					: $p) . '</span>&nbsp;';
 		if ($n)
-			$n = '&nbsp;<span class="calendar-next">' . ($nl ? '<a href="' . htmlspecialchars($nl) . '">' . $n . '</a>' : $n) . '</span>';
+			$n = '&nbsp;<span class="calendar-next">' . ($nl ? '<a href="' . htmlspecialchars($nl) . '">' . $n . '</a>'
+					: $n) . '</span>';
 		$calendar = '<table class="calendar">' . "\n" .
-		            '<caption class="calendar-month">' . $p . ($month_href ? '<a href="' . htmlspecialchars($month_href) . '">' . $title . '</a>' : $title) . $n .
+		            '<caption class="calendar-month">' . $p . ($month_href
+				? '<a href="' . htmlspecialchars($month_href) . '">' . $title . '</a>' : $title) . $n .
 		            "</caption>\n<tr>";
 
 		if ($day_name_length) { // if the day names should be shown ($day_name_length > 0)
 			// if day_name_length is >3, the full name of the day will be printed
 			foreach ($day_names as $d)
-				$calendar .= '<th abbr="' . htmlentities($d) . '">' . htmlentities($day_name_length < 4 ? substr($d, 0, $day_name_length) : $d) . '</th>';
+				$calendar .= '<th abbr="' . htmlentities($d) . '">' . htmlentities($day_name_length < 4
+						                                                                   ? substr($d, 0, $day_name_length)
+						                                                                   : $d) . '</th>';
 			$calendar .= "</tr>\n<tr>";
 		}
 
@@ -99,7 +104,7 @@ class tx_t3devapi_calendar
 			}
 			if (isset($days[$day]) and is_array($days[$day])) {
 				@list($link, $classes, $content) = $days[$day];
-				if (is_null($content))
+				if (is_NULL($content))
 					$content = $day;
 				$calendar .= '<td' . ($classes ? ' class="' . htmlspecialchars($classes) . '">' : '>') .
 				             ($link ? '<a href="' . htmlspecialchars($link) . '">' . $content . '</a>' : $content) . '</td>';

@@ -4,7 +4,7 @@
 *
 * Copyright notice
 *
-* (c) 2010 Yohann CERDAN <ycerdan@onext.fr>
+* (c) 2011 Yohann CERDAN <ycerdan@onext.fr>
 * All rights reserved
 *
 * This script is part of the TYPO3 project. The TYPO3 project is
@@ -35,9 +35,9 @@
 class tx_t3devapi_templating
 {
 	// Template object for frontend functions
-	protected $templateContent = null;
+	protected $templateContent = NULL;
 	// Parent object
-	protected $pObj = null;
+	protected $pObj = NULL;
 
 	/**
 	 * tx_t3devapi_templating::__construct()
@@ -58,15 +58,15 @@ class tx_t3devapi_templating
 	 * @return
 	 */
 
-	public function initTemplate($templateFile, $debug = false) {
+	public function initTemplate($templateFile, $debug = FALSE) {
 		$this->templateContent = $this->pObj->cObj->fileResource($templateFile);
-		if ($debug === true) {
-			if ($this->templateContent === null) {
+		if ($debug === TRUE) {
+			if ($this->templateContent === NULL) {
 				t3lib_div::debug('Check the path template or the rights', 'Error');
 			}
 			t3lib_div::debug($this->templateContent, 'Content of ' . $templateFile);
 		}
-		return true;
+		return TRUE;
 	}
 
 	/**
@@ -77,17 +77,17 @@ class tx_t3devapi_templating
 	 * @return
 	 */
 
-	public function renderAllTemplate($templateMarkers, $templateSection, $debug = false) {
+	public function renderAllTemplate($templateMarkers, $templateSection, $debug = FALSE) {
 		// Check if the template is loaded
 		if (!$this->templateContent) {
-			return false;
+			return FALSE;
 		}
 		// Check argument
 		if (!is_array($templateMarkers)) {
-			return false;
+			return FALSE;
 		}
 
-		if ($debug == true) {
+		if ($debug == TRUE) {
 			tx_t3devapi_miscellaneous::debug($templateMarkers, 'Markers for ' . $templateSection);
 		}
 

@@ -4,7 +4,7 @@
 *
 * Copyright notice
 *
-* (c) 2010 Yohann CERDAN <ycerdan@onext.fr>
+* (c) 2011 Yohann CERDAN <ycerdan@onext.fr>
 * All rights reserved
 *
 * This script is part of the TYPO3 project. The TYPO3 project is
@@ -35,8 +35,8 @@
 class tx_t3devapi_config
 {
 	// Parent object
-	protected $conf = null;
-	protected $cObj = null;
+	protected $conf = NULL;
+	protected $cObj = NULL;
 
 	/**
 	 * Constructor
@@ -44,7 +44,7 @@ class tx_t3devapi_config
 	 * @param mixed $pObj
 	 */
 
-	function __construct($pObj) {
+	public function __construct($pObj) {
 		$this->cObj = $pObj->cObj;
 		$this->conf = $pObj->conf;
 	}
@@ -56,7 +56,7 @@ class tx_t3devapi_config
 	 * @return
 	 */
 
-	function getArrayConfig($debug = false) {
+	public function getArrayConfig($debug = FALSE) {
 		// TYPOSCRIPT = template with plugin.tx_xxxx_pi1.xxxx = xxxx
 		$arrayConfig = $this->conf;
 
@@ -79,8 +79,8 @@ class tx_t3devapi_config
 		($arrayConfig['contentId'] == $this->cObj->data['uid']) ? $arrayConfig['piVars'] = 1 : $arrayConfig['piVars'] = 0;
 		// add "ext_conf_template.txt"
 		if ($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]) {
-			$ext_conf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]);
-			$arrayConfig = array_merge($arrayConfig, $ext_conf);
+			$extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]);
+			$arrayConfig = array_merge($arrayConfig, $extConf);
 		}
 		// add the pi config "plugin.tx_xxxx_pi1 = xxxx" which is not imported in the $conf
 		if (is_array($GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'])) {
@@ -91,7 +91,7 @@ class tx_t3devapi_config
 		// merge TYPOSCRIPT with FLEXFORM
 		$arrayConfig = array_merge($flexConfig, $arrayConfig);
 
-		if ($debug == true) {
+		if ($debug == TRUE) {
 			tx_t3devapi_miscellaneous::debug($arrayConfig);
 		}
 

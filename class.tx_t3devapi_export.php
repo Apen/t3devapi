@@ -40,7 +40,7 @@ class tx_t3devapi_export
 	 * Constructor
 	 */
 
-	function __construct() {
+	public function __construct() {
 	}
 
 	/**
@@ -51,7 +51,7 @@ class tx_t3devapi_export
 	 * $query['WHERE'] = '';
 	 */
 
-	function exportRecordsToXML($query) {
+	public function exportRecordsToXML($query) {
 		$xmlObj = t3lib_div::makeInstance('t3lib_xml', 'typo3_export');
 		$xmlObj->setRecFields($query['FROM'], $query['SELECT']);
 		$xmlObj->renderHeader();

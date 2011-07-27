@@ -57,7 +57,7 @@ class tx_t3devapi_html
 	 * @var tag text
 	 * @access protected
 	 */
-	protected $_text = false;
+	protected $_text = FALSE;
 	/**
 	 *
 	 * @var tag closers
@@ -197,22 +197,22 @@ class tx_t3devapi_html
 
 	public function renderSelect($name, $content = array(), $value = '', $attributes = array()) {
 		$my_options = array();
-		$fill_selected = false;
+		$fill_selected = FALSE;
 		foreach ($content as $key => $entry) {
 			$optionAttributes = array();
 			$optionAttributes['value'] = $key;
 			$select = '';
 			// aucune valeur de selectionn� indiqu�
-			if ($value == '' && ($fill_selected == false)) {
+			if ($value == '' && ($fill_selected == FALSE)) {
 				// $select = 'selected="selected"';
 				$optionAttributes['selected'] = 'selected';
-				$fill_selected = true;
+				$fill_selected = TRUE;
 			}
 			// une valeur est selectionn�
-			if (($value == $key) && ($fill_selected == false)) {
+			if (($value == $key) && ($fill_selected == FALSE)) {
 				// $select = 'selected="selected"';
 				$optionAttributes['selected'] = 'selected';
-				$fill_selected = true;
+				$fill_selected = TRUE;
 			}
 			$my_options[] = new tx_t3devapi_html('option', $optionAttributes, '', $entry);
 		}

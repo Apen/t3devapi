@@ -296,6 +296,146 @@ class tx_t3devapi_pibase
 		}
 	}
 
+	/*************************************** DISPLAY LIST ***************************************/
+
+	/**
+	 * Create a list view
+	 * Exemple : $this->displayList('getAllItems', 'processItemList', 'listExtraGlobalMarker', 'ITEMS_LIST');
+	 *
+	 * @param $getAllItems function who return the SQL ressource
+	 * @param $processItemList function who process each record
+	 * @param $listExtraGlobalMarker function who process the global array
+	 * @param $globalSubPart global subpart
+	 * @return string HTML code
+	 */
+
+	public function displayList($getAllItems, $processItemList, $listExtraGlobalMarker, $globalSubPart) {
+		$res = $this->$getAllItems();
+
+		if ($this->conf['records']['nbrecordsall'] == 0) {
+			return $this->pi_getLL('noresults');
+		}
+
+		// process part
+
+		$iItem = 1;
+		$markerArrayItems = array();
+
+		while ($item = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+			$item['ii'] = $this->conf['records']['offset'] + $iItem;
+			$item['i'] = $iItem++;
+			if ($processItemList !== NULL) {
+				$item = $this->$processItemList($item);
+			}
+			$markerArrayItems[] = array_merge($this->misc->convertToMarkerArray($item), $this->conf['markerslocallang']);
+		}
+
+		$this->conf['records']['recordsto'] = $this->conf['records']['offset'] + ($iItem - 1);
+		$this->conf['records']['recordsfrom'] = $this->conf['records']['offset'] + 1;
+
+		$GLOBALS['TYPO3_DB']->sql_free_result($res);
+
+		// render part
+
+		$markerArrayGlobal = array();
+		$markerArrayGlobal['###PAGEBROWSER###'] = '';
+
+		if (($this->conf['enablePageBrowser'] == 1) && ($this->conf['pageBrowserNbRecords'] > 0)) {
+			$markerArrayGlobal['###PAGEBROWSER###'] = $this->getHTMLPageBrowser($this->conf['records']['nbpages']);
+		}
+
+		$markerArrayGlobal['###' . $globalSubPart . '_ITEM###'] = $this->template->renderAllTemplate($markerArrayItems, '###' . $globalSubPart . '_ITEM###', $this->conf['debug']);
+
+		if ($listExtraGlobalMarker !== NULL) {
+			$markerArrayGlobal = array_merge($markerArrayGlobal, $this->$listExtraGlobalMarker(), $this->misc->convertToMarkerArray($this->conf['records']), $this->conf['markerslocallang']);
+		} else {
+			$markerArrayGlobal = array_merge($markerArrayGlobal, $this->misc->convertToMarkerArray($this->conf['records']), $this->conf['markerslocallang']);
+		}
+
+		$content = $this->template->renderAllTemplate($markerArrayGlobal, '###' . $globalSubPart . '###', $this->conf['debug']);
+
+		return $content;
+	}
+
+	/**
+	 * Create a list view
+	 * Same as displayList but with an array of records
+	 * Exemple : $this->displayList('getAllItems', 'processItemList', 'listExtraGlobalMarker', 'ITEMS_LIST');
+	 *
+	 * @param $getAllItems function who return an array of records
+	 * @param $processItemList function who process each record
+	 * @param $listExtraGlobalMarker function who process the global array
+	 * @param $globalSubPart global subpart
+	 * @return string HTML code
+	 */
+
+	public function displayListRows($getAllItems, $processItemList, $listExtraGlobalMarker, $globalSubPart) {
+		$items = $this->$getAllItems();
+
+		if ($this->conf['records']['nbrecordsall'] == 0) {
+			return $this->pi_getLL('noresults');
+		}
+
+		// process part
+
+		$iItem = 1;
+		$markerArrayItems = array();
+
+		foreach ($items as $item) {
+			$item['ii'] = $this->conf['records']['offset'] + $iItem;
+			$item['i'] = $iItem++;
+			if ($processItemList !== NULL) {
+				$item = $this->$processItemList($item);
+			}
+			$markerArrayItems[] = array_merge($this->misc->convertToMarkerArray($item), $this->conf['markerslocallang']);
+		}
+
+		$this->conf['records']['recordsto'] = $this->conf['records']['offset'] + ($iItem - 1);
+		$this->conf['records']['recordsfrom'] = $this->conf['records']['offset'] + 1;
+
+		// render part
+
+		$markerArrayGlobal = array();
+		$markerArrayGlobal['###PAGEBROWSER###'] = '';
+
+		if (($this->conf['enablePageBrowser'] == 1) && ($this->conf['pageBrowserNbRecords'] > 0)) {
+			$markerArrayGlobal['###PAGEBROWSER###'] = $this->getHTMLPageBrowser($this->conf['records']['nbpages']);
+		}
+
+		$markerArrayGlobal['###' . $globalSubPart . '_ITEM###'] = $this->template->renderAllTemplate($markerArrayItems, '###' . $globalSubPart . '_ITEM###', $this->conf['debug']);
+
+		if ($listExtraGlobalMarker !== NULL) {
+			$markerArrayGlobal = array_merge($markerArrayGlobal, $this->$listExtraGlobalMarker(), $this->misc->convertToMarkerArray($this->conf['records']), $this->conf['markerslocallang']);
+		} else {
+			$markerArrayGlobal = array_merge($markerArrayGlobal, $this->misc->convertToMarkerArray($this->conf['records']), $this->conf['markerslocallang']);
+		}
+
+		$content = $this->template->renderAllTemplate($markerArrayGlobal, '###' . $globalSubPart . '###', $this->conf['debug']);
+
+		return $content;
+	}
+
+	/*************************************** DISPLAY SINGLE ***************************************/
+
+	/**
+	 * Create a single view
+	 *
+	 * @param $uid uid of the record
+	 * @param $getItem function who return the SQL ressource
+	 * @param $processItem  function who process record
+	 * @param $singleExtraGlobalMarker function who process the global array
+	 * @param $globalSubPart global subpart
+	 * @return string HTML code
+	 */
+
+	public function displaySingle($uid, $getItem, $processItem, $singleExtraGlobalMarker, $globalSubPart) {
+		$item = $this->$getItem($uid);
+		if ($processItem !== NULL) {
+			$item = $this->$processItem($item);
+		}
+		return $this->template->renderAllTemplate(array_merge($this->$singleExtraGlobalMarker(), $this->misc->convertToMarkerArray($item), $this->conf['markerslocallang']), '###' . $globalSubPart . '###', $this->conf['debug']);
+	}
+
 	/*************************************** FLEXFORMS ***************************************/
 
 	/**

@@ -118,6 +118,21 @@ class tx_t3devapi_templating
 	}
 
 	/**
+	 * Get a subpart
+	 *
+	 * @param $templateSection
+	 * @return bool
+	 */
+
+	public function getSubpart($templateSection) {
+		// Check if the template is loaded
+		if (!$this->templateContent) {
+			return FALSE;
+		}
+		return $this->pObj->cObj->getSubpart($this->templateContent, $templateSection);
+	}
+
+	/**
 	 * Clean a template string (remove blank lines...)
 	 *
 	 * @param  $content

@@ -210,8 +210,10 @@ class tx_t3devapi_pibase
 	 */
 
 	public function profileStart() {
-		$this->profile['parsetime'] = microtime(TRUE);
-		$this->profile['mem'] = tx_t3devapi_miscellaneous::getMemoryUsage();
+		if ($this->conf['profile'] === TRUE) {
+			$this->profile['parsetime'] = microtime(TRUE);
+			$this->profile['mem'] = tx_t3devapi_miscellaneous::getMemoryUsage();
+		}
 	}
 
 	/**
@@ -221,9 +223,12 @@ class tx_t3devapi_pibase
 	 */
 
 	public function profileStop() {
-		$this->profile['parsetime'] = (microtime(TRUE) - $this->profile['parsetime']) . ' ms';
-		$this->profile['mem'] = tx_t3devapi_miscellaneous::getMemoryUsage() - $this->profile['mem'] . ' ko (total:' . tx_t3devapi_miscellaneous::getMemoryUsage() . 'ko)';
-		$content = $this->profile['parsetime'] . ' / ' . $this->profile['mem'];
+		$content = '';
+		if ($this->conf['profile'] === TRUE) {
+			$this->profile['parsetime'] = (microtime(TRUE) - $this->profile['parsetime']) . ' ms';
+			$this->profile['mem'] = tx_t3devapi_miscellaneous::getMemoryUsage() - $this->profile['mem'] . ' ko (total:' . tx_t3devapi_miscellaneous::getMemoryUsage() . 'ko)';
+			$content = $this->profile['parsetime'] . ' / ' . $this->profile['mem'];
+		}
 		return $content;
 	}
 
@@ -267,12 +272,12 @@ class tx_t3devapi_pibase
 	 * @return void
 	 */
 
-	public function addCSS($path) {
+	public function addCSS($path, $id = '') {
 		if ($this->cObj->getUserObjectType() == tslib_cObj::OBJECTTYPE_USER_INT) {
-			$GLOBALS['TSFE']->additionalHeaderData[$this->extKey . 'css'] = '<link rel="stylesheet" type="text/css" href="' . trim($path) . '" media="all">';
+			$GLOBALS['TSFE']->additionalHeaderData[$this->extKey . $id . 'css'] = '<link rel="stylesheet" type="text/css" href="' . trim($path) . '" media="all">';
 		} else {
-			$GLOBALS['TSFE']->pSetup['includeCSS.'][$this->extKey] = trim($path);
-			$GLOBALS['TSFE']->pSetup['includeCSS.'][$this->extKey . '.'] = array('media' => 'screen');
+			$GLOBALS['TSFE']->pSetup['includeCSS.'][$this->extKey . $id] = trim($path);
+			$GLOBALS['TSFE']->pSetup['includeCSS.'][$this->extKey . $id . '.'] = array('media' => 'screen');
 		}
 	}
 
@@ -283,9 +288,9 @@ class tx_t3devapi_pibase
 	 * @return void
 	 */
 
-	public function addJS($path, $includeInFooter = FALSE) {
+	public function addJS($path, $includeInFooter = FALSE, $id = '') {
 		if ($this->cObj->getUserObjectType() == tslib_cObj::OBJECTTYPE_USER_INT) {
-			$GLOBALS['TSFE']->additionalHeaderData[$this->extKey . 'js'] = '<script src="' . trim($path) . '" type="text/javascript"></script>';
+			$GLOBALS['TSFE']->additionalHeaderData[$this->extKey . $id . 'js'] = '<script src="' . trim($path) . '" type="text/javascript"></script>';
 		} else {
 			if ($includeInFooter === 1) {
 				$includeJs = 'includeJSFooter.';
@@ -347,7 +352,7 @@ class tx_t3devapi_pibase
 		$markerArrayGlobal['###' . $globalSubPart . '_ITEM###'] = $this->template->renderAllTemplate($markerArrayItems, '###' . $globalSubPart . '_ITEM###', $this->conf['debug']);
 
 		if ($listExtraGlobalMarker !== NULL) {
-			$markerArrayGlobal = array_merge($markerArrayGlobal, $this->$listExtraGlobalMarker(), $this->misc->convertToMarkerArray($this->conf['records']), $this->conf['markerslocallang']);
+			$markerArrayGlobal = array_merge($markerArrayGlobal, $this->misc->convertToMarkerArray($this->$listExtraGlobalMarker()), $this->misc->convertToMarkerArray($this->conf['records']), $this->conf['markerslocallang']);
 		} else {
 			$markerArrayGlobal = array_merge($markerArrayGlobal, $this->misc->convertToMarkerArray($this->conf['records']), $this->conf['markerslocallang']);
 		}
@@ -370,7 +375,12 @@ class tx_t3devapi_pibase
 	 */
 
 	public function displayListRows($getAllItems, $processItemList, $listExtraGlobalMarker, $globalSubPart) {
-		$items = $this->$getAllItems();
+		if (is_array($getAllItems)) {
+			$items = $getAllItems;
+			$this->conf['records']['nbrecordsall'] = count($items);
+		} else {
+			$items = $this->$getAllItems();
+		}
 
 		if ($this->conf['records']['nbrecordsall'] == 0) {
 			return $this->pi_getLL('noresults');
@@ -405,7 +415,7 @@ class tx_t3devapi_pibase
 		$markerArrayGlobal['###' . $globalSubPart . '_ITEM###'] = $this->template->renderAllTemplate($markerArrayItems, '###' . $globalSubPart . '_ITEM###', $this->conf['debug']);
 
 		if ($listExtraGlobalMarker !== NULL) {
-			$markerArrayGlobal = array_merge($markerArrayGlobal, $this->$listExtraGlobalMarker(), $this->misc->convertToMarkerArray($this->conf['records']), $this->conf['markerslocallang']);
+			$markerArrayGlobal = array_merge($markerArrayGlobal, $this->misc->convertToMarkerArray($this->$listExtraGlobalMarker()), $this->misc->convertToMarkerArray($this->conf['records']), $this->conf['markerslocallang']);
 		} else {
 			$markerArrayGlobal = array_merge($markerArrayGlobal, $this->misc->convertToMarkerArray($this->conf['records']), $this->conf['markerslocallang']);
 		}
@@ -562,9 +572,7 @@ class tx_t3devapi_pibase
 			$newContent = '<!-- BEGIN: plugin "' . $this->prefixId . '" -->';
 			$newContent .= $content;
 			$newContent .= '<!-- END: plugin "' . $this->prefixId;
-			if ($this->conf['profile'] === TRUE) {
-				$newContent .= ' / ' . $this->profileStop();
-			}
+			$newContent .= ' / ' . $this->profileStop();
 			$newContent .= '-->';
 			return $newContent;
 		}

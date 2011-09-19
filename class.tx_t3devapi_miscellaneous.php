@@ -368,13 +368,18 @@ class tx_t3devapi_miscellaneous
 	 * @return
 	 */
 
-	public function getPiVars($exclude = '') {
+	public function getPiVars($exclude = '', $prefix = FALSE) {
+		$piVars = array();
 		foreach ($this->pObj->piVars as $piVar => $piVarvalue) {
-			if (t3lib_div::inList($exclude, $piVar)) {
-				unset($this->pObj->piVars[$piVar]);
+			if (!t3lib_div::inList($exclude, $piVar)) {
+				if ($prefix === TRUE) {
+					$piVars[$this->pObj->prefixId . '[' . $piVar . ']'] = $piVarvalue;
+				} else {
+					$piVars[$piVar] = $piVarvalue;
+				}
 			}
 		}
-		return $this->pObj->piVars;
+		return $piVars;
 	}
 
 	/**

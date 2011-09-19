@@ -201,16 +201,11 @@ class tx_t3devapi_html
 		foreach ($content as $key => $entry) {
 			$optionAttributes = array();
 			$optionAttributes['value'] = $key;
-			$select = '';
-			// aucune valeur de selectionn� indiqu�
 			if ($value == '' && ($fill_selected == FALSE)) {
-				// $select = 'selected="selected"';
 				$optionAttributes['selected'] = 'selected';
 				$fill_selected = TRUE;
 			}
-			// une valeur est selectionn�
 			if (($value == $key) && ($fill_selected == FALSE)) {
-				// $select = 'selected="selected"';
 				$optionAttributes['selected'] = 'selected';
 				$fill_selected = TRUE;
 			}
@@ -220,10 +215,43 @@ class tx_t3devapi_html
 			$attributes['name'] = $name;
 		}
 		if (!isset($attributes['id'])) {
-			$attributes['id'] = $name;
+			$attributes['id'] = preg_replace('/(\[|\])*/', '', $name);
 		}
 		$my_select = new tx_t3devapi_html('select', $attributes, $my_options);
 		return $my_select->output();
+	}
+
+	public function renderMultipleSelect($name, $content = array(), $arrayOfValues = array(), $attributes = array()) {
+		$my_options = array();
+		foreach ($content as $key => $entry) {
+			$optionAttributes = array();
+			$optionAttributes['value'] = $key;
+			if (in_array($key, $arrayOfValues)) {
+				$optionAttributes['selected'] = 'selected';
+			}
+			$my_options[] = new tx_t3devapi_html('option', $optionAttributes, '', $entry);
+		}
+		if (!isset($attributes['name'])) {
+			$attributes['name'] = $name;
+		}
+		if (!isset($attributes['id'])) {
+			$attributes['id'] = preg_replace('/(\[|\])*/', '', $name);
+		}
+		$attributes['multiple'] = 'true';
+		$my_select = new tx_t3devapi_html('select', $attributes, $my_options);
+		return $my_select->output();
+	}
+
+	public function renderCheckbox($name, $content, $arrayOfValues = array(), $attributes = array()) {
+		$attributes['type'] = 'checkbox';
+		$attributes['name'] = $name;
+		$attributes['id'] = preg_replace('/(\[|\])*/', '', $name);
+		$attributes['value'] = $content;
+		if (in_array($content, $arrayOfValues)) {
+			$attributes['checked'] = 'checked';
+		}
+		$myInput = new tx_t3devapi_html('input', $attributes);
+		return $myInput->output();
 	}
 }
 

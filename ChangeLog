@@ -1,3 +1,6 @@
+2011-09-08 CERDAN Yohann  <cerdanyohann@yahoo.fr>
+	* Add a helpers section in the templating system
+	* Refactoring in the template section
 2011-09-07 CERDAN Yohann  <cerdanyohann@yahoo.fr>
 	* Add a TCA section, with a GMap render
 	* Improvements on addCss & addJs

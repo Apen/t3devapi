@@ -226,8 +226,10 @@ class tx_t3devapi_html
 		foreach ($content as $key => $entry) {
 			$optionAttributes = array();
 			$optionAttributes['value'] = $key;
-			if (in_array($key, $arrayOfValues)) {
-				$optionAttributes['selected'] = 'selected';
+			if (is_array($arrayOfValues)) {
+				if (in_array($key, $arrayOfValues)) {
+					$optionAttributes['selected'] = 'selected';
+				}
 			}
 			$my_options[] = new tx_t3devapi_html('option', $optionAttributes, '', $entry);
 		}

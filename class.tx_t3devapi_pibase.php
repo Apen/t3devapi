@@ -134,6 +134,23 @@ class tx_t3devapi_pibase
 	}
 
 	/**
+	 * Get records from a list of uids
+	 *
+	 * @param $from
+	 * @param $uid
+	 * @param string $select
+	 * @return array
+	 */
+
+	public function getRecords($from, $uids, $select = '*') {
+		$query['SELECT'] = $select;
+		$query['FROM'] = $from;
+		$query['WHERE'] = 'uid IN (' . mysql_real_escape_string($uids) . ')';
+		$rows = tx_t3devapi_database::exec_SELECTgetRows($query, $this->conf['debug']);
+		return $rows;
+	}
+
+	/**
 	 * Returns a part of a WHERE clause which will filter out records with start/end times or hidden/fe_groups fields
 	 * it also add a where condition if $this->conf['pidList'] is not empty
 	 *

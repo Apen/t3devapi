@@ -151,11 +151,16 @@ class tx_t3devapi_templating
 
 	public function processHelpers($templateMarkers, $content) {
 		$helpers = $this->findViewHelpers($content);
-
 		foreach ($helpers as $helper) {
 			$viewHelperArgumentLists = $this->getViewHelperArgumentLists($helper, $content, TRUE);
 			//t3lib_div::debug($viewHelperArgumentLists, $helper);
 			switch ($helper) {
+				case 'LLL':
+					$content = $this->processHelpersLLL($templateMarkers, $content, $viewHelperArgumentLists);
+					break;
+				case 'EMPTY':
+					$content = $this->processHelpersEmpty($templateMarkers, $content, $viewHelperArgumentLists);
+					break;
 				case 'NOTEMPTY':
 					$content = $this->processHelpersNotEmpty($templateMarkers, $content, $viewHelperArgumentLists);
 					break;
@@ -165,9 +170,52 @@ class tx_t3devapi_templating
 				case 'IF':
 					$content = $this->processHelpersIf($templateMarkers, $content, $viewHelperArgumentLists);
 					break;
+				case 'TS':
+					$content = $this->processHelpersTs($templateMarkers, $content, $viewHelperArgumentLists);
+					break;
+				case 'LINK':
+					$content = $this->processHelpersLink($templateMarkers, $content, $viewHelperArgumentLists);
+					break;
 			}
 		}
+		return $content;
+	}
 
+	/**
+	 * Processes helpers LLL : finds and evaluates them in HTML code.
+	 * Example : ###LLL:locallangvar###
+	 *
+	 * @param	string	HTML
+	 */
+
+	public function processHelpersLLL($templateMarkers, $content, $viewHelperArgumentLists) {
+		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
+			if (empty($this->pObj->conf['locallang'][strtolower($viewHelperArgument)]) !== TRUE) {
+				$value = $this->pObj->conf['locallang'][strtolower($viewHelperArgument)];
+				$content = t3lib_parsehtml::substituteMarker($content, '###LLL:' . $viewHelperArgument . '###', $value);
+			}
+		}
+		return $content;
+	}
+
+	/**
+	 * Processes helpers EMPTY : finds and evaluates them in HTML code.
+	 * Example : ###EMPTY:VAR###
+	 * @param	string	HTML
+	 */
+
+	public function processHelpersEmpty($templateMarkers, $content, $viewHelperArgumentLists) {
+		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
+			if (empty($templateMarkers['###' . $viewHelperArgument . '###']) === TRUE) {
+				$content = t3lib_parsehtml::substituteSubpart(
+					$content,
+					'###EMPTY:' . $viewHelperArgument . '###',
+					t3lib_parsehtml::getSubpart($content, '###EMPTY:' . $viewHelperArgument . '###')
+				);
+			} else {
+				$content = t3lib_parsehtml::substituteSubpart($content, '###EMPTY:' . $viewHelperArgument . '###', '');
+			}
+		}
 		return $content;
 	}
 
@@ -243,6 +291,67 @@ class tx_t3devapi_templating
 			} else {
 				$content = t3lib_parsehtml::substituteSubpart($content, '###IF:' . $viewHelperArgument . '###', '');
 			}
+		}
+		return $content;
+	}
+
+	/**
+	 * Processes helpers TS : finds and evaluates them in HTML code.
+	 * Example : ###TS:path.to.some.ts.property.or.content.object###
+	 *
+	 * @param	string	HTML
+	 */
+
+	public function processHelpersTs($templateMarkers, $content, $viewHelperArgumentLists) {
+		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
+			$path = $viewHelperArgument;
+			$pathExploded = explode('.', trim($path));
+			$depth = count($pathExploded);
+			$pathBranch = $GLOBALS['TSFE']->tmpl->setup;
+			$value = '';
+			for ($i = 0; $i < $depth; $i++) {
+				if ($i < ($depth - 1)) {
+					$pathBranch = $pathBranch[$pathExploded[$i] . '.'];
+				} elseif (empty($pathExploded[$i])) {
+					// path ends with a dot. We return the rest of the array
+					$value = $pathBranch;
+				} else {
+					// path ends without a dot. We return the value.
+					$value = $pathBranch[$pathExploded[$i]];
+					if (isset($pathBranch[$pathExploded[$i] . '.'])) {
+						// okay, seems to be a TS Content Element, let's run it
+						$cObj = t3lib_div::makeInstance('tslib_cObj');
+						$value = $cObj->cObjGetSingle(
+							$pathBranch[$pathExploded[$i]],
+							$pathBranch[$pathExploded[$i] . '.']
+						);
+					}
+				}
+			}
+			$content = t3lib_parsehtml::substituteMarker($content, '###TS:' . $viewHelperArgument . '###', $value);
+		}
+		return $content;
+	}
+
+	/**
+	 * Processes helpers LINK : finds and evaluates them in HTML code.
+	 * Example : ###LINK:Pid|AdditionalParameters|useCache###
+	 * Example : ###LINK:3|param1=val1&param12=val2|1###
+	 * If Pid is empty = current page
+	 *
+	 * @param	string	HTML
+	 */
+
+	public function processHelpersLink($templateMarkers, $content, $viewHelperArgumentLists) {
+		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
+			$explodeViewHelperArguments = explode('|', $viewHelperArgument);
+			$pid = $explodeViewHelperArguments[0] ? $explodeViewHelperArguments[0] : $GLOBALS['TSFE']->id;
+			$additionalParameters = $explodeViewHelperArguments[1] ?
+					t3lib_div::explodeUrl2Array($explodeViewHelperArguments[1])
+					: array();
+			$useCache = $explodeViewHelperArguments[2] ? TRUE : FALSE;
+			$value = $this->misc->getURL($additionalParameters, $useCache, $pid);
+			$content = t3lib_parsehtml::substituteMarker($content, '###LINK:' . $viewHelperArgument . '###', $value);
 		}
 		return $content;
 	}

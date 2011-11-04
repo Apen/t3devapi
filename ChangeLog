@@ -1,3 +1,9 @@
+2011-11-04 CERDAN Yohann <cerdanyohann@yahoo.fr>
+	* Refactoring of the html section
+	* add class.tx_t3devapi_tagbuilder.php to build html tags
+	* add class.tx_t3devapi_validate.php to validate fields
+	* Implements some tests for phpunit
+	* Some improvements
 2011-09-27 CERDAN Yohann <cerdanyohann@yahoo.fr>
 	* Some improvements
 2011-09-27 CERDAN Yohann <cerdanyohann@yahoo.fr>

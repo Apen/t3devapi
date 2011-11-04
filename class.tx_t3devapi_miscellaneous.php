@@ -1,37 +1,39 @@
 <?php
 
-/* * *************************************************************
-*
-* Copyright notice
-*
-* (c) 2010 Yohann CERDAN <ycerdan@onext.fr>
-* All rights reserved
-*
-* This script is part of the TYPO3 project. The TYPO3 project is
-* free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* The GNU General Public License can be found at
-* http://www.gnu.org/copyleft/gpl.html.
-*
-* This script is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* This copyright notice MUST APPEAR in all copies of the script!
-* ************************************************************* */
+/***************************************************************
+ *  Copyright notice
+ *
+ *  (c) 2011 Yohann CERDAN <cerdanyohann@yahoo.fr>
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *  A copy is found in the textfile GPL.txt and important notices to the license
+ *  from the author is found in LICENSE.txt distributed with these scripts.
+ *
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
 
 /**
  * tx_t3devapi_miscellaneous
  * Class with a lot of functions :-)
  *
- * @author Yohann
- * @copyright Copyright (c) 2011
+ * @author Yohann CERDAN <cerdanyohann@yahoo.fr>
+ * @package TYPO3
+ * @subpackage t3devapi
  */
-
 class tx_t3devapi_miscellaneous
 {
 	// Parent object
@@ -812,6 +814,45 @@ class tx_t3devapi_miscellaneous
 			}
 			$GLOBALS['TSFE']->newCObj();
 		}
+	}
+
+	/**
+	 * Returns given word as CamelCased.
+	 *
+	 * Converts a word like "send_email" to "SendEmail". It
+	 * will remove non alphanumeric characters from the word, so
+	 * "who's online" will be converted to "WhoSOnline"
+	 *
+	 * @param	string	Word to convert to camel case
+	 * @return	string	UpperCamelCasedWord
+	 */
+
+	public static function camelize($word) {
+		return str_replace(' ', '', ucwords(preg_replace('![^A-Z^a-z^0-9]+!', ' ', $word)));
+	}
+
+	/**
+	 * Returns a given CamelCasedString as an lowercase string with underscores.
+	 * Example: Converts BlogExample to blog_example, and minimalValue to minimal_value
+	 *
+	 * @param	string		$string: String to be converted to lowercase underscore
+	 * @return	string		lowercase_and_underscored_string
+	 */
+
+	public static function camelCaseToLowerCaseUnderscored($string) {
+		return strtolower(preg_replace('/(?<=\w)([A-Z])/', '_\\1', $string));
+	}
+
+	/**
+	 * Returns a given string with underscores as UpperCamelCase.
+	 * Example: Converts blog_example to BlogExample
+	 *
+	 * @param	string		$string: String to be converted to camel case
+	 * @return	string		UpperCamelCasedWord
+	 */
+
+	public static function underscoredToUpperCamelCase($string) {
+		return str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($string))));
 	}
 
 }

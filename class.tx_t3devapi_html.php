@@ -158,6 +158,28 @@ class tx_t3devapi_html
 	}
 
 	/**
+	 * Render a input type file
+	 *
+	 * @param string $name
+	 * @param array $attributes
+	 * @return string
+	 */
+
+	public function renderInputFile($name, $attributes = array()) {
+		$tag = new tx_t3devapi_tagbuilder();
+		$tag->setTagName('input');
+		$tag->addAttribute('type', 'file');
+		if (!isset($attributes['name'])) {
+			$tag->addAttribute('name', $name);
+		}
+		if (!isset($attributes['id'])) {
+			$tag->addAttribute('id', self::cleanId($name));
+		}
+		$tag->addAttributes($attributes);
+		return $tag->render();
+	}
+
+	/**
 	 * Render a textarea
 	 *
 	 * @param string $name
@@ -202,8 +224,10 @@ class tx_t3devapi_html
 		if (!isset($attributes['id'])) {
 			$tag->addAttribute('id', self::cleanId($name));
 		}
-		if (in_array($content, $arrayOfValues)) {
-			$tag->addAttribute('checked', 'checked');
+		if (is_array($arrayOfValues)) {
+			if (in_array($content, $arrayOfValues)) {
+				$tag->addAttribute('checked', 'checked');
+			}
 		}
 		$tag->addAttributes($attributes);
 		return $tag->render();

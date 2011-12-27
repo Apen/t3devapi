@@ -364,7 +364,10 @@ class tx_t3devapi_html
 	 */
 
 	public function cleanId($text) {
-		return preg_replace('/(\[|\])*/', '', $text);
+		$text = preg_replace('/\[\]/', '', $text);
+		$text = preg_replace('/\]/', '', $text);
+		$text = preg_replace('/\[/', '_', $text);
+		return $text;
 	}
 
 

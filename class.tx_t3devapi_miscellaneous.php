@@ -37,7 +37,7 @@
 class tx_t3devapi_miscellaneous
 {
 	// Parent object
-	protected $cpObj = NULL;
+	protected $pObj = NULL;
 
 	/**
 	 * Class constructor

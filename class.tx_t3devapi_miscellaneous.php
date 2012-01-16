@@ -43,7 +43,7 @@ class tx_t3devapi_miscellaneous
 	 * Class constructor
 	 */
 
-	public function __construct($pObj) {
+	public function __construct(&$pObj) {
 		$this->pObj = $pObj;
 	}
 

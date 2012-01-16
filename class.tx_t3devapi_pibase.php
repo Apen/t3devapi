@@ -85,8 +85,8 @@ class tx_t3devapi_pibase
 		}
 
 		// needed classes
-		$this->template = new tx_t3devapi_templating(&$this);
-		$this->misc = new tx_t3devapi_miscellaneous(&$this);
+		$this->template = new tx_t3devapi_templating($this);
+		$this->misc = new tx_t3devapi_miscellaneous($this);
 		$this->conf = tx_t3devapi_config::getArrayConfig();
 
 		// Additionnal TS

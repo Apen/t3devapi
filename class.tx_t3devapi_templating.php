@@ -48,10 +48,10 @@ class tx_t3devapi_templating
 	 * @param mixed $pObj
 	 */
 
-	public function __construct($pObj) {
+	public function __construct(&$pObj) {
 		// Store parent object as a class variable
 		$this->pObj = $pObj;
-		$this->misc = new tx_t3devapi_miscellaneous(&$pObj);
+		$this->misc = new tx_t3devapi_miscellaneous($pObj);
 	}
 
 	/**

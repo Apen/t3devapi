@@ -465,7 +465,7 @@ class tx_t3devapi_pibase
 		if ($singleExtraGlobalMarker === NULL) {
 			$singleExtraGlobalMarker = array();
 		}
-		return $this->template->renderAllTemplate(array_merge($this->$singleExtraGlobalMarker(), $this->misc->convertToMarkerArray($item), $this->conf['markerslocallang']), '###' . $globalSubPart . '###', $this->conf['debug']);
+		return $this->template->renderAllTemplate(array_merge($this->misc->convertToMarkerArray($this->$singleExtraGlobalMarker()), $this->misc->convertToMarkerArray($item), $this->conf['markerslocallang']), '###' . $globalSubPart . '###', $this->conf['debug']);
 	}
 
 	/*************************************** FLEXFORMS ***************************************/

@@ -46,6 +46,7 @@ class tx_t3devapi_pibase
 	public $conf = NULL;
 	public $template = NULL;
 	public $misc = NULL;
+	public $uploadPath = '';
 
 	/**
 	 * Constructor of the class
@@ -97,8 +98,9 @@ class tx_t3devapi_pibase
 		// Debug
 		$this->conf['debug'] = ($this->conf['debug'] == 1) ? TRUE : FALSE;
 
-		// Profile
+		// Check conf profile
 		$this->conf['profile'] = ($this->conf['profile'] == 1) ? TRUE : FALSE;
+		$this->profileStart();
 
 		// Path to the HTML template
 		if (empty($this->conf['templateFile']) === FALSE) {
@@ -112,6 +114,61 @@ class tx_t3devapi_pibase
 			'typo3conf/ext/' . $this->extKey . '/' . dirname($this->scriptRelPath) . '/locallang.xml'
 		);
 		$this->conf['markerslocallang'] = $this->misc->convertToMarkerArray($this->conf['locallang'], 'LLL:');
+
+		// upload path
+		$this->uploadPath = 'uploads/tx_' . $this->extKey . '/';
+	}
+
+	/**
+	 * Default init of the plugin
+	 * With the default flexform
+	 *
+	 * @return void
+	 */
+
+	public function defaultInit() {
+		// Starting point
+		$this->conf['pidList'] = $this->pi_getPidList($this->conf['pages'], '99');
+
+		// List & single UID
+		$this->conf['singleView'] = ($this->conf['singleView'] != '') ? $this->conf['singleView'] : $GLOBALS['TSFE']->id;
+		$this->conf['listView'] = ($this->conf['listView'] != '') ? $this->conf['listView'] : $GLOBALS['TSFE']->id;
+
+		// possibility to add where condition (AND xxx)
+		$this->conf['addWhere'] = '';
+
+		// Order by & ascDesc
+		$this->conf['orderBy'] = ($this->conf['orderBy'] != '') ? $this->conf['orderBy'] : '';
+		$this->conf['ascDesc'] = ($this->conf['ascDesc'] != '') ? $this->conf['ascDesc'] : '';
+
+		// Limit & start
+		$this->conf['limit'] = ($this->conf['limit'] != '') ? $this->conf['limit'] : '';
+		$this->conf['start'] = ($this->conf['start'] != '') ? $this->conf['start'] : '';
+
+		// Page browser
+		$this->conf['pageBrowserNbRecords'] = ($this->conf['pageBrowserNbRecords'] != '') ?
+				$this->conf['pageBrowserNbRecords'] : '';
+
+		// Size of the list thumbs
+		$thumbSize = explode('x', $this->conf['thumbSize']);
+		$this->conf['thumbWidth'] = (isset($thumbSize[0]) && ($thumbSize[0] != '')) ? $thumbSize[0] : 150;
+		$this->conf['thumbHeight'] = (isset($thumbSize[1]) && ($thumbSize[1] != '')) ? $thumbSize[1] : 150;
+
+		// Size of the full thumbs
+		$thumbSize = explode('x', $this->conf['thumbSizeSingle']);
+		$this->conf['thumbSingleWidth'] = (isset($thumbSize[0]) && ($thumbSize[0] != '')) ? $thumbSize[0] : 500;
+		$this->conf['thumbSingleHeight'] = (isset($thumbSize[1]) && ($thumbSize[1] != '')) ? $thumbSize[1] : 350;
+
+		// CSS
+		if (empty($this->conf['cssFile']) === FALSE) {
+			$this->addCSS($this->conf['cssFile']);
+		}
+
+		// Filter the list view
+		if ((isset($this->conf['listUID'])) && ($this->conf['listUID'] != '')) {
+			$this->conf['addWhere'] = ' AND pages.uid IN (' . $this->conf['listUID'] . ')';
+			$this->conf['orderBy'] = ' FIND_IN_SET(uid, \'' . $this->conf['listUID'] . '\')';
+		}
 	}
 
 	/*************************************** DB ***************************************/
@@ -590,12 +647,21 @@ class tx_t3devapi_pibase
 	public function pi_wrapInBaseClass($str) {
 		$content = '<div class="' . str_replace('_', '-', $this->prefixId) . '">' . $str . '</div>';
 
+		if ($this->conf['profile'] === TRUE) {
+			$content .= '<!-- PROFILE ' . $this->prefixId . ': ' . $this->profileStop() . ' -->';
+		}
+
+		if ($this->conf['debug'] === TRUE) {
+			tx_t3devapi_miscellaneous::debug($this->conf, 'Plugin configuration');
+			if ($this->conf['profile'] === TRUE) {
+				tx_t3devapi_miscellaneous::debug($this->profile, 'Profile');
+			}
+		}
+
 		if (!$GLOBALS['TSFE']->config['config']['disablePrefixComment']) {
 			$newContent = '<!-- BEGIN: plugin "' . $this->prefixId . '" -->';
 			$newContent .= $content;
-			$newContent .= '<!-- END: plugin "' . $this->prefixId;
-			$newContent .= ' / ' . $this->profileStop();
-			$newContent .= '-->';
+			$newContent .= '<!-- END: plugin "' . $this->prefixId . '" -->';
 			return $newContent;
 		}
 

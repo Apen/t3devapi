@@ -1,5 +1,6 @@
 2012-04-10 CERDAN Yohann <cerdanyohann@yahoo.fr>
 	* add new stuff in pibase
+	* add profiling with xhprof
 2011-11-04 CERDAN Yohann <cerdanyohann@yahoo.fr>
 	* Refactoring of the html section
 	* add class.tx_t3devapi_tagbuilder.php to build html tags

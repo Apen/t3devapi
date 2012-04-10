@@ -11,6 +11,7 @@ require_once(t3lib_extMgm::extPath('t3devapi') . 'class.tx_t3devapi_database.php
 require_once(t3lib_extMgm::extPath('t3devapi') . 'class.tx_t3devapi_export.php');
 require_once(t3lib_extMgm::extPath('t3devapi') . 'class.tx_t3devapi_fluid.php');
 require_once(t3lib_extMgm::extPath('t3devapi') . 'class.tx_t3devapi_html.php');
+require_once(t3lib_extMgm::extPath('t3devapi') . 'class.tx_t3devapi_profiler.php');
 require_once(t3lib_extMgm::extPath('t3devapi') . 'class.tx_t3devapi_templating.php');
 require_once(t3lib_extMgm::extPath('t3devapi') . 'class.tx_t3devapi_validate.php');
 

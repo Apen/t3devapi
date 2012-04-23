@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2011 Yohann CERDAN <cerdanyohann@yahoo.fr>
+ *  (c) 2012 Yohann CERDAN <cerdanyohann@yahoo.fr>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -31,8 +31,8 @@
  * Class to create some tag element with some php objects
  * Inspirate by the a class in the Fluid project
  *
- * @author Yohann CERDAN <cerdanyohann@yahoo.fr>
- * @package TYPO3
+ * @author     Yohann CERDAN <cerdanyohann@yahoo.fr>
+ * @package    TYPO3
  * @subpackage t3devapi
  */
 class tx_t3devapi_tagbuilder
@@ -43,7 +43,6 @@ class tx_t3devapi_tagbuilder
 	 *
 	 * @var string
 	 */
-
 	protected $tagName = '';
 
 	/**
@@ -51,7 +50,6 @@ class tx_t3devapi_tagbuilder
 	 *
 	 * @var string
 	 */
-
 	protected $content = '';
 
 	/**
@@ -59,7 +57,6 @@ class tx_t3devapi_tagbuilder
 	 *
 	 * @var array
 	 */
-
 	protected $attributes = array();
 
 	/**
@@ -68,13 +65,12 @@ class tx_t3devapi_tagbuilder
 	 *
 	 * @var boolean
 	 */
-
 	protected $forceClosingTag = FALSE;
 
 	/**
 	 * Constructor
 	 *
-	 * @param string $tagName name of the tag to be rendered
+	 * @param string $tagName    name of the tag to be rendered
 	 * @param string $tagContent content of the tag to be rendered
 	 */
 	public function __construct($tagName = '', $tagContent = '') {
@@ -88,7 +84,6 @@ class tx_t3devapi_tagbuilder
 	 * @param string $tagName name of the tag to be rendered
 	 * @return void
 	 */
-
 	public function setTagName($tagName) {
 		$this->tagName = $tagName;
 	}
@@ -98,7 +93,6 @@ class tx_t3devapi_tagbuilder
 	 *
 	 * @return string tag name of the tag to be rendered
 	 */
-
 	public function getTagName() {
 		return $this->tagName;
 	}
@@ -109,7 +103,6 @@ class tx_t3devapi_tagbuilder
 	 * @param string $tagContent content of the tag to be rendered
 	 * @return void
 	 */
-
 	public function setContent($tagContent) {
 		$this->content = $tagContent;
 	}
@@ -119,7 +112,6 @@ class tx_t3devapi_tagbuilder
 	 *
 	 * @return string content of the tag to be rendered
 	 */
-
 	public function getContent() {
 		return $this->content;
 	}
@@ -129,7 +121,6 @@ class tx_t3devapi_tagbuilder
 	 *
 	 * @return boolean TRUE if tag contains text, otherwise FALSE
 	 */
-
 	public function hasContent() {
 		if ($this->content === NULL) {
 			return FALSE;
@@ -144,7 +135,6 @@ class tx_t3devapi_tagbuilder
 	 * @param boolean $forceClosingTag
 	 * @return void
 	 */
-
 	public function forceClosingTag($forceClosingTag) {
 		$this->forceClosingTag = $forceClosingTag;
 	}
@@ -152,12 +142,11 @@ class tx_t3devapi_tagbuilder
 	/**
 	 * Adds an attribute to the $attributes-collection
 	 *
-	 * @param string $attributeName name of the attribute to be added to the tag
-	 * @param string $attributeValue attribute value
+	 * @param string  $attributeName           name of the attribute to be added to the tag
+	 * @param string  $attributeValue          attribute value
 	 * @param boolean $escapeSpecialCharacters apply htmlspecialchars to attribute value
 	 * @return void
 	 */
-
 	public function addAttribute($attributeName, $attributeValue, $escapeSpecialCharacters = TRUE) {
 		if ($escapeSpecialCharacters) {
 			$attributeValue = htmlspecialchars($attributeValue);
@@ -168,11 +157,10 @@ class tx_t3devapi_tagbuilder
 	/**
 	 * Adds attributes to the $attributes-collection
 	 *
-	 * @param array $attributes collection of attributes to add. key = attribute name, value = attribute value
+	 * @param array   $attributes              collection of attributes to add. key = attribute name, value = attribute value
 	 * @param boolean $escapeSpecialCharacters apply htmlspecialchars to attribute values#
 	 * @return void
 	 */
-
 	public function addAttributes(array $attributes, $escapeSpecialCharacters = TRUE) {
 		foreach ($attributes as $attributeName => $attributeValue) {
 			$this->addAttribute($attributeName, $attributeValue, $escapeSpecialCharacters);
@@ -185,7 +173,6 @@ class tx_t3devapi_tagbuilder
 	 * @param string $attributeName name of the attribute to be removed from the tag
 	 * @return void
 	 */
-
 	public function removeAttribute($attributeName) {
 		unset($this->attributes[$attributeName]);
 	}
@@ -195,11 +182,10 @@ class tx_t3devapi_tagbuilder
 	 *
 	 * @return void
 	 */
-
 	public function reset() {
-		$this->tagName = '';
-		$this->content = '';
-		$this->attributes = array();
+		$this->tagName         = '';
+		$this->content         = '';
+		$this->attributes      = array();
 		$this->forceClosingTag = FALSE;
 	}
 
@@ -208,7 +194,6 @@ class tx_t3devapi_tagbuilder
 	 *
 	 * @return void
 	 */
-
 	public function render() {
 		if (empty($this->tagName)) {
 			return '';
@@ -224,6 +209,7 @@ class tx_t3devapi_tagbuilder
 		}
 		return $output;
 	}
+
 }
 
 ?>

@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2011 Yohann CERDAN <cerdanyohann@yahoo.fr>
+ *  (c) 2012 Yohann CERDAN <cerdanyohann@yahoo.fr>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -30,8 +30,8 @@
  * tx_t3devapi_befunc
  * Class with some be functions
  *
- * @author Yohann CERDAN <cerdanyohann@yahoo.fr>
- * @package TYPO3
+ * @author     Yohann CERDAN <cerdanyohann@yahoo.fr>
+ * @package    TYPO3
  * @subpackage t3devapi
  */
 class tx_t3devapi_befunc
@@ -39,17 +39,15 @@ class tx_t3devapi_befunc
 	/**
 	 * Constructor
 	 */
-
 	public function __construct() {
 	}
 
 	/**
 	 * drawDBListTable
 	 *
-	 * @param  $content
+	 * @param string $content
 	 * @return string
 	 */
-
 	public function drawDBListTable($content) {
 		return '<table cellspacing="1" cellpadding="2" border="0" class="typo3-dblist">' . $content . '</table>';
 	}
@@ -57,11 +55,10 @@ class tx_t3devapi_befunc
 	/**
 	 * drawDBListTitle
 	 *
-	 * @param  $content
-	 * @param int $colspan
+	 * @param string $content
+	 * @param int    $colspan
 	 * @return string
 	 */
-
 	public function drawDBListTitle($content, $colspan = 100) {
 		return '<tr class="t3-row-header"><td colspan="' . $colspan . '">' . $content . '</td></tr>';
 	}
@@ -69,10 +66,9 @@ class tx_t3devapi_befunc
 	/**
 	 * drawDBListHeader
 	 *
-	 * @param  $headers
+	 * @param  string $headers
 	 * @return string
 	 */
-
 	public function drawDBListHeader($headers) {
 		$content = '';
 		$content .= '<tr class="c-headLine">';
@@ -86,10 +82,9 @@ class tx_t3devapi_befunc
 	/**
 	 * drawDBListRows
 	 *
-	 * @param  $rows
+	 * @param  array $rows
 	 * @return string
 	 */
-
 	public function drawDBListRows($rows) {
 		$content = '';
 		$content .= '<tr class="db_list_normal">';
@@ -110,58 +105,59 @@ class tx_t3devapi_befunc
 	 * $current = ($pointer !== NULL) ? intval($pointer) : 0;
 	 * $pageBrowser = $this->renderListNavigation($nbTotalRecords, $this->nbElementsPerPage, $current, $nbElementsPerPage);
 	 *
-	 * @param $totalItems
-	 * @param $iLimit
-	 * @param $firstElementNumber
-	 * @param bool $alwaysShow
+	 * @param  int    $totalItems
+	 * @param  int    $iLimit
+	 * @param  int    $firstElementNumber
+	 * @param bool    $alwaysShow
 	 * @return string
 	 */
-
 	public function renderListNavigation($totalItems, $iLimit, $firstElementNumber, $alwaysShow = FALSE) {
 		$totalPages = ceil($totalItems / $iLimit);
 
-		$content = '';
+		$content       = '';
 		$returnContent = '';
 		// Show page selector if not all records fit into one page
 		if ($totalPages > 1 || $alwaysShow == TRUE) {
-			$first = $previous = $next = $last = $reload = '';
+			$first       = $previous = $next = $last = $reload = '';
 			$listURLOrig = t3lib_div::getIndpEnv('TYPO3_REQUEST_DIR') . 'mod.php?M=' . t3lib_div::_GP('M');
-			$listURL = t3lib_div::getIndpEnv('TYPO3_REQUEST_DIR') . 'mod.php?M=' . t3lib_div::_GP('M');
+			$listURL     = t3lib_div::getIndpEnv('TYPO3_REQUEST_DIR') . 'mod.php?M=' . t3lib_div::_GP('M');
 			$listURL .= '&nbPerPage=' . $iLimit;
 			$currentPage = floor(($firstElementNumber + 1) / $iLimit) + 1;
 			// First
 			if ($currentPage > 1) {
 				$labelFirst = $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_common.xml:first');
-				$first = '<a href="' . $listURL . '&pointer=0"><img width="16" height="16" title="' . $labelFirst . '" alt="' . $labelFirst . '" src="sysext/t3skin/icons/gfx/control_first.gif"></a>';
+				$first      = '<a href="' . $listURL . '&pointer=0"><img width="16" height="16" title="' . $labelFirst . '" alt="' . $labelFirst . '" src="sysext/t3skin/icons/gfx/control_first.gif"></a>';
 			} else {
 				$first = '<img width="16" height="16" title="" alt="" src="sysext/t3skin/icons/gfx/control_first_disabled.gif">';
 			}
 			// Previous
 			if (($currentPage - 1) > 0) {
 				$labelPrevious = $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_common.xml:previous');
-				$previous = '<a href="' . $listURL . '&pointer=' . (($currentPage - 2) * $iLimit) . '"><img width="16" height="16" title="' . $labelPrevious . '" alt="' . $labelPrevious . '" src="sysext/t3skin/icons/gfx/control_previous.gif"></a>';
+				$previous      = '<a href="' . $listURL . '&pointer=' . (($currentPage - 2) * $iLimit) . '"><img width="16" height="16" title="' . $labelPrevious . '" alt="' . $labelPrevious . '" src="sysext/t3skin/icons/gfx/control_previous.gif"></a>';
 			} else {
 				$previous = '<img width="16" height="16" title="" alt="" src="sysext/t3skin/icons/gfx/control_previous_disabled.gif">';
 			}
 			// Next
 			if (($currentPage + 1) <= $totalPages) {
 				$labelNext = $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_common.xml:next');
-				$next = '<a href="' . $listURL . '&pointer=' . (($currentPage) * $iLimit) . '"><img width="16" height="16" title="' . $labelNext . '" alt="' . $labelNext . '" src="sysext/t3skin/icons/gfx/control_next.gif"></a>';
+				$next      = '<a href="' . $listURL . '&pointer=' . (($currentPage) * $iLimit) . '"><img width="16" height="16" title="' . $labelNext . '" alt="' . $labelNext . '" src="sysext/t3skin/icons/gfx/control_next.gif"></a>';
 			} else {
 				$next = '<img width="16" height="16" title="" alt="" src="sysext/t3skin/icons/gfx/control_next_disabled.gif">';
 			}
 			// Last
 			if ($currentPage != $totalPages) {
 				$labelLast = $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_common.xml:last');
-				$last = '<a href="' . $listURL . '&pointer=' . (($totalPages - 1) * $iLimit) . '"><img width="16" height="16" title="' . $labelLast . '" alt="' . $labelLast . '" src="sysext/t3skin/icons/gfx/control_last.gif"></a>';
+				$last      = '<a href="' . $listURL . '&pointer=' . (($totalPages - 1) * $iLimit) . '"><img width="16" height="16" title="' . $labelLast . '" alt="' . $labelLast . '" src="sysext/t3skin/icons/gfx/control_last.gif"></a>';
 			} else {
 				$last = '<img width="16" height="16" title="" alt="" src="sysext/t3skin/icons/gfx/control_last_disabled.gif">';
 			}
 
 			$pageNumberInput = '<span>' . $currentPage . '</span>';
-			$pageIndicator = '<span class="pageIndicator">'
-			                 . sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_web_list.xml:pageIndicator'), $pageNumberInput, $totalPages)
-			                 . '</span>';
+			$pageIndicator   = '<span class="pageIndicator">'
+				. sprintf(
+					$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_web_list.xml:pageIndicator'), $pageNumberInput, $totalPages
+				)
+				. '</span>';
 
 			if ($totalItems > ($firstElementNumber + $iLimit)) {
 				$lastElementNumber = $firstElementNumber + $iLimit;
@@ -170,24 +166,23 @@ class tx_t3devapi_befunc
 			}
 
 			$rangeIndicator = '<span class="pageIndicator">'
-			                  . sprintf($GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_web_list.xml:rangeIndicator'), $firstElementNumber + 1, $lastElementNumber)
-			                  . '</span>';
+				. sprintf(
+					$GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_mod_web_list.xml:rangeIndicator'), $firstElementNumber + 1,
+					$lastElementNumber
+				)
+				. '</span>';
 
 			$reload = '<input type="text" name="nbPerPage" id="nbPerPage" size="5" value="' . $iLimit . '"/> / page '
-			          . '<a href="#"  onClick="jumpToUrl(\'' . $listURLOrig . '&nbPerPage=\'+document.getElementById(\'nbPerPage\').value);">'
-			          . '<img width="16" height="16" title="" alt="" src="sysext/t3skin/icons/gfx/refresh_n.gif"></a>';
+				. '<a href="#"  onClick="jumpToUrl(\'' . $listURLOrig . '&nbPerPage=\'+document.getElementById(\'nbPerPage\').value);">'
+				. '<img width="16" height="16" title="" alt="" src="sysext/t3skin/icons/gfx/refresh_n.gif"></a>';
 
-			$content .= '<div id="typo3-dblist-pagination">'
-			            . $first . $previous
-			            . '<span class="bar">&nbsp;</span>'
-			            . $rangeIndicator . '<span class="bar">&nbsp;</span>'
-			            . $pageIndicator . '<span class="bar">&nbsp;</span>'
-			            . $next . $last . '<span class="bar">&nbsp;</span>'
-			            . $reload
-			            . '</div>';
+			$content .= '<div id="typo3-dblist-pagination">' . $first . $previous .
+				'<span class="bar">&nbsp;</span>' . $rangeIndicator . '<span class="bar">&nbsp;</span>' .
+				$pageIndicator . '<span class="bar">&nbsp;</span>' . $next . $last . '<span class="bar">&nbsp;</span>' .
+				$reload . '</div>';
 
 			$returnContent = $content;
-		} // end of if pages > 1
+		}
 		return $returnContent;
 	}
 }

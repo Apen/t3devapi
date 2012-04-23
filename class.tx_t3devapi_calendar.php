@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2011 Yohann CERDAN <cerdanyohann@yahoo.fr>
+ *  (c) 2012 Yohann CERDAN <cerdanyohann@yahoo.fr>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -58,7 +58,6 @@ class tx_t3devapi_calendar
 	 * @param array $pn
 	 * @return
 	 */
-
 	public function generateCalendar($year, $month, $days = array(), $day_name_length = 3, $month_href = NULL, $first_day = 0, $pn = array()) {
 		$first_of_month = gmmktime(0, 0, 0, $month, 1, $year);
 		// remember that mktime will automatically correct if invalid dates are entered

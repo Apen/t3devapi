@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2011 Yohann CERDAN <cerdanyohann@yahoo.fr>
+ *  (c) 2012 Yohann CERDAN <cerdanyohann@yahoo.fr>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -30,8 +30,8 @@
  * tx_t3devapi_export
  * Class to generate some generic records array
  *
- * @author Yohann CERDAN <cerdanyohann@yahoo.fr>
- * @package TYPO3
+ * @author     Yohann CERDAN <cerdanyohann@yahoo.fr>
+ * @package    TYPO3
  * @subpackage t3devapi
  */
 class tx_t3devapi_database
@@ -39,7 +39,6 @@ class tx_t3devapi_database
 	/**
 	 * Constructor
 	 */
-
 	public function __construct() {
 	}
 
@@ -47,20 +46,20 @@ class tx_t3devapi_database
 	/**
 	 * Executes a select based on input query parts array
 	 *
-	 * @param	array		Query parts array
-	 * @return	pointer		MySQL select result pointer / DBAL object
+	 * @param    array    $queryParts    Query parts array
+	 * @param    boolean  $debug
+	 * @return   pointer        MySQL select result pointer / DBAL object
 	 * @see exec_SELECTquery()
 	 */
-
-	public function exec_SELECT_queryArray($queryParts, $debug) {
+	public static function exec_SELECT_queryArray($queryParts, $debug) {
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
 
 		if (($GLOBALS['TYPO3_DB']->sql_error()) || ($debug === TRUE)) {
-			$debug = array();
+			$debug               = array();
 			$debug['queryParts'] = $queryParts;
-			$debug['sql'] = self::SELECT_queryArray($queryParts);
-			$debug['error'] = $GLOBALS['TYPO3_DB']->sql_error();
-			$debug['php'] = tx_t3devapi_miscellaneous::get_caller_method();
+			$debug['sql']        = self::SELECT_queryArray($queryParts);
+			$debug['error']      = $GLOBALS['TYPO3_DB']->sql_error();
+			$debug['php']        = tx_t3devapi_miscellaneous::get_caller_method();
 			tx_t3devapi_miscellaneous::debug($debug, $GLOBALS['TYPO3_DB']->sql_error());
 		}
 
@@ -70,12 +69,11 @@ class tx_t3devapi_database
 	/**
 	 * Return a select based on input query parts array
 	 *
-	 * @param	array		Query parts array
-	 * @return	pointer		MySQL select result pointer / DBAL object
+	 * @param    array  $queryParts      Query parts array
+	 * @return    pointer        MySQL select result pointer / DBAL object
 	 * @see exec_SELECTquery()
 	 */
-
-	public function SELECT_queryArray($queryParts) {
+	public static function SELECT_queryArray($queryParts) {
 		return $GLOBALS['TYPO3_DB']->SELECTquery(
 			$queryParts['SELECT'],
 			$queryParts['FROM'],
@@ -89,17 +87,11 @@ class tx_t3devapi_database
 	/**
 	 * Creates and executes a SELECT SQL-statement AND traverse result set and returns array with records in.
 	 *
-	 * @param	string		See exec_SELECTquery()
-	 * @param	string		See exec_SELECTquery()
-	 * @param	string		See exec_SELECTquery()
-	 * @param	string		See exec_SELECTquery()
-	 * @param	string		See exec_SELECTquery()
-	 * @param	string		See exec_SELECTquery()
-	 * @param	string		If set, the result array will carry this field names value as index. Requires that field to be selected of course!
-	 * @return	array		Array of rows.
+	 * @param    array    $queryParts      Query parts array
+	 * @param    boolean  $debug
+	 * @return    array        Array of rows
 	 */
-
-	public function exec_SELECTgetRows($queryParts, $debug) {
+	public static function exec_SELECTgetRows($queryParts, $debug) {
 		$res = self::exec_SELECT_queryArray($queryParts, $debug);
 		if (!$GLOBALS['TYPO3_DB']->sql_error()) {
 			$output = array();
@@ -114,29 +106,28 @@ class tx_t3devapi_database
 
 	/**
 	 * Get all the data according to the TCA (time,relation, etc...) from a sql ressource.
-	 *
 	 * Example :
 	 * $result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($query);
 	 * $records = t3lib_div::makeInstance('tx_t3devapi_database');
 	 * $rows = $records->getAllResults($result, $query['FROM']);
 	 *
-	 * @param  $res
-	 * @param  $table
+	 * @param  pointer $res
+	 * @param  string  $table
+	 * @param  boolean $convertData
 	 * @return array
 	 */
-
 	public function getAllResults($res, $table, $convertData = TRUE) {
-		$first = 1;
+		$first      = 1;
 		$recordList = array();
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
 			if ($first) {
-				$first = 0;
-				$recordList [] = self::getResultRowTitles($row, $table);
+				$first        = 0;
+				$recordList[] = self::getResultRowTitles($row, $table);
 			}
 			if ($convertData === TRUE) {
-				$recordList [] = self::getResultRow($row, $table);
+				$recordList[] = self::getResultRow($row, $table);
 			} else {
-				$recordList [] = $row;
+				$recordList[] = $row;
 			}
 		}
 		$GLOBALS['TYPO3_DB']->sql_free_result($res);
@@ -152,11 +143,11 @@ class tx_t3devapi_database
 	 * $records = t3lib_div::makeInstance('tx_t3devapi_database');
 	 * $rows = $records->getAllResults($result, $query['FROM']);
 	 *
-	 * @param  $res
-	 * @param  $table
+	 * @param  pointer $res
+	 * @param  string  $table
+	 * @param  string  $title
 	 * @return array
 	 */
-
 	public function formatAllResults($res, $table, $title) {
 		$content = '';
 
@@ -169,7 +160,7 @@ class tx_t3devapi_database
 
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
 			if ($first) {
-				$first = 0;
+				$first   = 0;
 				$headers = self::getResultRowTitles($row, $table);
 				$content .= '<tr class="c-headLine">';
 				foreach ($headers as $header) {
@@ -195,18 +186,19 @@ class tx_t3devapi_database
 	/**
 	 * Get the row titles
 	 *
-	 * @param  $row
-	 * @param  $table
+	 * @param  array  $row
+	 * @param  string $table
 	 * @return array
 	 */
-
 	public function getResultRowTitles($row, $table) {
 		global $TCA;
 		$tableHeader = array();
-		$conf = $TCA[$table];
+		$conf        = $TCA[$table];
 		foreach ($row as $fieldName => $fieldValue) {
-			$title = $GLOBALS['LANG']->sL($conf['columns'][$fieldName]['label'] ? $conf['columns'][$fieldName]['label']
-					                              : $fieldName, 1);
+			$title                   = $GLOBALS['LANG']->sL(
+				$conf['columns'][$fieldName]['label'] ? $conf['columns'][$fieldName]['label']
+					: $fieldName, 1
+			);
 			$tableHeader[$fieldName] = $title;
 		}
 		return $tableHeader;
@@ -216,11 +208,10 @@ class tx_t3devapi_database
 	 * Get the result row with getProcessedValueExtra()
 	 * It allow you to respect the TCA rules
 	 *
-	 * @param  $row
-	 * @param  $table
+	 * @param  array  $row
+	 * @param  string $table
 	 * @return array
 	 */
-
 	public function getResultRow($row, $table) {
 		$record = array();
 		foreach ($row as $fieldName => $fieldValue) {

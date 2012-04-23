@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2011 Yohann CERDAN <cerdanyohann@yahoo.fr>
+ *  (c) 2012 Yohann CERDAN <cerdanyohann@yahoo.fr>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -30,8 +30,8 @@
  * tx_t3devapi_profiler
  * Class to profile code
  *
- * @author Yohann CERDAN <cerdanyohann@yahoo.fr>
- * @package TYPO3
+ * @author     Yohann CERDAN <cerdanyohann@yahoo.fr>
+ * @package    TYPO3
  * @subpackage t3devapi
  */
 
@@ -44,18 +44,17 @@ class tx_t3devapi_profiler
 	/**
 	 * Constructor
 	 */
-
 	public function __construct($xhprofLibPath, $xhprofHtmlPath) {
-		$this->xhprofLibPath = $xhprofLibPath;
+		$this->xhprofLibPath  = $xhprofLibPath;
 		$this->xhprofHtmlPath = $xhprofHtmlPath;
 	}
 
 	/**
 	 * Set the xhprof namespace
 	 *
-	 * @param $xhprofNamespace
+	 * @param string $xhprofNamespace
+	 * @return void
 	 */
-
 	public function setXhprofNamespace($xhprofNamespace) {
 		$this->xhprofNamespace = $xhprofNamespace;
 	}
@@ -65,15 +64,15 @@ class tx_t3devapi_profiler
 	 *
 	 * @return string
 	 */
-
 	public function getXhprofNamespace() {
 		return $this->xhprofNamespace;
 	}
 
 	/**
 	 * Start to profile with xhprof
+	 *
+	 * @return void
 	 */
-
 	public function profilerStart() {
 		if (extension_loaded('xhprof')) {
 			include_once($this->xhprofLibPath . 'utils/xhprof_lib.php');
@@ -84,15 +83,16 @@ class tx_t3devapi_profiler
 
 	/**
 	 * Stop to profile with xhprof
+	 *
+	 * @return void
 	 */
-
 	public function profilerStop() {
 		if (extension_loaded('xhprof')) {
-			$xhprofData = xhprof_disable();
-			$xhprofRuns = new XHProfRuns_Default();
-			$runId = $xhprofRuns->save_run($xhprofData, $this->xhprofNamespace);
+			$xhprofData  = xhprof_disable();
+			$xhprofRuns  = new XHProfRuns_Default();
+			$runId       = $xhprofRuns->save_run($xhprofData, $this->xhprofNamespace);
 			$profilerUrl = sprintf($this->xhprofHtmlPath . 'index.php?run=%s&source=%s', $runId, $this->xhprofNamespace);
-			$styles = ' style="display: block; position: absolute; left: 5px; bottom: 5px; background: red; padding: 8px; z-index: 10000; color: #fff;"';
+			$styles      = ' style="display: block; position: absolute; left: 5px; bottom: 5px; background: red; padding: 8px; z-index: 10000; color: #fff;"';
 			echo '<a href="' . $profilerUrl . '" target="_blank" ' . $styles . '>Profiler output</a>';
 		}
 	}

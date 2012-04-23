@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2011 Yohann CERDAN <cerdanyohann@yahoo.fr>
+ *  (c) 2012 Yohann CERDAN <cerdanyohann@yahoo.fr>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -28,10 +28,10 @@
 
 /**
  * tx_t3devapi_templating
- * Class to use the TYPO3 template system
+ * Class to use the TYPO3 templating system
  *
- * @author Yohann CERDAN <cerdanyohann@yahoo.fr>
- * @package TYPO3
+ * @author     Yohann CERDAN <cerdanyohann@yahoo.fr>
+ * @package    TYPO3
  * @subpackage t3devapi
  */
 class tx_t3devapi_templating
@@ -45,9 +45,8 @@ class tx_t3devapi_templating
 	/**
 	 * tx_t3devapi_templating::__construct()
 	 *
-	 * @param mixed $pObj
+	 * @param object &$pObj
 	 */
-
 	public function __construct(&$pObj) {
 		// Store parent object as a class variable
 		$this->pObj = $pObj;
@@ -57,52 +56,56 @@ class tx_t3devapi_templating
 	/**
 	 * Loads a template file
 	 *
-	 * @param mixed $templateFile
-	 * @param mixed $debug
-	 * @return
+	 * @param string  $templateFile
+	 * @param boolean $debug
+	 * @return boolean
 	 */
-
 	public function initTemplate($templateFile, $debug = FALSE) {
-		$this->templateContent = $this->pObj->cObj->fileResource($templateFile);
-		if ($debug === TRUE) {
-			if ($this->templateContent === NULL) {
-				t3lib_div::debug('Check the path template or the rights', 'Error');
+		$templateAbsPath = t3lib_div::getFileAbsFileName($templateFile);
+		if ($templateAbsPath !== NULL) {
+			$this->templateContent = t3lib_div::getURL($templateAbsPath);
+			if ($debug === TRUE) {
+				if ($this->templateContent === NULL) {
+					tx_t3devapi_miscellaneous::debug('Check the path template or the rights', 'Error');
+				}
+				tx_t3devapi_miscellaneous::debug($this->templateContent, 'Content of ' . $templateFile);
 			}
-			t3lib_div::debug($this->templateContent, 'Content of ' . $templateFile);
+			return TRUE;
+		} else {
+			return FALSE;
 		}
-		return TRUE;
 	}
 
 	/**
 	 * Template rendering for subdatas and principal datas
 	 *
-	 * @param mixed $templateMarkers
-	 * @param mixed $templateSection
-	 * @return
+	 * @param array   $templateMarkers
+	 * @param string  $templateSection
+	 * @param boolean $debug
+	 * @return string HTML code
 	 */
-
 	public function renderAllTemplate($templateMarkers, $templateSection, $debug = FALSE) {
 		// Check if the template is loaded
 		if (!$this->templateContent) {
 			return FALSE;
 		}
+
 		// Check argument
 		if (!is_array($templateMarkers)) {
 			return FALSE;
 		}
 
-		if ($debug == TRUE) {
+		if ($debug === TRUE) {
 			tx_t3devapi_miscellaneous::debug($templateMarkers, 'Markers for ' . $templateSection);
 		}
 
-		// Templating
 		$content = '';
 
-		if (is_array($templateMarkers[0])) { // Subdatas
+		if (is_array($templateMarkers[0])) {
 			foreach ($templateMarkers as $markers) {
 				$content .= $this->renderAllTemplate($markers, $templateSection, $debug);
 			}
-		} else { // Principal datas
+		} else {
 			$content = $this->renderSingle($templateMarkers, $templateSection);
 		}
 
@@ -112,50 +115,91 @@ class tx_t3devapi_templating
 	/**
 	 * Render a single part with array and section
 	 *
-	 * @param $templateMarkers
-	 * @param $templateSection
+	 * @param array  $templateMarkers
+	 * @param string $templateSection
 	 * @return string
 	 */
-
 	public function renderSingle($templateMarkers, $templateSection) {
-		$subParts = $this->pObj->cObj->getSubpart($this->templateContent, $templateSection);
+		$subParts = $this->getSubpart($this->templateContent, $templateSection);
 
 		foreach ($templateMarkers as $subPart => $subContent) {
-			if (preg_match_all('/(<!--).*?' . $subPart . '.*?(-->)/', $subParts, $matches) >= 2) { // subpart
-				$subParts_temp = $this->pObj->cObj->getSubpart($subParts, $subPart);
-				$subParts = $this->pObj->cObj->substituteSubpart($subParts, $subPart, $subContent);
+			if (preg_match_all('/(<!--).*?' . $subPart . '.*?(-->)/', $subParts, $matches) >= 2) {
+				$subParts = $this->substituteSubpart($subParts, $subPart, $subContent);
 			}
 		}
 
-		$content = $this->pObj->cObj->substituteMarkerArray($subParts, $templateMarkers);
+		$content = $this->substituteMarkerArray($subParts, $templateMarkers);
 		$content = $this->processHelpers($templateMarkers, $content);
 
 		return $content;
 	}
 
 	/**
+	 * Substitutes markers in a template. Usually, this is just a wrapper method
+	 * around the t3lib_parsehtml::substituteMarkerArray method. However, this
+	 * method is only available from TYPO3 4.2.
+	 *
+	 * @param  string $template The template
+	 * @param  array  $marker   The markers that are to be replaced
+	 * @return string           The template with replaced markers
+	 */
+	protected function substituteMarkerArray($template, $marker) {
+		if (TYPO3_branch === '4.1' || TYPO3_branch === '4.0') {
+			return str_replace(array_keys($marker), array_values($marker), $template);
+		} else {
+			return t3lib_parsehtml::substituteMarkerArray($template, $marker);
+		}
+	}
+
+
+	/**
+	 * Replaces a subpart in a template with content. This is just a wrapper method
+	 * around the substituteSubpart method of the t3lib_parsehtml class.
+	 *
+	 * @param  string $template The tempalte
+	 * @param  string $subpart  The subpart name
+	 * @param  string $replace  The subpart content
+	 * @return string           The template with replaced subpart.
+	 */
+	protected function substituteSubpart($template, $subpart, $replace) {
+		return t3lib_parsehtml::substituteSubpart($template, $subpart, $replace);
+	}
+
+
+	/**
+	 * Gets a subpart from a template. This is just a wrapper around the getSubpart
+	 * method of the t3lib_parsehtml class.
+	 *
+	 * @param  string $template The template
+	 * @param  string $subpart  The subpart name
+	 * @return string           The subpart
+	 */
+	protected function getSubpart($template, $subpart) {
+		return t3lib_parsehtml::getSubpart($template, $subpart);
+	}
+
+	/**
 	 * Finds view helpers used in the current subpart being worked on.
 	 *
-	 * @param	string	A string that should be searched for view helpers.
-	 * @return	array	A list of view helper names used in the template.
+	 * @param    string   $content A string that should be searched for view helpers.
+	 * @return    array    A list of view helper names used in the template.
 	 */
-
-	public function findViewHelpers($content) {
+	protected function findViewHelpers($content) {
 		preg_match_all('!###([\w]+):.*?\###!is', $content, $match);
 		return array_unique($match[1]);
 	}
 
 	/**
-	 * Processes helpers: finds and evaluates them in HTML code.
+	 * Processes helpers: finds and evaluates them in HTML code
 	 *
-	 * @param	string	HTML
+	 * @param array  $templateMarkers
+	 * @param string $content
+	 * @return string
 	 */
-
-	public function processHelpers($templateMarkers, $content) {
+	protected function processHelpers($templateMarkers, $content) {
 		$helpers = $this->findViewHelpers($content);
 		foreach ($helpers as $helper) {
 			$viewHelperArgumentLists = $this->getViewHelperArgumentLists($helper, $content, TRUE);
-			//t3lib_div::debug($viewHelperArgumentLists, $helper);
 			switch ($helper) {
 				case 'LLL':
 					$content = $this->processHelpersLLL($templateMarkers, $content, $viewHelperArgumentLists);
@@ -178,6 +222,8 @@ class tx_t3devapi_templating
 				case 'LINK':
 					$content = $this->processHelpersLink($templateMarkers, $content, $viewHelperArgumentLists);
 					break;
+				default:
+					break;
 			}
 		}
 		return $content;
@@ -187,13 +233,15 @@ class tx_t3devapi_templating
 	 * Processes helpers LLL : finds and evaluates them in HTML code.
 	 * Example : ###LLL:locallangvar###
 	 *
-	 * @param	string	HTML
+	 * @param array  $templateMarkers
+	 * @param string $content
+	 * @param array  $viewHelperArgumentLists
+	 * @return string
 	 */
-
-	public function processHelpersLLL($templateMarkers, $content, $viewHelperArgumentLists) {
+	protected function processHelpersLLL($templateMarkers, $content, $viewHelperArgumentLists) {
 		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
 			if (empty($this->pObj->conf['locallang'][strtolower($viewHelperArgument)]) !== TRUE) {
-				$value = $this->pObj->conf['locallang'][strtolower($viewHelperArgument)];
+				$value   = $this->pObj->conf['locallang'][strtolower($viewHelperArgument)];
 				$content = t3lib_parsehtml::substituteMarker($content, '###LLL:' . $viewHelperArgument . '###', $value);
 			}
 		}
@@ -203,10 +251,13 @@ class tx_t3devapi_templating
 	/**
 	 * Processes helpers EMPTY : finds and evaluates them in HTML code.
 	 * Example : ###EMPTY:VAR###
-	 * @param	string	HTML
+	 *
+	 * @param array  $templateMarkers
+	 * @param string $content
+	 * @param array  $viewHelperArgumentLists
+	 * @return string
 	 */
-
-	public function processHelpersEmpty($templateMarkers, $content, $viewHelperArgumentLists) {
+	protected function processHelpersEmpty($templateMarkers, $content, $viewHelperArgumentLists) {
 		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
 			if (empty($templateMarkers['###' . $viewHelperArgument . '###']) === TRUE) {
 				$content = t3lib_parsehtml::substituteSubpart(
@@ -224,10 +275,13 @@ class tx_t3devapi_templating
 	/**
 	 * Processes helpers NOTEMPTY : finds and evaluates them in HTML code.
 	 * Example : ###NOTEMPTY:VAR###
-	 * @param	string	HTML
+	 *
+	 * @param array  $templateMarkers
+	 * @param string $content
+	 * @param array  $viewHelperArgumentLists
+	 * @return string
 	 */
-
-	public function processHelpersNotEmpty($templateMarkers, $content, $viewHelperArgumentLists) {
+	protected function processHelpersNotEmpty($templateMarkers, $content, $viewHelperArgumentLists) {
 		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
 			if (empty($templateMarkers['###' . $viewHelperArgument . '###']) !== TRUE) {
 				$content = t3lib_parsehtml::substituteSubpart(
@@ -246,13 +300,15 @@ class tx_t3devapi_templating
 	 * Processes helpers CROP : finds and evaluates them in HTML code.
 	 * Example : ###CROP:VAR|100|...###
 	 *
-	 * @param	string	HTML
+	 * @param array  $templateMarkers
+	 * @param string $content
+	 * @param array  $viewHelperArgumentLists
+	 * @return string
 	 */
-
-	public function processHelpersCrop($templateMarkers, $content, $viewHelperArgumentLists) {
+	protected function processHelpersCrop($templateMarkers, $content, $viewHelperArgumentLists) {
 		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
 			$explodeViewHelperArguments = explode('|', $viewHelperArgument);
-			$content = t3lib_parsehtml::substituteMarker(
+			$content                    = t3lib_parsehtml::substituteMarker(
 				$content,
 				'###CROP:' . $viewHelperArgument . '###',
 				$this->misc->truncate(
@@ -271,19 +327,22 @@ class tx_t3devapi_templating
 	 * Processes helpers IF : finds and evaluates them in HTML code.
 	 * Example : ###IF:_VAR|%|2### (underscore with a template var)
 	 * Example : ###IF:10|%|2###
-	 * @param	string	HTML
+	 *
+	 * @param array  $templateMarkers
+	 * @param string $content
+	 * @param array  $viewHelperArgumentLists
+	 * @return string
 	 */
-
-	public function processHelpersIf($templateMarkers, $content, $viewHelperArgumentLists) {
+	protected function processHelpersIf($templateMarkers, $content, $viewHelperArgumentLists) {
 		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
 			$explodeViewHelperArguments = explode('|', preg_replace('/\_(\w*)/', '###$1###', $viewHelperArgument));
-			$comparand1 = (strpos($explodeViewHelperArguments[0], '#') !== FALSE)
-					? $templateMarkers[$explodeViewHelperArguments[0]]
-					: $explodeViewHelperArguments[0];
-			$comparand2 = (strpos($explodeViewHelperArguments[2], '#') !== FALSE)
-					? $templateMarkers[$explodeViewHelperArguments[2]]
-					: $explodeViewHelperArguments[2];
-			$operator = $explodeViewHelperArguments[1];
+			$comparand1                 = (strpos($explodeViewHelperArguments[0], '#') !== FALSE)
+				? $templateMarkers[$explodeViewHelperArguments[0]]
+				: $explodeViewHelperArguments[0];
+			$comparand2                 = (strpos($explodeViewHelperArguments[2], '#') !== FALSE)
+				? $templateMarkers[$explodeViewHelperArguments[2]]
+				: $explodeViewHelperArguments[2];
+			$operator                   = $explodeViewHelperArguments[1];
 			if ($this->evaluateCondition($comparand1, $comparand2, $operator)) {
 				$content = t3lib_parsehtml::substituteSubpart(
 					$content,
@@ -301,16 +360,18 @@ class tx_t3devapi_templating
 	 * Processes helpers TS : finds and evaluates them in HTML code.
 	 * Example : ###TS:path.to.some.ts.property.or.content.object###
 	 *
-	 * @param	string	HTML
+	 * @param array  $templateMarkers
+	 * @param string $content
+	 * @param array  $viewHelperArgumentLists
+	 * @return string
 	 */
-
-	public function processHelpersTs($templateMarkers, $content, $viewHelperArgumentLists) {
+	protected function processHelpersTs($templateMarkers, $content, $viewHelperArgumentLists) {
 		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
-			$path = $viewHelperArgument;
+			$path         = $viewHelperArgument;
 			$pathExploded = explode('.', trim($path));
-			$depth = count($pathExploded);
-			$pathBranch = $GLOBALS['TSFE']->tmpl->setup;
-			$value = '';
+			$depth        = count($pathExploded);
+			$pathBranch   = $GLOBALS['TSFE']->tmpl->setup;
+			$value        = '';
 			for ($i = 0; $i < $depth; $i++) {
 				if ($i < ($depth - 1)) {
 					$pathBranch = $pathBranch[$pathExploded[$i] . '.'];
@@ -322,7 +383,7 @@ class tx_t3devapi_templating
 					$value = $pathBranch[$pathExploded[$i]];
 					if (isset($pathBranch[$pathExploded[$i] . '.'])) {
 						// okay, seems to be a TS Content Element, let's run it
-						$cObj = t3lib_div::makeInstance('tslib_cObj');
+						$cObj  = t3lib_div::makeInstance('tslib_cObj');
 						$value = $cObj->cObjGetSingle(
 							$pathBranch[$pathExploded[$i]],
 							$pathBranch[$pathExploded[$i] . '.']
@@ -341,19 +402,23 @@ class tx_t3devapi_templating
 	 * Example : ###LINK:3|param1=val1&param12=val2|1###
 	 * If Pid is empty = current page
 	 *
-	 * @param	string	HTML
+	 * @param array  $templateMarkers
+	 * @param string $content
+	 * @param array  $viewHelperArgumentLists
+	 * @return string
 	 */
-
-	public function processHelpersLink($templateMarkers, $content, $viewHelperArgumentLists) {
+	protected function processHelpersLink($templateMarkers, $content, $viewHelperArgumentLists) {
 		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
 			$explodeViewHelperArguments = explode('|', $viewHelperArgument);
-			$pid = $explodeViewHelperArguments[0] ? $explodeViewHelperArguments[0] : $GLOBALS['TSFE']->id;
-			$additionalParameters = $explodeViewHelperArguments[1] ?
-					t3lib_div::explodeUrl2Array($explodeViewHelperArguments[1])
-					: array();
-			$useCache = $explodeViewHelperArguments[2] ? TRUE : FALSE;
-			$value = $this->misc->getURL($additionalParameters, $useCache, $pid);
-			$content = t3lib_parsehtml::substituteMarker($content, '###LINK:' . $viewHelperArgument . '###', $value);
+			$pid                        = $explodeViewHelperArguments[0] ? $explodeViewHelperArguments[0] : $GLOBALS['TSFE']->id;
+			$additionalParameters       = $explodeViewHelperArguments[1] ?
+				t3lib_div::explodeUrl2Array($explodeViewHelperArguments[1])
+				: array();
+			$useCache                   = $explodeViewHelperArguments[2] ? TRUE : FALSE;
+			$value                      = $this->misc->getURL($additionalParameters, $useCache, $pid);
+			$content                    = t3lib_parsehtml::substituteMarker(
+				$content, '###LINK:' . $viewHelperArgument . '###', $value
+			);
 		}
 		return $content;
 	}
@@ -363,10 +428,10 @@ class tx_t3devapi_templating
 	 *
 	 * Supported operators are ==, !=, <, <=, >, >=, %
 	 *
-	 * @param	string	First comaprand
-	 * @param	string	Second comaprand
-	 * @param	string	Operator
-	 * @return	boolean	Boolean evaluation of the condition.
+	 * @param string $comparand1     First comaprand
+	 * @param string $comparand2     Second comaprand
+	 * @param string $operator       Operator
+	 * @return boolean    Boolean evaluation of the condition.
 	 */
 	protected function evaluateCondition($comparand1, $comparand2, $operator) {
 		$conditionResult = FALSE;
@@ -405,13 +470,12 @@ class tx_t3devapi_templating
 	 * Gets a list of view helper marker arguments for a given view helper from
 	 * the selected subpart.
 	 *
-	 * @param	string	marker name, can be lower case, doesn't need the ### delimiters
-	 * @param	string	subpart markup to search in
-	 * @param	boolean	Optionally determines whether duplicate view helpers are removed. Defaults to TRUE.
-	 * @return	array	array of markers
+	 * @param    string   $helperMarker      marker name, can be lower case, doesn't need the ### delimiters
+	 * @param    string   $subpart           subpart markup to search in
+	 * @param    boolean  $removeDuplicates  Optionally determines whether duplicate view helpers are removed. Defaults to TRUE.
+	 * @return    array    array of markers
 	 */
-
-	public function getViewHelperArgumentLists($helperMarker, $subpart, $removeDuplicates = TRUE) {
+	protected function getViewHelperArgumentLists($helperMarker, $subpart, $removeDuplicates = TRUE) {
 		// '!###' . $helperMarker . ':([A-Z0-9_-|.]*)\###!is'
 		// '!###' . $helperMarker . ':(.*?)\###!is',
 		// '!###' . $helperMarker . ':((.*?)+?(\###(.*?)\###(|.*?)?)?)?\###!is'
@@ -434,22 +498,22 @@ class tx_t3devapi_templating
 	/**
 	 * Clean a template string (remove blank lines...)
 	 *
-	 * @param  $content
+	 * @param  string $content
 	 * @return mixed
 	 */
-
-	public function cleanTemplate($content) {
+	protected function cleanTemplate($content) {
 		return preg_replace('/^[\t\s\r]*\n+/m', '', $content);
 	}
 
 	/**
 	 * Gets a list of Markers from the selected subpart.
 	 *
-	 * @param	string	marker name
-	 * @return	array	array of markers
+	 * @param string $template
+	 * @param string $markerPrefix
+	 * @param bool   $capturePrefix
+	 * @return array
 	 */
-
-	public function getMarkersFromTemplate($template, $markerPrefix = '', $capturePrefix = TRUE) {
+	protected function getMarkersFromTemplate($template, $markerPrefix = '', $capturePrefix = TRUE) {
 		$regex = '!###([A-Z0-9_-|:.]*)\###!is';
 
 		if (!empty($markerPrefix)) {

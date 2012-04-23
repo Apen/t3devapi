@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2011 Yohann CERDAN <cerdanyohann@yahoo.fr>
+ *  (c) 2012 Yohann CERDAN <cerdanyohann@yahoo.fr>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -30,8 +30,8 @@
  * tx_t3devapi_config
  * Class to get all the configuration in a plugin (typoscript, flexform, piVars, extConf)
  *
- * @author Yohann CERDAN <cerdanyohann@yahoo.fr>
- * @package TYPO3
+ * @author     Yohann CERDAN <cerdanyohann@yahoo.fr>
+ * @package    TYPO3
  * @subpackage t3devapi
  */
 class tx_t3devapi_config
@@ -45,7 +45,6 @@ class tx_t3devapi_config
 	 *
 	 * @param mixed $pObj
 	 */
-
 	public function __construct($pObj) {
 		$this->cObj = $pObj->cObj;
 		$this->conf = $pObj->conf;
@@ -54,20 +53,18 @@ class tx_t3devapi_config
 	/**
 	 * This function get all configurations from ts, flexform, getpost...
 	 *
-	 * @param mixed $debug
-	 * @return
+	 * @param boolean $debug
+	 * @return array
 	 */
-
 	public function getArrayConfig($debug = FALSE) {
 		// TYPOSCRIPT = template with plugin.tx_xxxx_pi1.xxxx = xxxx
 		$arrayConfig = $this->conf;
 
-		// FLEXFORM
-		$this->pi_initPIflexForm(); // Init and get the flexform data of the plugin
-		$flexConfig = array(); // Setup our storage array...
+		// Init and get the flexform data of the plugin
+		$this->pi_initPIflexForm();
+		$flexConfig = array();
 		$piFlexForm = array();
-		$piFlexForm = $this->cObj->data['pi_flexform']; // Assign the flexform data to a local variable for easier access
-		// Traverse the entire array based on the language and assign each configuration option to $flexConfig array...
+		$piFlexForm = $this->cObj->data['pi_flexform'];
 		if (isset($piFlexForm['data'])) {
 			foreach ($piFlexForm['data'] as $sheet => $data) {
 				foreach ($data as $lang => $value) {
@@ -77,19 +74,23 @@ class tx_t3devapi_config
 				}
 			}
 		}
+
 		// test contentId to know if this content is concerned by piVars
 		($arrayConfig['contentId'] == $this->cObj->data['uid']) ? $arrayConfig['piVars'] = 1 : $arrayConfig['piVars'] = 0;
 		// add "ext_conf_template.txt"
 		if ($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]) {
-			$extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]);
+			$extConf     = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]);
 			$arrayConfig = array_merge($arrayConfig, $extConf);
 		}
+
 		// add the pi config "plugin.tx_xxxx_pi1 = xxxx" which is not imported in the $conf
 		if (is_array($GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'])) {
 			$arrayConfig = array_merge($arrayConfig, $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.']);
 		}
+
 		// add $piVars
 		$arrayConfig = array_merge($arrayConfig, $this->piVars);
+
 		// merge TYPOSCRIPT with FLEXFORM
 		$arrayConfig = array_merge($flexConfig, $arrayConfig);
 

@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2011 Yohann CERDAN <cerdanyohann@yahoo.fr>
+ *  (c) 2012 Yohann CERDAN <cerdanyohann@yahoo.fr>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -43,7 +43,6 @@ class tx_t3devapi_fluid
 	 *
 	 * @param mixed $template
 	 */
-
 	public function __construct($template) {
 		$this->template = $template;
 	}
@@ -52,9 +51,8 @@ class tx_t3devapi_fluid
 	 * Loads a template file and generate the content
 	 *
 	 * @param array $context datas to send
-	 * @return
+	 * @return string
 	 */
-
 	public function fluidView($context = array()) {
 		$renderer = t3lib_div::makeInstance('Tx_Fluid_View_TemplateView');
 		$controllerContext = t3lib_div::makeInstance('Tx_Extbase_MVC_Controller_ControllerContext');

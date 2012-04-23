@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2011 Yohann CERDAN <cerdanyohann@yahoo.fr>
+ *  (c) 2012 Yohann CERDAN <cerdanyohann@yahoo.fr>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -30,18 +30,16 @@
  * tx_t3devapi_export
  * Class to export datas
  *
- * @author Yohann CERDAN <cerdanyohann@yahoo.fr>
- * @package TYPO3
+ * @author     Yohann CERDAN <cerdanyohann@yahoo.fr>
+ * @package    TYPO3
  * @subpackage t3devapi
  */
 class tx_t3devapi_export
 {
 
-
 	/**
 	 * Constructor
 	 */
-
 	public function __construct() {
 	}
 
@@ -51,13 +49,22 @@ class tx_t3devapi_export
 	 * $query['SELECT'] = 'uid,title,category';
 	 * $query['FROM'] = 'tt_news';
 	 * $query['WHERE'] = '';
+	 *
+	 * @param array $query
+	 * @return string
 	 */
-
 	public function exportRecordsToXML($query) {
 		$xmlObj = t3lib_div::makeInstance('t3lib_xml', 'typo3_export');
 		$xmlObj->setRecFields($query['FROM'], $query['SELECT']);
 		$xmlObj->renderHeader();
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery($query['SELECT'], $query['FROM'], $query['WHERE'], $query['GROUPBY'], $query['ORDERBY'], $query['LIMIT']);
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+			$query['SELECT'],
+			$query['FROM'],
+			$query['WHERE'],
+			$query['GROUPBY'],
+			$query['ORDERBY'],
+			$query['LIMIT']
+		);
 		$xmlObj->renderRecords($query['FROM'], $res);
 		$xmlObj->renderFooter();
 		$GLOBALS['TYPO3_DB']->sql_free_result($res);

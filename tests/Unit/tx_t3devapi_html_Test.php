@@ -233,7 +233,7 @@ class Tx_T3devapi_Html_Test extends Tx_Phpunit_TestCase
 
 	public function cleanId() {
 		$htmlGenerated = tx_t3devapi_html::cleanId('tx_t3devapi_pi1[var]');
-		$html = 'tx_t3devapi_pi1var';
+		$html = 'tx_t3devapi_pi1_var';
 		$this->debug($htmlGenerated);
 		$this->assertEquals($htmlGenerated, $html);
 	}

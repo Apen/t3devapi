@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2011 Yohann CERDAN <cerdanyohann@yahoo.fr>
+ *  (c) 2012 Yohann CERDAN <cerdanyohann@yahoo.fr>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -30,8 +30,8 @@
  * tx_t3devapi_miscellaneous
  * Class with a lot of functions :-)
  *
- * @author Yohann CERDAN <cerdanyohann@yahoo.fr>
- * @package TYPO3
+ * @author     Yohann CERDAN <cerdanyohann@yahoo.fr>
+ * @package    TYPO3
  * @subpackage t3devapi
  */
 class tx_t3devapi_miscellaneous
@@ -42,7 +42,6 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * Class constructor
 	 */
-
 	public function __construct(&$pObj) {
 		$this->pObj = $pObj;
 	}
@@ -50,19 +49,19 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This print a debug
 	 *
-	 * @return
+	 * @param string $var
+	 * @param string $header
+	 * @return void
 	 */
-
-	public function debug($var = '', $header = '') {
+	public static function debug($var = '', $header = '') {
 		t3lib_div::debug($var, $header);
 	}
 
 	/**
 	 * This function return the array of template config
 	 *
-	 * @return
+	 * @return void
 	 */
-
 	public function getTmplSetup() {
 		return $GLOBALS['TSFE']->tmpl->setup['plugin.'];
 	}
@@ -70,9 +69,8 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function return the array of TYPO3_CONF_VARS
 	 *
-	 * @return
+	 * @return array
 	 */
-
 	public function getT3ConfVars() {
 		return $GLOBALS['TYPO3_CONF_VARS'];
 	}
@@ -80,36 +78,34 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function return the complete infos about the DB
 	 *
-	 * @return
+	 * @return array
 	 */
-
 	public function getDbInfo() {
-		$dbinfo = array();
-		$dbinfo['TYPO3_db'] = TYPO3_db;
+		$dbinfo                      = array();
+		$dbinfo['TYPO3_db']          = TYPO3_db;
 		$dbinfo['TYPO3_db_username'] = TYPO3_db_username;
 		$dbinfo['TYPO3_db_password'] = TYPO3_db_password;
-		$dbinfo['TYPO3_db_host'] = TYPO3_db_host;
+		$dbinfo['TYPO3_db_host']     = TYPO3_db_host;
 		return $dbinfo;
 	}
 
 	/**
 	 * This function return the complete url on the current pages with params
 	 *
-	 * @param array $additionalParamsArray
+	 * @param array   $additionalParamsArray
 	 * @param integer $cache
 	 * @param integer $altPageId
-	 * @return
+	 * @return string
 	 */
-
 	public function getURL($additionalParamsArray = array(), $cache = 0, $altPageId = 0) {
-		$conf = array();
+		$conf                 = array();
 		$conf['useCacheHash'] = $cache;
 		if ($this->pObj->cObj->getUserObjectType() == tslib_cObj::OBJECTTYPE_USER_INT) {
 			$conf['useCacheHash'] = 0;
 		}
-		$conf['no_cache'] = 0;
-		$conf['returnLast'] = 'url';
-		$conf['parameter'] = $altPageId ? $altPageId : $GLOBALS['TSFE']->id;
+		$conf['no_cache']         = 0;
+		$conf['returnLast']       = 'url';
+		$conf['parameter']        = $altPageId ? $altPageId : $GLOBALS['TSFE']->id;
 		$conf['additionalParams'] = t3lib_div::implodeArrayForUrl('', $additionalParamsArray, '', 1);
 		return $this->pObj->cObj->typolink('', $conf);
 	}
@@ -117,21 +113,20 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function return the complete <a href="xx"> on the current pages with params
 	 *
-	 * @param array $additionalParamsArray
+	 * @param array   $additionalParamsArray
 	 * @param integer $cache
 	 * @param integer $altPageId
-	 * @param mixed $label
-	 * @return
+	 * @param mixed   $label
+	 * @return string
 	 */
-
 	public function getTypolink($additionalParamsArray = array(), $cache = 0, $altPageId = 0, $label) {
-		$conf = array();
+		$conf                 = array();
 		$conf['useCacheHash'] = $cache;
 		if ($this->pObj->cObj->getUserObjectType() == tslib_cObj::OBJECTTYPE_USER_INT) {
 			$conf['useCacheHash'] = 0;
 		}
-		$conf['no_cache'] = 0;
-		$conf['parameter'] = $altPageId ? $altPageId : $GLOBALS['TSFE']->id;
+		$conf['no_cache']         = 0;
+		$conf['parameter']        = $altPageId ? $altPageId : $GLOBALS['TSFE']->id;
 		$conf['additionalParams'] = t3lib_div::implodeArrayForUrl('', $additionalParamsArray, '', 1);
 		return $this->pObj->cObj->typolink($label, $conf);
 	}
@@ -139,81 +134,78 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * Change the page title if you corectly use the cHash
 	 *
-	 * @param mixed $new_title
+	 * @param string $newTitle
+	 * @return void
 	 */
-
-	public function changePageTitle($new_title) {
+	public function changePageTitle($newTitle) {
 		// Caution : you do not must be in user_int because it doesn't work ;-)
-		$GLOBALS['TSFE']->page['title'] = $new_title;
+		$GLOBALS['TSFE']->page['title'] = $newTitle;
 		// set pagetitle for indexed search to news title
-		$GLOBALS['TSFE']->indexedDocTitle = $new_title;
+		$GLOBALS['TSFE']->indexedDocTitle = $newTitle;
 	}
 
 	/**
 	 * Resize an image with image magick
 	 * Prefer the cImage method to have access to all the parameters of cImage
 	 *
-	 * @param mixed $image
-	 * @param mixed $title
-	 * @param mixed $alt
-	 * @param mixed $maxW
-	 * @param mixed $maxH
-	 * @param mixed $crop
-	 * @return the image (HTML)
+	 * @param string  $image
+	 * @param string  $title
+	 * @param string  $alt
+	 * @param string  $maxW
+	 * @param string  $maxH
+	 * @param boolean $crop
+	 * @return string the image (HTML)
 	 */
-
 	public function resizeImg($image, $title, $alt, $maxW, $maxH, $crop = FALSE) {
-		$img['file'] = $image;
+		$img['file']            = $image;
 		$lConf['file.']['maxH'] = $maxH;
 		$lConf['file.']['maxW'] = $maxW;
-		$lConf['altText'] = $alt;
-		$lConf['titleText'] = $title;
+		$lConf['altText']       = $alt;
+		$lConf['titleText']     = $title;
 
 		$lConf['emptyTitleHandling'] = 'removeAttr';
 		// force crop
 		if ($crop == TRUE) {
 			$lConf['file.']['height'] = $maxH . 'c';
-			$lConf['file.']['width'] = $maxW . 'c';
+			$lConf['file.']['width']  = $maxW . 'c';
 		}
 
-		return $this->pObj->cObj->cImage($img["file"], $lConf);
+		return $this->pObj->cObj->cImage($img['file'], $lConf);
 	}
 
 	/**
 	 * Resize or crop an image with the cImage object
 	 *
-	 * @param mixed $image
-	 * @param mixed $title
-	 * @param mixed $alt
-	 * @param mixed $width
-	 * @param mixed $height
-	 * @param string $londDesc
-	 * @return the image (HTML)
+	 * @param string  $image
+	 * @param string  $title
+	 * @param string  $alt
+	 * @param string  $width
+	 * @param string  $height
+	 * @param string  $londDesc
+	 * @return string the image (HTML)
 	 */
-
 	public function cImage($image, $title, $alt, $width, $height, $londDesc = '') {
-		$img['file'] = $image;
+		$img['file']              = $image;
 		$lConf['file.']['height'] = $height;
-		$lConf['file.']['width'] = $width;
-		$lConf['altText'] = $alt;
-		$lConf['titleText'] = $title;
+		$lConf['file.']['width']  = $width;
+		$lConf['altText']         = $alt;
+		$lConf['titleText']       = $title;
 		if ($londDesc != '') {
 			$lConf['longdescURL'] = $londDesc;
 		}
 		$lConf['emptyTitleHandling'] = 'removeAttr';
-		return $this->pObj->cObj->cImage($img["file"], $lConf);
+		return $this->pObj->cObj->cImage($img['file'], $lConf);
 	}
 
 	/**
 	 * Exec the image magick binary
-	 * Example : $this->imageMagickExec($path.$filename,$path.$filenameList,"+profile '*' -geometry '100>x100>' -colorspace RGB -quality 70");
+	 * Ex: $this->imageMagickExec($path.$filename,$path.$filenameList,"+profile '*' -geometry '100>x100>' -colorspace RGB -quality 70");
 	 *
-	 * @param mixed $input
-	 * @param mixed $output
-	 * @param mixed $params
-	 * @return
+	 * @param string $input
+	 * @param string $output
+	 * @param string $params
+	 * @return string
 	 */
-
 	public function imageMagickExec($input, $output, $params) {
 		$cmd = t3lib_div::imageMagickCommand('convert', $params . ' ' . escapeshellarg($input) . ' ' . escapeshellarg($output));
 		$ret = exec($cmd);
@@ -224,10 +216,9 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function format a RTE content
 	 *
-	 * @param mixed $value
-	 * @return the formated content
+	 * @param string $value
+	 * @return string formated content
 	 */
-
 	public function formatRTE($value) {
 		return $this->pObj->cObj->parseFunc($value, array(), '< lib.parseFunc_RTE');
 	}
@@ -235,10 +226,9 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function format a FILE link
 	 *
-	 * @param mixed $value
-	 * @return
+	 * @param string $value
+	 * @return string
 	 */
-
 	public function renderLinkType($value) {
 		return $this->pObj->cObj->getTypoLink_URL($value);
 	}
@@ -246,11 +236,10 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function return a mailto
 	 *
-	 * @param mixed $email
-	 * @param array $conf
-	 * @return
+	 * @param string $email
+	 * @param array  $conf
+	 * @return string
 	 */
-
 	public function getMailto($email, $conf = array()) {
 		return $this->pObj->cObj->mailto_makelinks('mailto:' . $email, $conf);
 	}
@@ -258,9 +247,8 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function return the base url
 	 *
-	 * @return the base URL
+	 * @return string the base URL
 	 */
-
 	public function getBaseURL() {
 		return $GLOBALS['TSFE']->tmpl->setup['config.']['baseURL'];
 	}
@@ -268,10 +256,10 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * Set a variable in the register (accessible in the setup TS code)
 	 *
-	 * @param mixed $varname
-	 * @param mixed $varcontent
+	 * @param string $varname
+	 * @param mixed  $varcontent
+	 * @return void
 	 */
-
 	public function setRegister($varname, $varcontent) {
 		$GLOBALS['TSFE']->register[$varname] = $varcontent;
 	}
@@ -280,22 +268,19 @@ class tx_t3devapi_miscellaneous
 	 * Get a variable in the register (accessible in the setup TS code)
 	 *
 	 * @param mixed $varname
-	 * @param mixed $varcontent
-	 * @return
+	 * @return mixed
 	 */
-
-	public function getRegister($varname, $varcontent) {
+	public function getRegister($varname) {
 		return $GLOBALS['TSFE']->register[$varname];
 	}
 
 	/**
 	 * Set a variable in typo3 fe_users session
 	 *
-	 * @param mixed $varname
-	 * @param mixed $varcontent
-	 * @return
+	 * @param string $varname
+	 * @param mixed  $varcontent
+	 * @return void
 	 */
-
 	public function setSession($varname, $varcontent) {
 		$GLOBALS['TSFE']->fe_user->setKey('ses', $varname, $varcontent);
 		$GLOBALS['TSFE']->storeSessionData(); // validate the session
@@ -305,11 +290,10 @@ class tx_t3devapi_miscellaneous
 	 * Get a variable in typo3 session (without params return all the session table)
 	 *
 	 * @param string $varname
-	 * @return
+	 * @return mixed
 	 */
-
-	public function getSession($varname = "") {
-		if ($varname != "") {
+	public function getSession($varname = '') {
+		if ($varname != '') {
 			return $GLOBALS['TSFE']->fe_user->getKey('ses', $varname);
 		} else {
 			return $GLOBALS['TSFE']->fe_user->sesData;
@@ -319,10 +303,9 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * Get the tca of a table
 	 *
-	 * @param mixed $table
-	 * @return
+	 * @param string $table
+	 * @return array
 	 */
-
 	public function getTableTCA($table) {
 		global $TCA;
 		$GLOBALS['TSFE']->includeTCA();
@@ -333,9 +316,8 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * Get the rootline of the current page
 	 *
-	 * @return
+	 * @return array
 	 */
-
 	public function getRootline() {
 		$GLOBALS['TSFE']->getPageAndRootline();
 		return $GLOBALS['TSFE']->rootLine;
@@ -344,12 +326,11 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function return an array with ###value###
 	 *
-	 * @param mixed $array
+	 * @param array  $array
 	 * @param string $marker_prefix
-	 * @return
+	 * @return array
 	 */
-
-	public function convertToMarkerArray($array, $marker_prefix = "") {
+	public function convertToMarkerArray($array, $marker_prefix = '') {
 		$temp = array();
 		foreach ($array as $key => $val) {
 			$temp[self::convertToMarker($key, $marker_prefix)] = $val;
@@ -360,11 +341,10 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function return a string with ###value###
 	 *
-	 * @param mixed $value
-	 * @param string $marker_prefix
-	 * @return
+	 * @param string  $value
+	 * @param string  $marker_prefix
+	 * @return string
 	 */
-
 	public function convertToMarker($value, $marker_prefix = '') {
 		return '###' . strtoupper($marker_prefix . $value) . '###';
 	}
@@ -372,10 +352,10 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function return the piVars Array with exlude value like var1,var2
 	 *
-	 * @param mixed $exclude
-	 * @return
+	 * @param string  $exclude
+	 * @param boolean $prefix
+	 * @return array
 	 */
-
 	public function getPiVars($exclude = '', $prefix = FALSE) {
 		$piVars = array();
 		foreach ($this->pObj->piVars as $piVar => $piVarvalue) {
@@ -393,20 +373,24 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function get a tt_content records (for example a plugin)
 	 *
-	 * @param mixed $uid
+	 * @param int $uid
 	 * @return HTML
 	 */
-
 	public function getGeneratedContent($uid) {
-		$objContent = array('tables' => 'tt_content', 'source' => 'tt_content_' . $uid);
+		$objContent = array(
+			'tables' => 'tt_content',
+			'source' => 'tt_content_' . $uid
+		);
 		return $this->pObj->cObj->RECORDS($objContent);
 	}
 
 	/**
 	 * Load a TS string
 	 *
+	 * @param array  $conf
+	 * @param string $content
+	 * @return array
 	 */
-
 	public function loadTS($conf, $content) {
 		require_once(PATH_t3lib . 'class.t3lib_tsparser.php');
 		$tsparser = t3lib_div::makeInstance('t3lib_tsparser');
@@ -421,17 +405,17 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * Loads the TypoScript for the given extension prefix, e.g. tx_cspuppyfunctions_pi1, for use in a backend module.
 	 *
+	 * @param int    $pid
 	 * @param string $extKey
 	 * @return array
 	 */
-
 	public function loadTypoScriptForBEModule($pid, $extKey) {
 		require_once(PATH_t3lib . 'class.t3lib_page.php');
 		require_once(PATH_t3lib . 'class.t3lib_tstemplate.php');
 		require_once(PATH_t3lib . 'class.t3lib_tsparser_ext.php');
-		$sysPageObj = t3lib_div::makeInstance('t3lib_pageSelect');
-		$rootLine = $sysPageObj->getRootLine($pid);
-		$TSObj = t3lib_div::makeInstance('t3lib_tsparser_ext');
+		$sysPageObj      = t3lib_div::makeInstance('t3lib_pageSelect');
+		$rootLine        = $sysPageObj->getRootLine($pid);
+		$TSObj           = t3lib_div::makeInstance('t3lib_tsparser_ext');
 		$TSObj->tt_track = 0;
 		$TSObj->init();
 		$TSObj->runThroughTemplates($rootLine);
@@ -442,15 +426,14 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function return an array of a csv file
 	 *
-	 * @param mixed $openFile
-	 * @param mixed $columnsOnly
-	 * @param string $delimiters
-	 * @return
+	 * @param string   $openFile
+	 * @param boolean  $columnsOnly
+	 * @param string   $delimiters
+	 * @return array
 	 */
-
 	public function csv2array($openFile, $columnsOnly = FALSE, $delimiters = ";") {
 		$handle = fopen($openFile, "r");
-		$rows = 0;
+		$rows   = 0;
 		while (!feof($handle)) {
 			$columns[] = explode($delimiters, fgets($handle, 4096));
 			if ($rows++ == 0 && $columnsOnly) {
@@ -464,16 +447,15 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function return csv string of an array
 	 *
-	 * @param mixed $buffer
-	 * @param mixed $file
-	 * @param string $delimiters
-	 * @param mixed $stringonly
-	 * @return
+	 * @param array    $buffer
+	 * @param string   $file
+	 * @param string   $delimiters
+	 * @param boolean  $stringonly
+	 * @return string
 	 */
-
 	public function array2csv($buffer, $file, $delimiters = ";", $stringonly = FALSE) {
 		$csv = "";
-		$i = 0;
+		$i   = 0;
 		foreach ($buffer as $val) {
 			foreach ($val as $key => $value) {
 				$csv .= utf8_encode($value) . $delimiters;
@@ -499,14 +481,13 @@ class tx_t3devapi_miscellaneous
 	 * Cuts a string to the length of $length and replaces the last characters
 	 * with the ending if the text is longer than length.
 	 *
-	 * @param string $text String to truncate.
-	 * @param integer $length Length of returned string, including ellipsis.
-	 * @param mixed $ending If string, will be used as Ending and appended to the trimmed string. Can also be an associative array that can contain the last three params of this method.
-	 * @param boolean $exact If FALSE, $text will not be cut mid-word
+	 * @param string  $text         String to truncate.
+	 * @param integer $length       Length of returned string, including ellipsis.
+	 * @param mixed   $ending       If string, will be used as Ending and appended to the trimmed string
+	 * @param boolean $exact        If FALSE, $text will not be cut mid-word
 	 * @param boolean $considerHtml If TRUE, HTML tags would be handled correctly
 	 * @return string Trimmed string.
 	 */
-
 	public function truncate($text, $length = 100, $ending = '...', $exact = TRUE, $considerHtml = FALSE) {
 		if (is_array($ending)) {
 			extract($ending);
@@ -516,8 +497,8 @@ class tx_t3devapi_miscellaneous
 				return $text;
 			}
 			$totalLength = mb_strlen($ending);
-			$openTags = array();
-			$truncate = '';
+			$openTags    = array();
+			$truncate    = '';
 			preg_match_all('/(<\/?([\w+]+)[^>]*>)?([^<>]*)/', $text, $tags, PREG_SET_ORDER);
 			foreach ($tags as $tag) {
 				if (!preg_match('/img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param/s', $tag[2])) {
@@ -534,9 +515,12 @@ class tx_t3devapi_miscellaneous
 
 				$contentLength = mb_strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', ' ', $tag[3]));
 				if ($contentLength + $totalLength > $length) {
-					$left = $length - $totalLength;
+					$left           = $length - $totalLength;
 					$entitiesLength = 0;
-					if (preg_match_all('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', $tag[3], $entities, PREG_OFFSET_CAPTURE)) {
+					if (preg_match_all(
+						'/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', $tag[3], $entities, PREG_OFFSET_CAPTURE
+					)
+					) {
 						foreach ($entities[0] as $entity) {
 							if ($entity[1] + 1 - $entitiesLength <= $left) {
 								$left--;
@@ -595,17 +579,19 @@ class tx_t3devapi_miscellaneous
 
 	/**
 	 * Enable the SQL debug
+	 *
+	 * @return void
 	 */
-
 	public function debugQueryInit() {
 		$GLOBALS['TYPO3_DB']->store_lastBuiltQuery = TRUE;
-		$GLOBALS['TYPO3_DB']->debugOutput = TRUE;
+		$GLOBALS['TYPO3_DB']->debugOutput          = TRUE;
 	}
 
 	/**
 	 * Display the last query if you have activated the debugQueryInit()
+	 *
+	 * @return void
 	 */
-
 	public function debugQuery() {
 		t3lib_div::debug($GLOBALS['TYPO3_DB']->debug_lastBuiltQuery, 'SQL');
 	}
@@ -614,73 +600,125 @@ class tx_t3devapi_miscellaneous
 	 * Replace the XCLASS statement at end of a class file
 	 *
 	 * @param string $file
-	 * @access static
 	 * @return void
 	 */
-
 	public function XCLASS($file) {
 		global $TYPO3_CONF_VARS;
-		if (defined('TYPO3_MODE') && isset($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS'][$file]) && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS'][$file]) {
+		if (defined(
+			'TYPO3_MODE'
+		) && isset($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS'][$file]) && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS'][$file]
+		) {
 			include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS'][$file]);
 		}
 	}
 
 	/**
-	 * Send a email using t3lib_htmlmail
+	 * Send a email using t3lib_htmlmail or the new swift mailer
+	 * It depends on the TYPO3 version
+	 *
+	 * @param string $to
+	 * @param string $subject
+	 * @param string $message
+	 * @param string $type
+	 * @param string $fromEmail
+	 * @param string $fromName
+	 * @param string $charset
+	 * @param array  $files
+	 * @return mixed
 	 */
+	public function sendEmail($to, $subject, $message, $type = 'plain', $fromEmail = '', $fromName = '', $charset = 'utf-8', $files = array()) {
+		$useSwiftMailer = t3lib_div::compat_version('4.5');
+		if ($useSwiftMailer) {
+			// new TYPO3 swiftmailer code
+			$mail = t3lib_div::makeInstance('t3lib_mail_Message');
+			$mail->setTo(array($to));
+			$mail->setSubject($subject);
+			$mail->setCharset($charset);
+			$mail->setFrom(array($fromEmail => $fromName));
+			$mail->setReplyTo(array($fromEmail => $fromName));
 
-	public function sendEmail($to, $subject, $message, $type = 'plain', $fromEmail = '', $fromName = '', $charset = 'iso-8859-1', $files = array()) {
-		// send mail
-		$mail = t3lib_div::makeInstance('t3lib_htmlmail');
-		$mail->start();
-		$mail->useBase64();
-		$mail->charset = 'iso-8859-1';
-		$mail->subject = $subject;
-		// from
-		$mail->from_email = $fromEmail;
-		$mail->from_name = $fromName;
-		// replyTo
-		$mail->replyto_email = $fromEmail;
-		$mail->replyto_name = $fromName;
-		// recipients
-		$mail->setRecipient($to);
-		// add Plain
-		if ($type == 'plain') {
-			$mail->addPlain($message);
-		}
-		// add HTML
-		if ($type == 'html') {
-			$mail->theParts['html']['content'] = $message;
-			$mail->theParts['html']['path'] = '';
-			$mail->extractMediaLinks();
-			$mail->extractHyperLinks();
-			$mail->fetchHTMLMedia();
-			$mail->substMediaNamesInHTML(0); // 0 = relative
-			$mail->substHREFsInHTML();
-			$mail->setHtml($mail->encodeMsg($mail->theParts['html']['content']));
-		}
-		// add Files
-		if (!empty($files)) {
-			foreach ($files as $file) {
-				$mail->addAttachment($file);
+			// add Files
+			if (!empty($files)) {
+				foreach ($files as $file) {
+					$mail->attach(Swift_Attachment::fromPath($file));
+				}
 			}
+
+			// add Plain
+			if ($type == 'plain') {
+				$mail->addPart($message, 'text/plain');
+			}
+
+			// add HTML
+			if ($type == 'html') {
+				$mail->setBody($message, 'text/html');
+			}
+
+			// send
+			$mail->send();
+		} else {
+			// send mail
+			$mail = t3lib_div::makeInstance('t3lib_htmlmail');
+			$mail->start();
+			$mail->useBase64();
+			$mail->charset = $charset;
+			$mail->subject = $subject;
+
+			// from
+			$mail->from_email = $fromEmail;
+			$mail->from_name  = $fromName;
+
+			// replyTo
+			$mail->replyto_email = $fromEmail;
+			$mail->replyto_name  = $fromName;
+
+			// recipients
+			$mail->setRecipient($to);
+
+			// add Plain
+			if ($type == 'plain') {
+				$mail->addPlain($message);
+			}
+
+			// add HTML
+			if ($type == 'html') {
+				$mail->theParts['html']['content'] = $message;
+				$mail->theParts['html']['path']    = '';
+				$mail->extractMediaLinks();
+				$mail->extractHyperLinks();
+				$mail->fetchHTMLMedia();
+				$mail->substMediaNamesInHTML(0);
+				$mail->substHREFsInHTML();
+				$mail->setHtml($mail->encodeMsg($mail->theParts['html']['content']));
+			}
+
+			// add Files
+			if (!empty($files)) {
+				foreach ($files as $file) {
+					$mail->addAttachment($file);
+				}
+			}
+
+			// send
+			$mail->setHeaders();
+			$mail->setContent();
+
+			return $mail->sendtheMail();
 		}
-		// send
-		$mail->setHeaders();
-		$mail->setContent();
-		return $mail->sendtheMail();
 	}
 
 	/**
 	 * Get the name of the caller function
+	 *
+	 * @param int $rank
+	 * @return mixed
 	 */
-
 	public function get_caller_method($rank = 1) {
 		$traces = debug_backtrace();
 		if (isset($traces[$rank])) {
 			return array(
-				'file' => $traces[$rank]['file'],
-				'line' => $traces[$rank]['line'],
+				'file'     => $traces[$rank]['file'],
+				'line'     => $traces[$rank]['line'],
 				'function' => $traces[$rank]['function']
 			);
 		}
@@ -689,16 +727,20 @@ class tx_t3devapi_miscellaneous
 
 	/**
 	 * Get the current memory usage
+	 *
+	 * @return void
 	 */
-
 	public function getMemoryUsage() {
 		return (integer)((memory_get_usage() + 512) / 1024);
 	}
 
 	/**
 	 * Load an xml locallang file
+	 *
+	 * @param string $LLFile
+	 * @param string $langKey
+	 * @return array
 	 */
-
 	public function loadLL($LLFile, $langKey = NULL) {
 		$tsfeLoaded = isset($GLOBALS['TSFE']) && is_object($GLOBALS['TSFE']);
 		$langLoaded = isset($GLOBALS['LANG']) && is_object($GLOBALS['LANG']);
@@ -720,7 +762,7 @@ class tx_t3devapi_miscellaneous
 		}
 
 		// Language list
-		$LLArray = array();
+		$LLArray      = array();
 		$langLoadList = array_unique(array('default', $langKey));
 
 		// Loads locallang file
@@ -734,7 +776,7 @@ class tx_t3devapi_miscellaneous
 		foreach ($langLoadList as $tLangKey) {
 			if (isset($LOCAL_LANG[$tLangKey]) && is_array($LOCAL_LANG[$tLangKey])) {
 				$LLArray[$tLangKey] = count($LLArray[$tLangKey]) ? array_merge($LLArray[$tLangKey], $LOCAL_LANG[$tLangKey])
-						: $LOCAL_LANG[$tLangKey];
+					: $LOCAL_LANG[$tLangKey];
 			}
 		}
 
@@ -754,13 +796,12 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * Determines the rootpage ID for a given page.
 	 *
-	 * @param	integer	A page ID somewhere in a tree.
-	 * @return	integer	The page's tree branch's root page ID
+	 * @param    int  $pageId  A page ID somewhere in a tree.
+	 * @return   int           The page's tree branch's root page ID
 	 */
-
 	public function getRootPageId($pageId) {
 		$rootPageId = $pageId;
-		$rootline = t3lib_BEfunc::BEgetRootLine($pageId);
+		$rootline   = t3lib_BEfunc::BEgetRootLine($pageId);
 
 		$rootline = array_reverse($rootline);
 		foreach ($rootline as $page) {
@@ -774,8 +815,10 @@ class tx_t3devapi_miscellaneous
 
 	/**
 	 * Build the TSFE (for the BE for example)
+	 *
+	 * @param int $pid
+	 * @return void
 	 */
-
 	public function buildTSFE($pid) {
 		require_once(PATH_t3lib . 'class.t3lib_timetrack.php');
 		require_once(PATH_t3lib . 'class.t3lib_tsparser_ext.php');
@@ -795,20 +838,21 @@ class tx_t3devapi_miscellaneous
 		}
 
 		if (!is_object($GLOBALS['TSFE']) && $pid) {
-			$GLOBALS['TSFE'] = new $temp_TSFEclassName($GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0, 0, 0, 0, 0);
-			$GLOBALS['TSFE']->tmpl = t3lib_div::makeInstance('t3lib_tsparser_ext');
-			$GLOBALS['TSFE']->sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
+			$GLOBALS['TSFE']                 = new $temp_TSFEclassName($GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0, 0, 0, 0, 0);
+			$GLOBALS['TSFE']->tmpl           = t3lib_div::makeInstance('t3lib_tsparser_ext');
+			$GLOBALS['TSFE']->sys_page       = t3lib_div::makeInstance('t3lib_pageSelect');
 			$GLOBALS['TSFE']->tmpl->tt_track = 0; // Do not log time-performance information
 			$GLOBALS['TSFE']->tmpl->init();
 			$rootLine = $GLOBALS['TSFE']->sys_page->getRootLine($pid);
-			$GLOBALS['TSFE']->tmpl->runThroughTemplates($rootLine, $template_uid);
+			$GLOBALS['TSFE']->tmpl->runThroughTemplates($rootLine, 0);
 			$GLOBALS['TSFE']->tmpl->generateConfig();
 			$GLOBALS['TSFE']->tmpl->loaded = 1;
 			$GLOBALS['TSFE']->getConfigArray();
 			$GLOBALS['TSFE']->linkVars = '' . $GLOBALS['TSFE']->config['config']['linkVars'];
 			if ($GLOBALS['TSFE']->config['config']['simulateStaticDocuments_pEnc_onlyP']) {
-				foreach (t3lib_div::trimExplode(',', $GLOBALS['TSFE']->config['config']['simulateStaticDocuments_pEnc_onlyP'], 1) as $temp_p)
-				{
+				foreach (t3lib_div::trimExplode(
+					         ',', $GLOBALS['TSFE']->config['config']['simulateStaticDocuments_pEnc_onlyP'], 1
+				         ) as $temp_p) {
 					$GLOBALS['TSFE']->pEncAllowedParamNames[$temp_p] = 1;
 				}
 			}
@@ -823,10 +867,9 @@ class tx_t3devapi_miscellaneous
 	 * will remove non alphanumeric characters from the word, so
 	 * "who's online" will be converted to "WhoSOnline"
 	 *
-	 * @param	string	Word to convert to camel case
-	 * @return	string	UpperCamelCasedWord
+	 * @param    string  $word  Word to convert to camel case
+	 * @return   string         UpperCamelCasedWord
 	 */
-
 	public static function camelize($word) {
 		return str_replace(' ', '', ucwords(preg_replace('![^A-Z^a-z^0-9]+!', ' ', $word)));
 	}
@@ -835,10 +878,9 @@ class tx_t3devapi_miscellaneous
 	 * Returns a given CamelCasedString as an lowercase string with underscores.
 	 * Example: Converts BlogExample to blog_example, and minimalValue to minimal_value
 	 *
-	 * @param	string		$string: String to be converted to lowercase underscore
-	 * @return	string		lowercase_and_underscored_string
+	 * @param    string   $string String to be converted to lowercase underscore
+	 * @return   string            lowercase_and_underscored_string
 	 */
-
 	public static function camelCaseToLowerCaseUnderscored($string) {
 		return strtolower(preg_replace('/(?<=\w)([A-Z])/', '_\\1', $string));
 	}
@@ -847,10 +889,9 @@ class tx_t3devapi_miscellaneous
 	 * Returns a given string with underscores as UpperCamelCase.
 	 * Example: Converts blog_example to BlogExample
 	 *
-	 * @param	string		$string: String to be converted to camel case
-	 * @return	string		UpperCamelCasedWord
+	 * @param    string    $string  String to be converted to camel case
+	 * @return   string             UpperCamelCasedWord
 	 */
-
 	public static function underscoredToUpperCamelCase($string) {
 		return str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($string))));
 	}

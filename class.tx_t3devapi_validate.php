@@ -3,7 +3,7 @@
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2011 Yohann CERDAN <cerdanyohann@yahoo.fr>
+ *  (c) 2012 Yohann CERDAN <cerdanyohann@yahoo.fr>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -30,8 +30,8 @@
  * tx_t3devapi_validate
  * Class to validate some value
  *
- * @author Yohann CERDAN <cerdanyohann@yahoo.fr>
- * @package TYPO3
+ * @author     Yohann CERDAN <cerdanyohann@yahoo.fr>
+ * @package    TYPO3
  * @subpackage t3devapi
  */
 class tx_t3devapi_validate
@@ -39,13 +39,11 @@ class tx_t3devapi_validate
 	/**
 	 * @var array
 	 */
-
 	public $errors = array();
 
 	/**
 	 * Constructor of the class
 	 */
-
 	public function __construct() {
 	}
 
@@ -55,9 +53,8 @@ class tx_t3devapi_validate
 	 * @param string $error
 	 * @return void
 	 */
-
 	public function setError($error) {
-		$this->errors [] = $error;
+		$this->errors[] = $error;
 	}
 
 	/**
@@ -65,7 +62,6 @@ class tx_t3devapi_validate
 	 *
 	 * @return array
 	 */
-
 	public function getErrors() {
 		return $this->errors;
 	}
@@ -77,7 +73,6 @@ class tx_t3devapi_validate
 	 * @param string $error
 	 * @return bool
 	 */
-
 	public function isRequired($value, $error) {
 		if (!empty($value) || $value === 0 || $value === '0') {
 			return TRUE;
@@ -93,7 +88,6 @@ class tx_t3devapi_validate
 	 * @param string $error
 	 * @return bool
 	 */
-
 	public function isIP($value, $error) {
 		if (!preg_match('/\b(([01]?\d?\d|2[0-4]\d|25[0-5])\.){3}([01]?\d?\d|2[0-4]\d|25[0-5])\b/', $value)) {
 			$this->setError($error);
@@ -109,9 +103,12 @@ class tx_t3devapi_validate
 	 * @param string $error
 	 * @return bool
 	 */
-
 	public function isEmail($value, $error) {
-		if (!preg_match('/^(?:(?#local-part)(?#quoted)"[^\"]*"|(?#non-quoted)[a-z0-9&+_-](?:\.?[a-z0-9&+_-]+)*)@(?:(?#domain)(?#domain-name)[a-z0-9](?:[a-z0-9-]*[a-z0-9])*(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])*)*|(?#ip)(\[)?(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}(?(1)\]|))$/', $value)) {
+		if (!preg_match(
+			'/^(?:(?#local-part)(?#quoted)"[^\"]*"|(?#non-quoted)[a-z0-9&+_-](?:\.?[a-z0-9&+_-]+)*)@(?:(?#domain)(?#domain-name)[a-z0-9](?:[a-z0-9-]*[a-z0-9])*(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])*)*|(?#ip)(\[)?(?:[01]?\d?\d|2[0-4]\d|25[0-5])(?:\.(?:[01]?\d?\d|2[0-4]\d|25[0-5])){3}(?(1)\]|))$/',
+			$value
+		)
+		) {
 			$this->setError($error);
 			return FALSE;
 		}
@@ -125,10 +122,9 @@ class tx_t3devapi_validate
 	 * @param string $error
 	 * @return bool
 	 */
-
 	public function isAlphabetic($value, $error) {
 		$whiteSpace = '\s';
-		$pattern = '/[^a-zA-Z' . $whiteSpace . ']/u';
+		$pattern    = '/[^a-zA-Z' . $whiteSpace . ']/u';
 		if (preg_replace($pattern, '', (string)$value) !== $value) {
 			$this->setError($error);
 			return FALSE;
@@ -143,10 +139,9 @@ class tx_t3devapi_validate
 	 * @param string $error
 	 * @return bool
 	 */
-
 	public function isAlphanumeric($value, $error) {
 		$whiteSpace = '\s';
-		$pattern = '/[^a-zA-Z0-9' . $whiteSpace . ']/u';
+		$pattern    = '/[^a-zA-Z0-9' . $whiteSpace . ']/u';
 		if (preg_replace($pattern, '', (string)$value) !== $value) {
 			$this->setError($error);
 			return FALSE;
@@ -157,13 +152,12 @@ class tx_t3devapi_validate
 	/**
 	 * Check if the value is an integer
 	 *
-	 * @param string$value
+	 * @param string $value
 	 * @param string $error
 	 * @return bool
 	 */
-
 	public function isInteger($value, $error) {
-		$locale = localeconv();
+		$locale        = localeconv();
 		$valueFiltered = str_replace($locale['thousands_sep'], '', $value);
 		$valueFiltered = str_replace($locale['mon_thousands_sep'], '', $value);
 		$valueFiltered = str_replace($locale['decimal_point'], '.', $valueFiltered);
@@ -182,9 +176,8 @@ class tx_t3devapi_validate
 	 * @param string $error
 	 * @return bool
 	 */
-
 	public function isFloat($value, $error) {
-		$locale = localeconv();
+		$locale        = localeconv();
 		$valueFiltered = str_replace($locale['thousands_sep'], '', $value);
 		$valueFiltered = str_replace($locale['mon_thousands_sep'], '', $value);
 		$valueFiltered = str_replace($locale['decimal_point'], '.', $valueFiltered);
@@ -200,11 +193,10 @@ class tx_t3devapi_validate
 	 * Check if the value is in the array
 	 *
 	 * @param string $value
-	 * @param array $array
+	 * @param array  $array
 	 * @param string $error
 	 * @return bool
 	 */
-
 	public function isInArray($value, $array, $error) {
 		if (!in_array($value, $array)) {
 			$this->setError($error);
@@ -221,12 +213,11 @@ class tx_t3devapi_validate
 	 * @param string $error
 	 * @return bool
 	 */
-
 	public function isDate($value, $format, $error) {
-		$parsedDate = strptime($value, $format);
-		$parsedDateYear = $parsedDate['tm_year'] + 1900;
+		$parsedDate      = strptime($value, $format);
+		$parsedDateYear  = $parsedDate['tm_year'] + 1900;
 		$parsedDateMonth = $parsedDate['tm_mon'] + 1;
-		$parsedDateDay = $parsedDate['tm_mday'];
+		$parsedDateDay   = $parsedDate['tm_mday'];
 		if (!checkdate($parsedDateMonth, $parsedDateDay, $parsedDateYear)) {
 			$this->setError($error);
 			return FALSE;
@@ -242,7 +233,6 @@ class tx_t3devapi_validate
 	 * @param string $error
 	 * @return bool
 	 */
-
 	public function isEquals($value, $param, $error) {
 		if ($value !== $param) {
 			$this->setError($error);
@@ -254,12 +244,11 @@ class tx_t3devapi_validate
 	/**
 	 * Check if the value if less than $param
 	 *
-	 * @param int $value
-	 * @param int $param
+	 * @param int    $value
+	 * @param int    $param
 	 * @param string $error
 	 * @return bool
 	 */
-
 	public function isLessthan($value, $param, $error) {
 		if ($value >= $param || !is_numeric($value)) {
 			$this->setError($error);
@@ -271,12 +260,11 @@ class tx_t3devapi_validate
 	/**
 	 * Check if the value if greater than $param
 	 *
-	 * @param int $value
-	 * @param int $param
+	 * @param int    $value
+	 * @param int    $param
 	 * @param string $error
 	 * @return bool
 	 */
-
 	public function isGreaterthan($value, $param, $error) {
 		if ($value <= $param || !is_numeric($value)) {
 			$this->setError($error);
@@ -288,12 +276,11 @@ class tx_t3devapi_validate
 	/**
 	 * Check if the length of the value is min
 	 *
-	 * @param int $value
-	 * @param int $param
+	 * @param int    $value
+	 * @param int    $param
 	 * @param string $error
 	 * @return bool
 	 */
-
 	public function isLengthMin($value, $param, $error) {
 		$length = iconv_strlen($value);
 		if ($length < $param) {
@@ -306,12 +293,11 @@ class tx_t3devapi_validate
 	/**
 	 * Check if the length of the value is max
 	 *
-	 * @param int $value
-	 * @param int $param
+	 * @param int    $value
+	 * @param int    $param
 	 * @param string $error
 	 * @return bool
 	 */
-
 	public function isLengthMax($value, $param, $error) {
 		$length = iconv_strlen($value);
 		if ($length > $param) {
@@ -329,7 +315,6 @@ class tx_t3devapi_validate
 	 * @param string $error
 	 * @return bool
 	 */
-
 	public function isRegexp($value, $param, $error) {
 		if (!preg_match($param, $value)) {
 			$this->setError($error);
@@ -347,7 +332,11 @@ class tx_t3devapi_validate
 	 */
 
 	public function isUri($value, $error) {
-		if (!preg_match('/^(?#Protocol)(?:(?:ht|f)tp(?:s?)\:\/\/|~\/|\/)?(?#Username:Password)(?:\w+:\w+@)?(?#Subdomains)(?:(?:[-\w]+\.)+(?#TopLevel Domains)(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum|travel|[a-z]{2}))(?#Port)(?::[\d]{1,5})?(?#Directories)(?:(?:(?:\/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|\/)+|\?|#)?(?#Query)(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?#Anchor)(?:#(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)?$/', $value)) {
+		if (!preg_match(
+			'/^(?#Protocol)(?:(?:ht|f)tp(?:s?)\:\/\/|~\/|\/)?(?#Username:Password)(?:\w+:\w+@)?(?#Subdomains)(?:(?:[-\w]+\.)+(?#TopLevel Domains)(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum|travel|[a-z]{2}))(?#Port)(?::[\d]{1,5})?(?#Directories)(?:(?:(?:\/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|\/)+|\?|#)?(?#Query)(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?#Anchor)(?:#(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)?$/',
+			$value
+		)
+		) {
 			$this->setError($error);
 			return FALSE;
 		}

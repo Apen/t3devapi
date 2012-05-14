@@ -45,12 +45,13 @@ class tx_t3devapi_templating
 	/**
 	 * tx_t3devapi_templating::__construct()
 	 *
-	 * @param object &$pObj
+	 * @param object $pObj
 	 */
 	public function __construct(&$pObj) {
 		// Store parent object as a class variable
 		$this->pObj = $pObj;
 		$this->misc = new tx_t3devapi_miscellaneous($pObj);
+		require_once(PATH_t3lib . 'class.t3lib_parsehtml.php');
 	}
 
 	/**
@@ -61,7 +62,7 @@ class tx_t3devapi_templating
 	 * @return boolean
 	 */
 	public function initTemplate($templateFile, $debug = FALSE) {
-		$templateAbsPath = t3lib_div::getFileAbsFileName($templateFile);
+		$templateAbsPath = t3lib_div::getFileAbsFileName(trim($templateFile));
 		if ($templateAbsPath !== NULL) {
 			$this->templateContent = t3lib_div::getURL($templateAbsPath);
 			if ($debug === TRUE) {
@@ -528,6 +529,47 @@ class tx_t3devapi_templating
 		$markers = array_unique($match[1]);
 
 		return $markers;
+	}
+
+	/**
+	 * Get all the subparts of a content
+	 *
+	 * @param string $template
+	 * @return array
+	 */
+	protected function getTemplateSubpartTagList($template) {
+		$tagList        = array();
+		$orderedTagList = array();
+
+		preg_match_all('/<!--.*?###(.*?)###.*?-->/', $template, $res, PREG_OFFSET_CAPTURE | PREG_PATTERN_ORDER);
+
+		foreach ($res[0] as $k => $v) {
+			$type = 'open';
+
+			if (isset($tagList[$res[1][$k][0]])) {
+				$type = 'close';
+			}
+
+			$tagList[$res[1][$k][0]][$type] = array(
+				'matchedTag' => $v[0],
+				'tagName'    => $res[1][$k][0],
+				'offset'     => $v[1],
+				'type'       => $type,
+			);
+
+			if ($type == 'close') {
+				$orderedTagList[$res[1][$k][0]] = array($tagList[$res[1][$k][0]]['open'], $tagList[$res[1][$k][0]]['close']);
+			}
+		}
+
+		unset($tagList);
+
+		foreach ($orderedTagList as $tagKey => $tagValue) {
+			$orderedTagList[$tagKey]['content'] = $this->getSubpart($template, '###' . $tagKey . '###');
+			$orderedTagList[$tagKey]['markers'] = $this->getMarkersFromTemplate($orderedTagList[$tagKey]['content']);
+		}
+
+		return $orderedTagList;
 	}
 
 }

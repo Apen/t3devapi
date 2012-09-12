@@ -29,6 +29,14 @@
 
 class Tx_T3devapi_Html_Test extends Tx_Phpunit_TestCase
 {
+	/**
+	 * @var Tx_Phpunit_Framework
+	 */
+	private $testingFramework;
+
+	public function setUp() {
+		$this->testingFramework = new Tx_Phpunit_Framework('t3devapi');
+	}
 
 	/**
 	 * renderLabel
@@ -167,7 +175,12 @@ class Tx_T3devapi_Html_Test extends Tx_Phpunit_TestCase
 	 */
 
 	public function renderSelectWithoutSelected() {
-		$htmlGenerated = tx_t3devapi_html::renderSelect('test', array(1 => 'test 1', 2 => 'test 2', 3 => 'test 3'), NULL, array('class' => 'test'));
+		$htmlGenerated = tx_t3devapi_html::renderSelect('test', array(
+		                                                             1  => 'test 1',
+		                                                             2  => 'test 2',
+		                                                             3  => 'test 3'
+		                                                        ), NULL, array('class' => 'test')
+		);
 		$html = '<select name="test" id="test" class="test"><option value="1" selected="selected">test 1</option><option value="2">test 2</option><option value="3">test 3</option></select>';
 		$this->debug($htmlGenerated);
 		$this->assertEquals($htmlGenerated, $html);
@@ -180,7 +193,12 @@ class Tx_T3devapi_Html_Test extends Tx_Phpunit_TestCase
 	 */
 
 	public function renderSelectWithSelected() {
-		$htmlGenerated = tx_t3devapi_html::renderSelect('test', array(1 => 'test 1', 2 => 'test 2', 3 => 'test 3'), 3, array('class' => 'test'));
+		$htmlGenerated = tx_t3devapi_html::renderSelect('test', array(
+		                                                             1  => 'test 1',
+		                                                             2  => 'test 2',
+		                                                             3  => 'test 3'
+		                                                        ), 3, array('class' => 'test')
+		);
 		$html = '<select name="test" id="test" class="test"><option value="1">test 1</option><option value="2">test 2</option><option value="3" selected="selected">test 3</option></select>';
 		$this->debug($htmlGenerated);
 		$this->assertEquals($htmlGenerated, $html);
@@ -193,7 +211,12 @@ class Tx_T3devapi_Html_Test extends Tx_Phpunit_TestCase
 	 */
 
 	public function renderMultipleSelect() {
-		$htmlGenerated = tx_t3devapi_html::renderMultipleSelect('test', array(1 => 'test 1', 2 => 'test 2', 3 => 'test 3'), array(1, 3), array('class' => 'test'));
+		$htmlGenerated = tx_t3devapi_html::renderMultipleSelect('test', array(
+		                                                                     1  => 'test 1',
+		                                                                     2  => 'test 2',
+		                                                                     3  => 'test 3'
+		                                                                ), array(1, 3), array('class' => 'test')
+		);
 		$html = '<select multiple="multiple" name="test" id="test" class="test"><option value="1" selected="selected">test 1</option><option value="2">test 2</option><option value="3" selected="selected">test 3</option></select>';
 		$this->debug($htmlGenerated);
 		$this->assertEquals($htmlGenerated, $html);
@@ -241,6 +264,7 @@ class Tx_T3devapi_Html_Test extends Tx_Phpunit_TestCase
 	public function debug($message) {
 		echo '<em>' . htmlentities($message) . '</em>';
 	}
+
 }
 
 ?>

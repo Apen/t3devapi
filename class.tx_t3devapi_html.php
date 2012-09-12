@@ -45,7 +45,7 @@ class tx_t3devapi_html
 	 * @param string $content
 	 * @return string
 	 */
-	public function renderLabel($for, $content) {
+	public static function renderLabel($for, $content) {
 		$tag = new tx_t3devapi_tagbuilder();
 		$tag->setTagName('label');
 		$tag->addAttribute('for', self::cleanId($for));
@@ -62,7 +62,7 @@ class tx_t3devapi_html
 	 * @param array  $attributes
 	 * @return string
 	 */
-	public function renderInput($type, $name, $value = '', $attributes = array()) {
+	public static function renderInput($type, $name, $value = '', $attributes = array()) {
 		$tag = new tx_t3devapi_tagbuilder();
 		$tag->setTagName('input');
 		$tag->addAttribute('type', $type);
@@ -85,7 +85,7 @@ class tx_t3devapi_html
 	 * @param array  $attributes
 	 * @return string
 	 */
-	public function renderText($name, $value = '', $attributes = array()) {
+	public static function renderText($name, $value = '', $attributes = array()) {
 		return self::renderInput('text', $name, $value, $attributes);
 	}
 
@@ -97,7 +97,7 @@ class tx_t3devapi_html
 	 * @param array  $attributes
 	 * @return string
 	 */
-	public function renderHidden($name, $value = '', $attributes = array()) {
+	public static function renderHidden($name, $value = '', $attributes = array()) {
 		return self::renderInput('hidden', $name, $value, $attributes);
 	}
 
@@ -109,7 +109,7 @@ class tx_t3devapi_html
 	 * @param array  $attributes
 	 * @return string
 	 */
-	public function renderButton($name, $value = '', $attributes = array()) {
+	public static function renderButton($name, $value = '', $attributes = array()) {
 		return self::renderInput('button', $name, $value, $attributes);
 	}
 
@@ -121,7 +121,7 @@ class tx_t3devapi_html
 	 * @param array  $attributes
 	 * @return string
 	 */
-	public function renderPassword($name, $value = '', $attributes = array()) {
+	public static function renderPassword($name, $value = '', $attributes = array()) {
 		return self::renderInput('password', $name, $value, $attributes);
 	}
 
@@ -133,7 +133,7 @@ class tx_t3devapi_html
 	 * @param array  $attributes
 	 * @return string
 	 */
-	public function renderReset($name, $value = '', $attributes = array()) {
+	public static function renderReset($name, $value = '', $attributes = array()) {
 		return self::renderInput('reset', $name, $value, $attributes);
 	}
 
@@ -145,7 +145,7 @@ class tx_t3devapi_html
 	 * @param array  $attributes
 	 * @return string
 	 */
-	public function renderSubmit($name, $value = '', $attributes = array()) {
+	public static function renderSubmit($name, $value = '', $attributes = array()) {
 		return self::renderInput('submit', $name, $value, $attributes);
 	}
 
@@ -156,7 +156,7 @@ class tx_t3devapi_html
 	 * @param array  $attributes
 	 * @return string
 	 */
-	public function renderInputFile($name, $attributes = array()) {
+	public static function renderInputFile($name, $attributes = array()) {
 		$tag = new tx_t3devapi_tagbuilder();
 		$tag->setTagName('input');
 		$tag->addAttribute('type', 'file');
@@ -178,7 +178,7 @@ class tx_t3devapi_html
 	 * @param array  $attributes
 	 * @return string
 	 */
-	public function renderTextArea($name, $value = '', $attributes = array()) {
+	public static function renderTextArea($name, $value = '', $attributes = array()) {
 		$tag = new tx_t3devapi_tagbuilder();
 		$tag->setTagName('textarea');
 		$tag->forceClosingTag(TRUE);
@@ -202,7 +202,7 @@ class tx_t3devapi_html
 	 * @param array  $attributes
 	 * @return string
 	 */
-	public function renderCheckbox($name, $content, $arrayOfValues = array(), $attributes = array()) {
+	public static function renderCheckbox($name, $content, $arrayOfValues = array(), $attributes = array()) {
 		$tag = new tx_t3devapi_tagbuilder();
 		$tag->setTagName('input');
 		$tag->addAttribute('type', 'checkbox');
@@ -231,7 +231,7 @@ class tx_t3devapi_html
 	 * @param array  $attributes
 	 * @return string
 	 */
-	public function renderRadio($name, $content, $arrayOfValues = array(), $attributes = array()) {
+	public static function renderRadio($name, $content, $arrayOfValues = array(), $attributes = array()) {
 		$tag = new tx_t3devapi_tagbuilder();
 		$tag->setTagName('input');
 		$tag->addAttribute('type', 'radio');
@@ -258,7 +258,7 @@ class tx_t3devapi_html
 	 * @param array  $attributes
 	 * @return string
 	 */
-	public function renderSelect($name, $content = array(), $value = '', $attributes = array()) {
+	public static function renderSelect($name, $content = array(), $value = '', $attributes = array()) {
 		$tag = new tx_t3devapi_tagbuilder();
 		$tag->forceClosingTag(TRUE);
 		$tag->setTagName('select');
@@ -270,7 +270,7 @@ class tx_t3devapi_html
 		}
 		$options = '';
 		if (array_key_exists($value, $content) === FALSE) {
-			$keys  = array_keys($content);
+			$keys = array_keys($content);
 			$value = $keys[0];
 		}
 		foreach ($content as $key => $entry) {
@@ -295,7 +295,7 @@ class tx_t3devapi_html
 	 * @param array  $attributes
 	 * @return string
 	 */
-	public function renderMultipleSelect($name, $content = array(), $arrayOfValues = array(), $attributes = array()) {
+	public static function renderMultipleSelect($name, $content = array(), $arrayOfValues = array(), $attributes = array()) {
 		$tag = new tx_t3devapi_tagbuilder();
 		$tag->forceClosingTag(TRUE);
 		$tag->setTagName('select');
@@ -331,7 +331,7 @@ class tx_t3devapi_html
 	 * @param boolean $isSelected specifies wheter or not to add selected attribute
 	 * @return string the rendered option tag
 	 */
-	public function renderOptionTag($value, $label, $isSelected) {
+	public static function renderOptionTag($value, $label, $isSelected) {
 		$output = '<option value="' . htmlspecialchars($value) . '"';
 		if ($isSelected) {
 			$output .= ' selected="selected"';
@@ -342,12 +342,26 @@ class tx_t3devapi_html
 	}
 
 	/**
+	 * Render an option group
+	 *
+	 * @param $label
+	 * @param $value
+	 * @return string
+	 */
+	public static function renderOptionGroup($label, $value) {
+		$output = '<optgroup label="' . htmlspecialchars($label) . '">';
+		$output .= $value;
+		$output .= '</optgroup>';
+		return $output;
+	}
+
+	/**
 	 * Clean an ID string (ex: without [])
 	 *
 	 * @param string $text
 	 * @return mixed
 	 */
-	public function cleanId($text) {
+	public static function cleanId($text) {
 		$text = preg_replace('/\[\]/', '', $text);
 		$text = preg_replace('/\]/', '', $text);
 		$text = preg_replace('/\[/', '_', $text);

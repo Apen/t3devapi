@@ -192,7 +192,7 @@ class tx_t3devapi_tagbuilder
 	/**
 	 * Renders and returns the tag
 	 *
-	 * @return void
+	 * @return string
 	 */
 	public function render() {
 		if (empty($this->tagName)) {

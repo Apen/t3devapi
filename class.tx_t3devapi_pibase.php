@@ -36,6 +36,10 @@
  */
 class tx_t3devapi_pibase
 {
+
+	/**
+	 * @var tslib_cObj
+	 */
 	public $cObj = NULL;
 	public $prefixId = '';
 	public $scriptRelPath = '';
@@ -45,6 +49,9 @@ class tx_t3devapi_pibase
 	public $profile;
 	public $conf = NULL;
 	public $template = NULL;
+	/**
+	 * @var tx_t3devapi_miscellaneous
+	 */
 	public $misc = NULL;
 	public $uploadPath = '';
 

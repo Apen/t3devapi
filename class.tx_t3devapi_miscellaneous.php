@@ -41,6 +41,8 @@ class tx_t3devapi_miscellaneous
 
 	/**
 	 * Class constructor
+	 *
+	 * @param $pObj
 	 */
 	public function __construct(&$pObj) {
 		$this->pObj = $pObj;
@@ -81,11 +83,11 @@ class tx_t3devapi_miscellaneous
 	 * @return array
 	 */
 	public function getDbInfo() {
-		$dbinfo                      = array();
-		$dbinfo['TYPO3_db']          = TYPO3_db;
+		$dbinfo = array();
+		$dbinfo['TYPO3_db'] = TYPO3_db;
 		$dbinfo['TYPO3_db_username'] = TYPO3_db_username;
 		$dbinfo['TYPO3_db_password'] = TYPO3_db_password;
-		$dbinfo['TYPO3_db_host']     = TYPO3_db_host;
+		$dbinfo['TYPO3_db_host'] = TYPO3_db_host;
 		return $dbinfo;
 	}
 
@@ -98,14 +100,14 @@ class tx_t3devapi_miscellaneous
 	 * @return string
 	 */
 	public function getURL($additionalParamsArray = array(), $cache = 0, $altPageId = 0) {
-		$conf                 = array();
+		$conf = array();
 		$conf['useCacheHash'] = $cache;
 		if ($this->pObj->cObj->getUserObjectType() == tslib_cObj::OBJECTTYPE_USER_INT) {
 			$conf['useCacheHash'] = 0;
 		}
-		$conf['no_cache']         = 0;
-		$conf['returnLast']       = 'url';
-		$conf['parameter']        = $altPageId ? $altPageId : $GLOBALS['TSFE']->id;
+		$conf['no_cache'] = 0;
+		$conf['returnLast'] = 'url';
+		$conf['parameter'] = $altPageId ? $altPageId : $GLOBALS['TSFE']->id;
 		$conf['additionalParams'] = t3lib_div::implodeArrayForUrl('', $additionalParamsArray, '', 1);
 		return $this->pObj->cObj->typolink('', $conf);
 	}
@@ -120,13 +122,13 @@ class tx_t3devapi_miscellaneous
 	 * @return string
 	 */
 	public function getTypolink($additionalParamsArray = array(), $cache = 0, $altPageId = 0, $label) {
-		$conf                 = array();
+		$conf = array();
 		$conf['useCacheHash'] = $cache;
 		if ($this->pObj->cObj->getUserObjectType() == tslib_cObj::OBJECTTYPE_USER_INT) {
 			$conf['useCacheHash'] = 0;
 		}
-		$conf['no_cache']         = 0;
-		$conf['parameter']        = $altPageId ? $altPageId : $GLOBALS['TSFE']->id;
+		$conf['no_cache'] = 0;
+		$conf['parameter'] = $altPageId ? $altPageId : $GLOBALS['TSFE']->id;
 		$conf['additionalParams'] = t3lib_div::implodeArrayForUrl('', $additionalParamsArray, '', 1);
 		return $this->pObj->cObj->typolink($label, $conf);
 	}
@@ -157,17 +159,17 @@ class tx_t3devapi_miscellaneous
 	 * @return string the image (HTML)
 	 */
 	public function resizeImg($image, $title, $alt, $maxW, $maxH, $crop = FALSE) {
-		$img['file']            = $image;
+		$img['file'] = $image;
 		$lConf['file.']['maxH'] = $maxH;
 		$lConf['file.']['maxW'] = $maxW;
-		$lConf['altText']       = $alt;
-		$lConf['titleText']     = $title;
+		$lConf['altText'] = $alt;
+		$lConf['titleText'] = $title;
 
 		$lConf['emptyTitleHandling'] = 'removeAttr';
 		// force crop
 		if ($crop == TRUE) {
 			$lConf['file.']['height'] = $maxH . 'c';
-			$lConf['file.']['width']  = $maxW . 'c';
+			$lConf['file.']['width'] = $maxW . 'c';
 		}
 
 		return $this->pObj->cObj->cImage($img['file'], $lConf);
@@ -185,11 +187,11 @@ class tx_t3devapi_miscellaneous
 	 * @return string the image (HTML)
 	 */
 	public function cImage($image, $title, $alt, $width, $height, $londDesc = '') {
-		$img['file']              = $image;
+		$img['file'] = $image;
 		$lConf['file.']['height'] = $height;
-		$lConf['file.']['width']  = $width;
-		$lConf['altText']         = $alt;
-		$lConf['titleText']       = $title;
+		$lConf['file.']['width'] = $width;
+		$lConf['altText'] = $alt;
+		$lConf['titleText'] = $title;
 		if ($londDesc != '') {
 			$lConf['longdescURL'] = $londDesc;
 		}
@@ -306,7 +308,7 @@ class tx_t3devapi_miscellaneous
 	 * @param string $table
 	 * @return array
 	 */
-	public function getTableTCA($table) {
+	public static function getTableTCA($table) {
 		global $TCA;
 		$GLOBALS['TSFE']->includeTCA();
 		t3lib_div::loadTCA($table);
@@ -374,7 +376,7 @@ class tx_t3devapi_miscellaneous
 	 * This function get a tt_content records (for example a plugin)
 	 *
 	 * @param int $uid
-	 * @return HTML
+	 * @return string HTML
 	 */
 	public function getGeneratedContent($uid) {
 		$objContent = array(
@@ -393,6 +395,7 @@ class tx_t3devapi_miscellaneous
 	 */
 	public function loadTS($conf, $content) {
 		require_once(PATH_t3lib . 'class.t3lib_tsparser.php');
+		/** @var $tsparser t3lib_tsparser */
 		$tsparser = t3lib_div::makeInstance('t3lib_tsparser');
 		// Copy conf into existing setup
 		$tsparser->setup = $conf;
@@ -413,9 +416,11 @@ class tx_t3devapi_miscellaneous
 		require_once(PATH_t3lib . 'class.t3lib_page.php');
 		require_once(PATH_t3lib . 'class.t3lib_tstemplate.php');
 		require_once(PATH_t3lib . 'class.t3lib_tsparser_ext.php');
-		$sysPageObj      = t3lib_div::makeInstance('t3lib_pageSelect');
-		$rootLine        = $sysPageObj->getRootLine($pid);
-		$TSObj           = t3lib_div::makeInstance('t3lib_tsparser_ext');
+		/** @var $sysPageObj t3lib_pageSelect */
+		$sysPageObj = t3lib_div::makeInstance('t3lib_pageSelect');
+		$rootLine = $sysPageObj->getRootLine($pid);
+		/** @var $TSObj t3lib_tsparser_ext */
+		$TSObj = t3lib_div::makeInstance('t3lib_tsparser_ext');
 		$TSObj->tt_track = 0;
 		$TSObj->init();
 		$TSObj->runThroughTemplates($rootLine);
@@ -433,7 +438,8 @@ class tx_t3devapi_miscellaneous
 	 */
 	public function csv2array($openFile, $columnsOnly = FALSE, $delimiters = ";") {
 		$handle = fopen($openFile, "r");
-		$rows   = 0;
+		$rows = 0;
+		$columns = array();
 		while (!feof($handle)) {
 			$columns[] = explode($delimiters, fgets($handle, 4096));
 			if ($rows++ == 0 && $columnsOnly) {
@@ -455,7 +461,7 @@ class tx_t3devapi_miscellaneous
 	 */
 	public function array2csv($buffer, $file, $delimiters = ";", $stringonly = FALSE) {
 		$csv = "";
-		$i   = 0;
+		$i = 0;
 		foreach ($buffer as $val) {
 			foreach ($val as $key => $value) {
 				$csv .= utf8_encode($value) . $delimiters;
@@ -497,8 +503,8 @@ class tx_t3devapi_miscellaneous
 				return $text;
 			}
 			$totalLength = mb_strlen($ending);
-			$openTags    = array();
-			$truncate    = '';
+			$openTags = array();
+			$truncate = '';
 			preg_match_all('/(<\/?([\w+]+)[^>]*>)?([^<>]*)/', $text, $tags, PREG_SET_ORDER);
 			foreach ($tags as $tag) {
 				if (!preg_match('/img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param/s', $tag[2])) {
@@ -515,7 +521,7 @@ class tx_t3devapi_miscellaneous
 
 				$contentLength = mb_strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', ' ', $tag[3]));
 				if ($contentLength + $totalLength > $length) {
-					$left           = $length - $totalLength;
+					$left = $length - $totalLength;
 					$entitiesLength = 0;
 					if (preg_match_all(
 						'/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', $tag[3], $entities, PREG_OFFSET_CAPTURE
@@ -584,7 +590,7 @@ class tx_t3devapi_miscellaneous
 	 */
 	public function debugQueryInit() {
 		$GLOBALS['TYPO3_DB']->store_lastBuiltQuery = TRUE;
-		$GLOBALS['TYPO3_DB']->debugOutput          = TRUE;
+		$GLOBALS['TYPO3_DB']->debugOutput = TRUE;
 	}
 
 	/**
@@ -602,7 +608,7 @@ class tx_t3devapi_miscellaneous
 	 * @param string $file
 	 * @return void
 	 */
-	public function XCLASS($file) {
+	public static function XCLASS($file) {
 		global $TYPO3_CONF_VARS;
 		if (defined(
 			'TYPO3_MODE'
@@ -630,6 +636,7 @@ class tx_t3devapi_miscellaneous
 		$useSwiftMailer = t3lib_div::compat_version('4.5');
 		if ($useSwiftMailer) {
 			// new TYPO3 swiftmailer code
+			/** @var $mail t3lib_mail_Message */
 			$mail = t3lib_div::makeInstance('t3lib_mail_Message');
 			$mail->setTo(array($to));
 			$mail->setSubject($subject);
@@ -658,6 +665,7 @@ class tx_t3devapi_miscellaneous
 			$mail->send();
 		} else {
 			// send mail
+			/** @var $mail t3lib_htmlmail */
 			$mail = t3lib_div::makeInstance('t3lib_htmlmail');
 			$mail->start();
 			$mail->useBase64();
@@ -666,11 +674,11 @@ class tx_t3devapi_miscellaneous
 
 			// from
 			$mail->from_email = $fromEmail;
-			$mail->from_name  = $fromName;
+			$mail->from_name = $fromName;
 
 			// replyTo
 			$mail->replyto_email = $fromEmail;
-			$mail->replyto_name  = $fromName;
+			$mail->replyto_name = $fromName;
 
 			// recipients
 			$mail->setRecipient($to);
@@ -683,7 +691,7 @@ class tx_t3devapi_miscellaneous
 			// add HTML
 			if ($type == 'html') {
 				$mail->theParts['html']['content'] = $message;
-				$mail->theParts['html']['path']    = '';
+				$mail->theParts['html']['path'] = '';
 				$mail->extractMediaLinks();
 				$mail->extractHyperLinks();
 				$mail->fetchHTMLMedia();
@@ -762,7 +770,7 @@ class tx_t3devapi_miscellaneous
 		}
 
 		// Language list
-		$LLArray      = array();
+		$LLArray = array();
 		$langLoadList = array_unique(array('default', $langKey));
 
 		// Loads locallang file
@@ -801,7 +809,7 @@ class tx_t3devapi_miscellaneous
 	 */
 	public function getRootPageId($pageId) {
 		$rootPageId = $pageId;
-		$rootline   = t3lib_BEfunc::BEgetRootLine($pageId);
+		$rootline = t3lib_BEfunc::BEgetRootLine($pageId);
 
 		$rootline = array_reverse($rootline);
 		foreach ($rootline as $page) {
@@ -838,9 +846,9 @@ class tx_t3devapi_miscellaneous
 		}
 
 		if (!is_object($GLOBALS['TSFE']) && $pid) {
-			$GLOBALS['TSFE']                 = new $temp_TSFEclassName($GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0, 0, 0, 0, 0);
-			$GLOBALS['TSFE']->tmpl           = t3lib_div::makeInstance('t3lib_tsparser_ext');
-			$GLOBALS['TSFE']->sys_page       = t3lib_div::makeInstance('t3lib_pageSelect');
+			$GLOBALS['TSFE'] = new $temp_TSFEclassName($GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0, 0, 0, 0, 0);
+			$GLOBALS['TSFE']->tmpl = t3lib_div::makeInstance('t3lib_tsparser_ext');
+			$GLOBALS['TSFE']->sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
 			$GLOBALS['TSFE']->tmpl->tt_track = 0; // Do not log time-performance information
 			$GLOBALS['TSFE']->tmpl->init();
 			$rootLine = $GLOBALS['TSFE']->sys_page->getRootLine($pid);

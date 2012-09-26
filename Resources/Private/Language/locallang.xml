@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+    <meta type="array">
+        <type>module</type>
+        <description>Language labels for the t3devapi extension</description>
+    </meta>
+    <data type="array">
+        <languageKey index="default" type="array">
+            <label index="paginate_next">Next</label>
+            <label index="paginate_first">First</label>
+            <label index="paginate_last">Last</label>
+            <label index="paginate_previous">Previous</label>
+			<label index="paginate_overall">Page %s from %s</label>
+        </languageKey>
+		<languageKey index="fr" type="array">
+            <label index="paginate_next">Suivant</label>
+            <label index="paginate_first">Premier</label>
+            <label index="paginate_last">Dernier</label>
+            <label index="paginate_previous">Précédent</label>
+			<label index="paginate_overall">Page %s sur %s</label>
+        </languageKey>
+    </data>
+</T3locallang>

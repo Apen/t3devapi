@@ -50,7 +50,7 @@ class tx_t3devapi_pibase
 	public $conf = NULL;
 	public $template = NULL;
 	/**
-	 * @var tx_t3devapi_miscellaneous
+	 * @var $misc tx_t3devapi_miscellaneous
 	 */
 	public $misc = NULL;
 	public $uploadPath = '';

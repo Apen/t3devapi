@@ -1,3 +1,9 @@
+2012-09-14 CERDAN Yohann <cerdanyohann@yahoo.fr>
+	* Be carreful, i move all the files in Classes directory, check your require()
+	* Add some classes
+2012-09-14 CERDAN Yohann <cerdanyohann@yahoo.fr>
+	* Move classes in directory
+	* Add a paginate fluid viewhelper 
 2012-09-12 CERDAN Yohann <cerdanyohann@yahoo.fr>
 	* add class tx_t3devapi_fertehtmlarea
 2012-04-23 CERDAN Yohann <cerdanyohann@yahoo.fr>

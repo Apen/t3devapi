@@ -55,11 +55,11 @@ class tx_t3devapi_database
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
 
 		if (($GLOBALS['TYPO3_DB']->sql_error()) || ($debug === TRUE)) {
-			$debug               = array();
+			$debug = array();
 			$debug['queryParts'] = $queryParts;
-			$debug['sql']        = self::SELECT_queryArray($queryParts);
-			$debug['error']      = $GLOBALS['TYPO3_DB']->sql_error();
-			$debug['php']        = tx_t3devapi_miscellaneous::get_caller_method();
+			$debug['sql'] = self::SELECT_queryArray($queryParts);
+			$debug['error'] = $GLOBALS['TYPO3_DB']->sql_error();
+			$debug['php'] = tx_t3devapi_miscellaneous::get_caller_method();
 			tx_t3devapi_miscellaneous::debug($debug, $GLOBALS['TYPO3_DB']->sql_error());
 		}
 
@@ -117,11 +117,11 @@ class tx_t3devapi_database
 	 * @return array
 	 */
 	public function getAllResults($res, $table, $convertData = TRUE) {
-		$first      = 1;
+		$first = 1;
 		$recordList = array();
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
 			if ($first) {
-				$first        = 0;
+				$first = 0;
 				$recordList[] = self::getResultRowTitles($row, $table);
 			}
 			if ($convertData === TRUE) {
@@ -160,7 +160,7 @@ class tx_t3devapi_database
 
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
 			if ($first) {
-				$first   = 0;
+				$first = 0;
 				$headers = self::getResultRowTitles($row, $table);
 				$content .= '<tr class="c-headLine">';
 				foreach ($headers as $header) {
@@ -193,9 +193,9 @@ class tx_t3devapi_database
 	public function getResultRowTitles($row, $table) {
 		global $TCA;
 		$tableHeader = array();
-		$conf        = $TCA[$table];
+		$conf = $TCA[$table];
 		foreach ($row as $fieldName => $fieldValue) {
-			$title                   = $GLOBALS['LANG']->sL(
+			$title = $GLOBALS['LANG']->sL(
 				$conf['columns'][$fieldName]['label'] ? $conf['columns'][$fieldName]['label']
 					: $fieldName, 1
 			);
@@ -217,6 +217,8 @@ class tx_t3devapi_database
 		foreach ($row as $fieldName => $fieldValue) {
 			if ((TYPO3_MODE == 'FE')) {
 				$GLOBALS['TSFE']->includeTCA();
+				$GLOBALS['LANG'] = t3lib_div::makeInstance('language');
+				$GLOBALS['LANG']->init($GLOBALS['TSFE']->tmpl->setup['config.']['language']);
 			}
 			$record[$fieldName] = t3lib_BEfunc::getProcessedValueExtra($table, $fieldName, $fieldValue, 0, $row['uid']);
 		}

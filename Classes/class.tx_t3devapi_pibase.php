@@ -44,14 +44,13 @@ class tx_t3devapi_pibase
 	public $prefixId = '';
 	public $scriptRelPath = '';
 	public $extKey = '';
-	public $pi_checkCHash = FALSE;
+	public $pi_checkCHash = TRUE;
 	public $piVars = array();
 	public $profile;
 	public $conf = NULL;
+	/** @var tx_t3devapi_templating */
 	public $template = NULL;
-	/**
-	 * @var $misc tx_t3devapi_miscellaneous
-	 */
+	/** @var $misc tx_t3devapi_miscellaneous */
 	public $misc = NULL;
 	public $uploadPath = '';
 
@@ -92,8 +91,8 @@ class tx_t3devapi_pibase
 
 		// needed classes
 		$this->template = new tx_t3devapi_templating($this);
-		$this->misc     = new tx_t3devapi_miscellaneous($this);
-		$this->conf     = tx_t3devapi_config::getArrayConfig();
+		$this->misc = new tx_t3devapi_miscellaneous($this);
+		$this->conf = $this->getArrayConfig();
 
 		// Additionnal TS
 		if (empty($this->conf['myTS']) === FALSE) {
@@ -115,7 +114,7 @@ class tx_t3devapi_pibase
 		}
 
 		// locallangs array
-		$this->conf['locallang']        = $this->misc->loadLL(
+		$this->conf['locallang'] = $this->misc->loadLL(
 			'typo3conf/ext/' . $this->extKey . '/' . dirname($this->scriptRelPath) . '/locallang.xml'
 		);
 		$this->conf['markerslocallang'] = $this->misc->convertToMarkerArray($this->conf['locallang'], 'LLL:');
@@ -136,7 +135,7 @@ class tx_t3devapi_pibase
 
 		// List & single UID
 		$this->conf['singleView'] = ($this->conf['singleView'] != '') ? $this->conf['singleView'] : $GLOBALS['TSFE']->id;
-		$this->conf['listView']   = ($this->conf['listView'] != '') ? $this->conf['listView'] : $GLOBALS['TSFE']->id;
+		$this->conf['listView'] = ($this->conf['listView'] != '') ? $this->conf['listView'] : $GLOBALS['TSFE']->id;
 
 		// possibility to add where condition (AND xxx)
 		$this->conf['addWhere'] = '';
@@ -150,17 +149,16 @@ class tx_t3devapi_pibase
 		$this->conf['start'] = ($this->conf['start'] != '') ? $this->conf['start'] : '';
 
 		// Page browser
-		$this->conf['pageBrowserNbRecords'] = ($this->conf['pageBrowserNbRecords'] != '') ?
-			$this->conf['pageBrowserNbRecords'] : '';
+		$this->conf['pageBrowserNbRecords'] = ($this->conf['pageBrowserNbRecords'] != '') ? $this->conf['pageBrowserNbRecords'] : '';
 
 		// Size of the list thumbs
-		$thumbSize                 = explode('x', $this->conf['thumbSize']);
-		$this->conf['thumbWidth']  = (isset($thumbSize[0]) && ($thumbSize[0] != '')) ? $thumbSize[0] : 150;
+		$thumbSize = explode('x', $this->conf['thumbSize']);
+		$this->conf['thumbWidth'] = (isset($thumbSize[0]) && ($thumbSize[0] != '')) ? $thumbSize[0] : 150;
 		$this->conf['thumbHeight'] = (isset($thumbSize[1]) && ($thumbSize[1] != '')) ? $thumbSize[1] : 150;
 
 		// Size of the full thumbs
-		$thumbSize                       = explode('x', $this->conf['thumbSizeSingle']);
-		$this->conf['thumbSingleWidth']  = (isset($thumbSize[0]) && ($thumbSize[0] != '')) ? $thumbSize[0] : 500;
+		$thumbSize = explode('x', $this->conf['thumbSizeSingle']);
+		$this->conf['thumbSingleWidth'] = (isset($thumbSize[0]) && ($thumbSize[0] != '')) ? $thumbSize[0] : 500;
 		$this->conf['thumbSingleHeight'] = (isset($thumbSize[1]) && ($thumbSize[1] != '')) ? $thumbSize[1] : 350;
 
 		// CSS
@@ -171,7 +169,7 @@ class tx_t3devapi_pibase
 		// Filter the list view
 		if ((isset($this->conf['listUID'])) && ($this->conf['listUID'] != '')) {
 			$this->conf['addWhere'] = ' AND pages.uid IN (' . $this->conf['listUID'] . ')';
-			$this->conf['orderBy']  = ' FIND_IN_SET(uid, \'' . $this->conf['listUID'] . '\')';
+			$this->conf['orderBy'] = ' FIND_IN_SET(uid, \'' . $this->conf['listUID'] . '\')';
 		}
 	}
 
@@ -187,10 +185,10 @@ class tx_t3devapi_pibase
 	 */
 	public function getRecord($from, $uid, $select = '*') {
 		$query['SELECT'] = $select;
-		$query['FROM']   = $from;
-		$query['WHERE']  = 'uid=' . intval($uid);
-		$res             = tx_t3devapi_database::exec_SELECT_queryArray($query, $this->conf['debug']);
-		$row             = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+		$query['FROM'] = $from;
+		$query['WHERE'] = 'uid=' . intval($uid);
+		$res = tx_t3devapi_database::exec_SELECT_queryArray($query, $this->conf['debug']);
+		$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 		$GLOBALS['TYPO3_DB']->sql_free_result($res);
 		return $row;
 	}
@@ -205,9 +203,9 @@ class tx_t3devapi_pibase
 	 */
 	public function getRecords($from, $uids, $select = '*') {
 		$query['SELECT'] = $select;
-		$query['FROM']   = $from;
-		$query['WHERE']  = 'uid IN (' . mysql_real_escape_string($uids) . ')';
-		$rows            = tx_t3devapi_database::exec_SELECTgetRows($query, $this->conf['debug']);
+		$query['FROM'] = $from;
+		$query['WHERE'] = 'uid IN (' . mysql_real_escape_string($uids) . ')';
+		$rows = tx_t3devapi_database::exec_SELECTgetRows($query, $this->conf['debug']);
 		return $rows;
 	}
 
@@ -270,12 +268,12 @@ class tx_t3devapi_pibase
 	 */
 	public function getListPageBrowser() {
 		$this->conf['records']['pagebrowsernbrecords'] = $this->conf['pageBrowserNbRecords'];
-		$this->conf['records']['nbpages']              = ceil(
+		$this->conf['records']['nbpages'] = ceil(
 			intval($this->conf['records']['nbrecordsall']) / intval($this->conf['pageBrowserNbRecords'])
 		);
-		$this->conf['records']['offset']               = isset($this->piVars['page'])
+		$this->conf['records']['offset'] = isset($this->piVars['page'])
 			? $this->piVars['page'] * $this->conf['pageBrowserNbRecords'] : 0;
-		$this->conf['query']['LIMIT']                  = $this->conf['records']['offset'] . ',' . $this->conf['pageBrowserNbRecords'];
+		$this->conf['query']['LIMIT'] = $this->conf['records']['offset'] . ',' . $this->conf['pageBrowserNbRecords'];
 		return tx_t3devapi_database::exec_SELECT_queryArray($this->conf['query'], $this->conf['debug']);
 	}
 
@@ -287,7 +285,7 @@ class tx_t3devapi_pibase
 	public function profileStart() {
 		if ($this->conf['profile'] === TRUE) {
 			$this->profile['parsetime'] = microtime(TRUE);
-			$this->profile['mem']       = tx_t3devapi_miscellaneous::getMemoryUsage();
+			$this->profile['mem'] = tx_t3devapi_miscellaneous::getMemoryUsage();
 		}
 	}
 
@@ -300,7 +298,7 @@ class tx_t3devapi_pibase
 		$content = '';
 		if ($this->conf['profile'] === TRUE) {
 			$this->profile['parsetime'] = (microtime(TRUE) - $this->profile['parsetime']) . ' ms';
-			$this->profile['mem']       = tx_t3devapi_miscellaneous::getMemoryUsage() - $this->profile['mem'] . ' ko';
+			$this->profile['mem'] = tx_t3devapi_miscellaneous::getMemoryUsage() - $this->profile['mem'] . ' ko';
 			$this->profile['mem'] .= '(total:' . tx_t3devapi_miscellaneous::getMemoryUsage() . 'ko)';
 			$content = $this->profile['parsetime'] . ' / ' . $this->profile['mem'];
 		}
@@ -351,7 +349,7 @@ class tx_t3devapi_pibase
 				$path
 			) . '" media="all">';
 		} else {
-			$GLOBALS['TSFE']->pSetup['includeCSS.'][$this->extKey . $id]       = trim($path);
+			$GLOBALS['TSFE']->pSetup['includeCSS.'][$this->extKey . $id] = trim($path);
 			$GLOBALS['TSFE']->pSetup['includeCSS.'][$this->extKey . $id . '.'] = array('media' => 'screen');
 		}
 	}
@@ -400,26 +398,26 @@ class tx_t3devapi_pibase
 
 		// process part
 
-		$iItem            = 1;
+		$iItem = 1;
 		$markerArrayItems = array();
 
 		while ($item = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
 			$item['ii'] = $this->conf['records']['offset'] + $iItem;
-			$item['i']  = $iItem++;
+			$item['i'] = $iItem++;
 			if ($processItemList !== NULL) {
 				$item = $this->$processItemList($item);
 			}
 			$markerArrayItems[] = array_merge($this->misc->convertToMarkerArray($item), $this->conf['markerslocallang']);
 		}
 
-		$this->conf['records']['recordsto']   = $this->conf['records']['offset'] + ($iItem - 1);
+		$this->conf['records']['recordsto'] = $this->conf['records']['offset'] + ($iItem - 1);
 		$this->conf['records']['recordsfrom'] = $this->conf['records']['offset'] + 1;
 
 		$GLOBALS['TYPO3_DB']->sql_free_result($res);
 
 		// render part
 
-		$markerArrayGlobal                      = array();
+		$markerArrayGlobal = array();
 		$markerArrayGlobal['###PAGEBROWSER###'] = '';
 
 		if (($this->conf['enablePageBrowser'] == 1) && ($this->conf['pageBrowserNbRecords'] > 0)) {
@@ -459,7 +457,7 @@ class tx_t3devapi_pibase
 	 */
 	public function displayListRows($getAllItems, $processItemList, $listExtraGlobalMarker, $globalSubPart) {
 		if (is_array($getAllItems)) {
-			$items                                 = $getAllItems;
+			$items = $getAllItems;
 			$this->conf['records']['nbrecordsall'] = count($items);
 		} else {
 			$items = $this->$getAllItems();
@@ -471,24 +469,24 @@ class tx_t3devapi_pibase
 
 		// process part
 
-		$iItem            = 1;
+		$iItem = 1;
 		$markerArrayItems = array();
 
 		foreach ($items as $item) {
 			$item['ii'] = $this->conf['records']['offset'] + $iItem;
-			$item['i']  = $iItem++;
+			$item['i'] = $iItem++;
 			if ($processItemList !== NULL) {
 				$item = $this->$processItemList($item);
 			}
 			$markerArrayItems[] = array_merge($this->misc->convertToMarkerArray($item), $this->conf['markerslocallang']);
 		}
 
-		$this->conf['records']['recordsto']   = $this->conf['records']['offset'] + ($iItem - 1);
+		$this->conf['records']['recordsto'] = $this->conf['records']['offset'] + ($iItem - 1);
 		$this->conf['records']['recordsfrom'] = $this->conf['records']['offset'] + 1;
 
 		// render part
 
-		$markerArrayGlobal                      = array();
+		$markerArrayGlobal = array();
 		$markerArrayGlobal['###PAGEBROWSER###'] = '';
 
 		if (($this->conf['enablePageBrowser'] == 1) && ($this->conf['pageBrowserNbRecords'] > 0)) {
@@ -622,7 +620,7 @@ class tx_t3devapi_pibase
 		$recursive = t3lib_div::intInRange($recursive, 0);
 
 		$pid_list_arr = array_unique(t3lib_div::trimExplode(',', $pid_list, 1));
-		$pid_list     = array();
+		$pid_list = array();
 
 		foreach ($pid_list_arr as $val) {
 			$val = t3lib_div::intInRange($val, 0);
@@ -685,6 +683,57 @@ class tx_t3devapi_pibase
 	 */
 	public function getPrefix($value) {
 		return $this->prefixId . '[' . $value . ']';
+	}
+
+	/**
+	 * This function get all configurations from ts, flexform, getpost...
+	 *
+	 * @param boolean $debug
+	 * @return array
+	 */
+	public function getArrayConfig($debug = FALSE) {
+		// TYPOSCRIPT = template with plugin.tx_xxxx_pi1.xxxx = xxxx
+		$arrayConfig = $this->conf;
+
+		// Init and get the flexform data of the plugin
+		$this->pi_initPIflexForm();
+		$flexConfig = array();
+		$piFlexForm = array();
+		$piFlexForm = $this->cObj->data['pi_flexform'];
+		if (isset($piFlexForm['data'])) {
+			foreach ($piFlexForm['data'] as $sheet => $data) {
+				foreach ($data as $lang => $value) {
+					foreach ($value as $key => $val) {
+						$flexConfig[$key] = $this->pi_getFFvalue($piFlexForm, $key, $sheet);
+					}
+				}
+			}
+		}
+
+		// test contentId to know if this content is concerned by piVars
+		($arrayConfig['contentId'] == $this->cObj->data['uid']) ? $arrayConfig['piVars'] = 1 : $arrayConfig['piVars'] = 0;
+		// add "ext_conf_template.txt"
+		if ($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]) {
+			$extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]);
+			$arrayConfig = array_merge($arrayConfig, $extConf);
+		}
+
+		// add the pi config "plugin.tx_xxxx_pi1 = xxxx" which is not imported in the $conf
+		if (is_array($GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'])) {
+			$arrayConfig = array_merge($arrayConfig, $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.']);
+		}
+
+		// add $piVars
+		$arrayConfig = array_merge($arrayConfig, $this->piVars);
+
+		// merge TYPOSCRIPT with FLEXFORM
+		$arrayConfig = array_merge($flexConfig, $arrayConfig);
+
+		if ($debug == TRUE) {
+			tx_t3devapi_miscellaneous::debug($arrayConfig);
+		}
+
+		return $arrayConfig;
 	}
 
 }

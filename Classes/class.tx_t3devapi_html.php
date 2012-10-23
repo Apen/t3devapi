@@ -194,6 +194,66 @@ class tx_t3devapi_html
 	}
 
 	/**
+	 * Render a DIV
+	 *
+	 * @param string $name
+	 * @param string $value
+	 * @param array  $attributes
+	 * @return string
+	 */
+	public static function renderDiv($name, $value = '', $attributes = array()) {
+		$tag = new tx_t3devapi_tagbuilder();
+		$tag->setTagName('div');
+		$tag->forceClosingTag(TRUE);
+		if (!isset($attributes['id'])) {
+			$tag->addAttribute('id', self::cleanId($name));
+		}
+		$tag->setContent($value);
+		$tag->addAttributes($attributes);
+		return $tag->render();
+	}
+
+	/**
+	 * Render a SCRIPT
+	 *
+	 * @param string $value
+	 * @param array  $attributes
+	 * @return string
+	 */
+	public static function renderScriptJs($value = '', $attributes = array()) {
+		$tag = new tx_t3devapi_tagbuilder();
+		$tag->setTagName('script');
+		$tag->forceClosingTag(TRUE);
+		$tag->addAttribute('type', 'text/javascript');
+		$tag->setContent($value);
+		$tag->addAttributes($attributes);
+		return $tag->render();
+	}
+
+	/**
+	 * Render a FORM
+	 *
+	 * @param string $name
+	 * @param string $value
+	 * @param array  $attributes
+	 * @return string
+	 */
+	public static function renderForm($name, $value = '', $attributes = array()) {
+		$tag = new tx_t3devapi_tagbuilder();
+		$tag->setTagName('form');
+		$tag->forceClosingTag(TRUE);
+		if (!isset($attributes['name'])) {
+			$tag->addAttribute('name', $name);
+		}
+		if (!isset($attributes['method'])) {
+			$tag->addAttribute('method', 'post');
+		}
+		$tag->setContent($value);
+		$tag->addAttributes($attributes);
+		return $tag->render();
+	}
+
+	/**
 	 * Render a checbox
 	 *
 	 * @param string $name
@@ -324,6 +384,47 @@ class tx_t3devapi_html
 	}
 
 	/**
+	 * Render a multiple select with option group
+	 *
+	 * @param string $name
+	 * @param array  $content
+	 * @param array  $arrayOfValues
+	 * @param array  $attributes
+	 * @return string
+	 */
+	public static function renderMultipleSelectWithGroup($name, $content = array(), $arrayOfValues = array(), $attributes = array()) {
+		$tag = new tx_t3devapi_tagbuilder();
+		$tag->forceClosingTag(TRUE);
+		$tag->setTagName('select');
+		$tag->addAttribute('multiple', 'multiple');
+		if (!isset($attributes['name'])) {
+			$tag->addAttribute('name', $name);
+		}
+		if (!isset($attributes['id'])) {
+			$tag->addAttribute('id', self::cleanId($name));
+		}
+		$contentGroup = '';
+		foreach ($content as $key => $option) {
+			$options = '';
+			foreach ($option as $entryKey => $entryValue) {
+				if (is_array($arrayOfValues)) {
+					if (in_array($entryKey, $arrayOfValues)) {
+						$options .= self::renderOptionTag($entryKey, $entryValue, TRUE);
+					} else {
+						$options .= self::renderOptionTag($entryKey, $entryValue, FALSE);
+					}
+				} else {
+					$options .= self::renderOptionTag($entryKey, $entryValue, FALSE);
+				}
+			}
+			$contentGroup .= self::renderOptionGroup($key, $options);
+		}
+		$tag->setContent($contentGroup);
+		$tag->addAttributes($attributes);
+		return $tag->render();
+	}
+
+	/**
 	 * Render one option tag
 	 *
 	 * @param string  $value      value attribute of the option tag (will be escaped)
@@ -344,8 +445,8 @@ class tx_t3devapi_html
 	/**
 	 * Render an option group
 	 *
-	 * @param $label
-	 * @param $value
+	 * @param string $label
+	 * @param string $value
 	 * @return string
 	 */
 	public static function renderOptionGroup($label, $value) {

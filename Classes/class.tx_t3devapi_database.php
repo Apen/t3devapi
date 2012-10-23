@@ -116,7 +116,7 @@ class tx_t3devapi_database
 	 * @param  boolean $convertData
 	 * @return array
 	 */
-	public function getAllResults($res, $table, $convertData = TRUE) {
+	public static function getAllResults($res, $table, $convertData = TRUE) {
 		$first = 1;
 		$recordList = array();
 		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
@@ -148,7 +148,7 @@ class tx_t3devapi_database
 	 * @param  string  $title
 	 * @return array
 	 */
-	public function formatAllResults($res, $table, $title) {
+	public static function formatAllResults($res, $table, $title) {
 		$content = '';
 
 		$content .= '<table cellspacing="1" cellpadding="2" border="0" class="typo3-dblist">';
@@ -190,7 +190,7 @@ class tx_t3devapi_database
 	 * @param  string $table
 	 * @return array
 	 */
-	public function getResultRowTitles($row, $table) {
+	public static function getResultRowTitles($row, $table) {
 		global $TCA;
 		$tableHeader = array();
 		$conf = $TCA[$table];
@@ -212,7 +212,7 @@ class tx_t3devapi_database
 	 * @param  string $table
 	 * @return array
 	 */
-	public function getResultRow($row, $table) {
+	public static function getResultRow($row, $table) {
 		$record = array();
 		foreach ($row as $fieldName => $fieldValue) {
 			if ((TYPO3_MODE == 'FE')) {

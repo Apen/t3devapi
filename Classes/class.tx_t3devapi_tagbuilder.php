@@ -183,9 +183,9 @@ class tx_t3devapi_tagbuilder
 	 * @return void
 	 */
 	public function reset() {
-		$this->tagName         = '';
-		$this->content         = '';
-		$this->attributes      = array();
+		$this->tagName = '';
+		$this->content = '';
+		$this->attributes = array();
 		$this->forceClosingTag = FALSE;
 	}
 
@@ -207,7 +207,7 @@ class tx_t3devapi_tagbuilder
 		} else {
 			$output .= ' />';
 		}
-		return $output;
+		return $output . "\r\n";
 	}
 
 }

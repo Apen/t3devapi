@@ -29,6 +29,7 @@
 /**
  * tx_t3devapi_config
  * Class to get all the configuration in a plugin (typoscript, flexform, piVars, extConf)
+ * Keep this function/class for old compatibility, now in tx_t3devapi_pibase
  *
  * @author     Yohann CERDAN <cerdanyohann@yahoo.fr>
  * @package    TYPO3

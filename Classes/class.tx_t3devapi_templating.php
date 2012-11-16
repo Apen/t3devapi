@@ -176,7 +176,7 @@ class tx_t3devapi_templating
 	 * @return string           The subpart
 	 */
 	protected function getSubpart($template, $subpart) {
-		return t3lib_parsehtml::getSubpart($template, $subpart);
+		return ltrim(t3lib_parsehtml::getSubpart($template, $subpart));
 	}
 
 	/**
@@ -242,7 +242,7 @@ class tx_t3devapi_templating
 	protected function processHelpersLLL($templateMarkers, $content, $viewHelperArgumentLists) {
 		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
 			if (empty($this->pObj->conf['locallang'][strtolower($viewHelperArgument)]) !== TRUE) {
-				$value   = $this->pObj->conf['locallang'][strtolower($viewHelperArgument)];
+				$value = $this->pObj->conf['locallang'][strtolower($viewHelperArgument)];
 				$content = t3lib_parsehtml::substituteMarker($content, '###LLL:' . $viewHelperArgument . '###', $value);
 			}
 		}
@@ -309,7 +309,7 @@ class tx_t3devapi_templating
 	protected function processHelpersCrop($templateMarkers, $content, $viewHelperArgumentLists) {
 		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
 			$explodeViewHelperArguments = explode('|', $viewHelperArgument);
-			$content                    = t3lib_parsehtml::substituteMarker(
+			$content = t3lib_parsehtml::substituteMarker(
 				$content,
 				'###CROP:' . $viewHelperArgument . '###',
 				$this->misc->truncate(
@@ -337,13 +337,13 @@ class tx_t3devapi_templating
 	protected function processHelpersIf($templateMarkers, $content, $viewHelperArgumentLists) {
 		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
 			$explodeViewHelperArguments = explode('|', preg_replace('/\_(\w*)/', '###$1###', $viewHelperArgument));
-			$comparand1                 = (strpos($explodeViewHelperArguments[0], '#') !== FALSE)
+			$comparand1 = (strpos($explodeViewHelperArguments[0], '#') !== FALSE)
 				? $templateMarkers[$explodeViewHelperArguments[0]]
 				: $explodeViewHelperArguments[0];
-			$comparand2                 = (strpos($explodeViewHelperArguments[2], '#') !== FALSE)
+			$comparand2 = (strpos($explodeViewHelperArguments[2], '#') !== FALSE)
 				? $templateMarkers[$explodeViewHelperArguments[2]]
 				: $explodeViewHelperArguments[2];
-			$operator                   = $explodeViewHelperArguments[1];
+			$operator = $explodeViewHelperArguments[1];
 			if ($this->evaluateCondition($comparand1, $comparand2, $operator)) {
 				$content = t3lib_parsehtml::substituteSubpart(
 					$content,
@@ -368,11 +368,11 @@ class tx_t3devapi_templating
 	 */
 	protected function processHelpersTs($templateMarkers, $content, $viewHelperArgumentLists) {
 		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
-			$path         = $viewHelperArgument;
+			$path = $viewHelperArgument;
 			$pathExploded = explode('.', trim($path));
-			$depth        = count($pathExploded);
-			$pathBranch   = $GLOBALS['TSFE']->tmpl->setup;
-			$value        = '';
+			$depth = count($pathExploded);
+			$pathBranch = $GLOBALS['TSFE']->tmpl->setup;
+			$value = '';
 			for ($i = 0; $i < $depth; $i++) {
 				if ($i < ($depth - 1)) {
 					$pathBranch = $pathBranch[$pathExploded[$i] . '.'];
@@ -384,7 +384,7 @@ class tx_t3devapi_templating
 					$value = $pathBranch[$pathExploded[$i]];
 					if (isset($pathBranch[$pathExploded[$i] . '.'])) {
 						// okay, seems to be a TS Content Element, let's run it
-						$cObj  = t3lib_div::makeInstance('tslib_cObj');
+						$cObj = t3lib_div::makeInstance('tslib_cObj');
 						$value = $cObj->cObjGetSingle(
 							$pathBranch[$pathExploded[$i]],
 							$pathBranch[$pathExploded[$i] . '.']
@@ -411,13 +411,13 @@ class tx_t3devapi_templating
 	protected function processHelpersLink($templateMarkers, $content, $viewHelperArgumentLists) {
 		foreach ($viewHelperArgumentLists as $viewHelperArgument) {
 			$explodeViewHelperArguments = explode('|', $viewHelperArgument);
-			$pid                        = $explodeViewHelperArguments[0] ? $explodeViewHelperArguments[0] : $GLOBALS['TSFE']->id;
-			$additionalParameters       = $explodeViewHelperArguments[1] ?
+			$pid = $explodeViewHelperArguments[0] ? $explodeViewHelperArguments[0] : $GLOBALS['TSFE']->id;
+			$additionalParameters = $explodeViewHelperArguments[1] ?
 				t3lib_div::explodeUrl2Array($explodeViewHelperArguments[1])
 				: array();
-			$useCache                   = $explodeViewHelperArguments[2] ? TRUE : FALSE;
-			$value                      = $this->misc->getURL($additionalParameters, $useCache, $pid);
-			$content                    = t3lib_parsehtml::substituteMarker(
+			$useCache = $explodeViewHelperArguments[2] ? TRUE : FALSE;
+			$value = $this->misc->getURL($additionalParameters, $useCache, $pid);
+			$content = t3lib_parsehtml::substituteMarker(
 				$content, '###LINK:' . $viewHelperArgument . '###', $value
 			);
 		}
@@ -538,7 +538,7 @@ class tx_t3devapi_templating
 	 * @return array
 	 */
 	protected function getTemplateSubpartTagList($template) {
-		$tagList        = array();
+		$tagList = array();
 		$orderedTagList = array();
 
 		preg_match_all('/<!--.*?###(.*?)###.*?-->/', $template, $res, PREG_OFFSET_CAPTURE | PREG_PATTERN_ORDER);

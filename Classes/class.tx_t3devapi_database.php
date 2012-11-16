@@ -51,7 +51,7 @@ class tx_t3devapi_database
 	 * @return   pointer        MySQL select result pointer / DBAL object
 	 * @see exec_SELECTquery()
 	 */
-	public static function exec_SELECT_queryArray($queryParts, $debug) {
+	public static function exec_SELECT_queryArray($queryParts, $debug = FALSE) {
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
 
 		if (($GLOBALS['TYPO3_DB']->sql_error()) || ($debug === TRUE)) {

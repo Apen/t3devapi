@@ -36,13 +36,15 @@ class Tx_T3devapi_ViewHelpers_Widget_Controller_PaginateController extends Tx_Fl
 	 * @var array
 	 */
 	protected $configuration = array(
-		'itemsPerPage'        => 10,
-		'insertAbove'         => FALSE,
-		'insertBelow'         => TRUE,
-		'pagesAfter'          => 3,
-		'pagesBefore'         => 3,
-		'lessPages'           => TRUE,
-		'forcedNumberOfLinks' => 5
+		'itemsPerPage'           => 10,
+		'insertAbove'            => FALSE,
+		'insertBelow'            => TRUE,
+		'pagesAfter'             => 3,
+		'pagesBefore'            => 3,
+		'lessPages'              => TRUE,
+		'forcedNumberOfLinks'    => 5,
+		'forceFirstPrevNextlast' => FALSE,
+		'showFirstLast'          => TRUE
 	);
 
 	/**
@@ -89,7 +91,8 @@ class Tx_T3devapi_ViewHelpers_Widget_Controller_PaginateController extends Tx_Fl
 		$this->objects = $this->widgetConfiguration['objects'];
 		$this->configuration = t3lib_div::array_merge_recursive_overrule(
 			$this->configuration,
-			(array)$this->widgetConfiguration['configuration'], TRUE
+			(array)$this->widgetConfiguration['configuration'],
+			TRUE
 		);
 		$this->numberOfPages = ceil(count($this->objects) / (integer)$this->configuration['itemsPerPage']);
 		$this->pagesBefore = (integer)$this->configuration['pagesBefore'];
@@ -111,7 +114,6 @@ class Tx_T3devapi_ViewHelpers_Widget_Controller_PaginateController extends Tx_Fl
 		}
 		$totalNumberOfLinks = min($this->currentPage, $this->pagesBefore) +
 			min($this->pagesAfter, $this->numberOfPages - $this->currentPage) + 1;
-
 		if ($totalNumberOfLinks <= $forcedNumberOfLinks) {
 			$delta = intval(ceil(($forcedNumberOfLinks - $totalNumberOfLinks) / 2));
 			$incr = ($forcedNumberOfLinks & 1) == 0 ? 1 : 0;
@@ -159,12 +161,9 @@ class Tx_T3devapi_ViewHelpers_Widget_Controller_PaginateController extends Tx_Fl
 		}
 		$modifiedObjects = $query->execute();
 
-		$this->view->assign('contentArguments',
-		                    array($this->widgetConfiguration['as'] => $modifiedObjects)
-		);
+		$this->view->assign('contentArguments', array($this->widgetConfiguration['as'] => $modifiedObjects));
 		$this->view->assign('configuration', $this->configuration);
 		$this->view->assign('pagination', $this->buildPagination());
-		//var_dump($this->view);
 	}
 
 	/**
@@ -181,7 +180,7 @@ class Tx_T3devapi_ViewHelpers_Widget_Controller_PaginateController extends Tx_Fl
 		$end = min($this->numberOfPages, $this->currentPage + $this->pagesAfter + 1);
 		for ($i = $start; $i < $end; $i++) {
 			$j = $i + 1;
-			$pages[] = array('number' => $j, 'isCurrent' => ($j === $this->currentPage));
+			$pages[] = array('number' => $j, 'isCurrent' => (intval($j) === intval($this->currentPage)));
 		}
 
 		$pagination = array(
@@ -199,18 +198,22 @@ class Tx_T3devapi_ViewHelpers_Widget_Controller_PaginateController extends Tx_Fl
 		} else {
 			$pagination['lastPageItem'] = $pagination['numberOfItems'];
 		}
+
+		// previous pages
 		if ($this->currentPage > 1) {
 			$pagination['previousPage'] = $this->currentPage - 1;
 		}
 
-		// Less pages
+		// less pages (before current)
 		if ($start > 0 && $this->lessPages) {
 			$pagination['lessPages'] = TRUE;
 		}
-		// More pages
+
+		// next pages (after current)
 		if ($end != $this->numberOfPages && $this->lessPages) {
 			$pagination['morePages'] = TRUE;
 		}
+
 		return $pagination;
 	}
 }

@@ -14,78 +14,131 @@
     </f:if>
 </f:section>
 
+<f:section name="linkFirst">
+    <f:if condition="{noLink}">
+        <f:then>
+            <f:translate key="LLL:EXT:t3devapi/Resources/Private/Language/locallang.xml:paginate_first"/>
+        </f:then>
+        <f:else>
+            <f:widget.link>
+                <f:translate key="LLL:EXT:t3devapi/Resources/Private/Language/locallang.xml:paginate_first"/>
+            </f:widget.link>
+        </f:else>
+    </f:if>
+</f:section>
+
+<f:section name="linkPrevious">
+    <f:if condition="{noLink}">
+        <f:then>
+            <f:translate key="LLL:EXT:t3devapi/Resources/Private/Language/locallang.xml:paginate_previous"/>
+        </f:then>
+        <f:else>
+            <f:widget.link arguments="{currentPage: pagination.previousPage}">
+                <f:translate key="LLL:EXT:t3devapi/Resources/Private/Language/locallang.xml:paginate_previous"/>
+            </f:widget.link>
+        </f:else>
+    </f:if>
+</f:section>
+
+<f:section name="linkNext">
+    <f:if condition="{noLink}">
+        <f:then>
+            <f:translate key="LLL:EXT:t3devapi/Resources/Private/Language/locallang.xml:paginate_next"/>
+        </f:then>
+        <f:else>
+            <f:widget.link arguments="{currentPage: pagination.nextPage}">
+                <f:translate key="LLL:EXT:t3devapi/Resources/Private/Language/locallang.xml:paginate_next"/>
+            </f:widget.link>
+        </f:else>
+    </f:if>
+</f:section>
+
+<f:section name="linkLast">
+    <f:if condition="{noLink}">
+        <f:then>
+            <f:translate key="LLL:EXT:t3devapi/Resources/Private/Language/locallang.xml:paginate_last"/>
+        </f:then>
+        <f:else>
+            <f:widget.link arguments="{currentPage: pagination.numberOfPages}">
+                <f:translate key="LLL:EXT:t3devapi/Resources/Private/Language/locallang.xml:paginate_last"/>
+            </f:widget.link>
+        </f:else>
+    </f:if>
+</f:section>
+
 <f:section name="paginator">
     <f:if condition="{pagination.numberOfPages} > 1">
-        <div class="pagination">
-            <ul class="">
-                <f:if condition="{pagination.previousPage}">
-                    <li class="previous">
-                        <f:if condition="{pagination.previousPage} > 1">
-                            <f:then>
-                                <f:widget.link arguments="{currentPage: 1}">
-                                    <f:translate key="LLL:EXT:t3devapi/Resources/Private/Language/locallang.xml:paginate_first"/>
-                                </f:widget.link>
-                            </f:then>
-                            <f:else>
-                                <f:widget.link>
-                                    <f:translate key="LLL:EXT:t3devapi/Resources/Private/Language/locallang.xml:paginate_first"/>
-                                </f:widget.link>
-                            </f:else>
-                        </f:if>
-                    </li>
-                    <li class="previous">
-                        <f:if condition="{pagination.previousPage} > 1">
-                            <f:then>
-                                <f:widget.link arguments="{currentPage: pagination.previousPage}">
-                                    <f:translate key="LLL:EXT:t3devapi/Resources/Private/Language/locallang.xml:paginate_previous"/>
-                                </f:widget.link>
-                            </f:then>
-                            <f:else>
-                                <f:widget.link>
-                                    <f:translate key="LLL:EXT:t3devapi/Resources/Private/Language/locallang.xml:paginate_previous"/>
-                                </f:widget.link>
-                            </f:else>
-                        </f:if>
-                    </li>
-                </f:if>
-                <f:if condition="{pagination.lessPages}">
-                    <li><a>....</a></li>
-                </f:if>
-                <f:for each="{pagination.pages}" as="page">
-                    <f:if condition="{page.isCurrent}">
-                        <f:then>
-                            <li class="active"><a>{page.number}</a></li>
-                        </f:then>
-                        <f:else>
-                            <li>
-                                <f:if condition="{page.number} > 1">
-                                    <f:then>
-                                        <f:widget.link arguments="{currentPage: page.number}">{page.number}</f:widget.link>
-                                    </f:then>
-                                    <f:else>
-                                        <f:widget.link>{page.number}</f:widget.link>
-                                    </f:else>
-                                </f:if>
-                            </li>
-                        </f:else>
+        <ul class="pagebrowse">
+            <f:if condition="{pagination.previousPage}">
+                <f:then>
+                    <f:if condition="{configuration.showFirstLast}">
+                        <li class="pagebrowse-first">
+                            <f:render section="linkFirst" arguments="{pagination: pagination,configuration:configuration}"/>
+                        </li>
                     </f:if>
-                </f:for>
-                <f:if condition="{pagination.morePages}">
-                    <li><a>....</a></li>
-                </f:if>
-                <f:if condition="{pagination.nextPage}">
-                    <li class="last next">
-                        <f:widget.link arguments="{currentPage: pagination.nextPage}">
-                            <f:translate key="LLL:EXT:t3devapi/Resources/Private/Language/locallang.xml:paginate_next"/>
-                        </f:widget.link>
+                    <li class="pagebrowse-prev">
+                        <f:render section="linkPrevious" arguments="{pagination: pagination,configuration:configuration}"/>
                     </li>
-                    <li class="last next">
-                        <f:widget.link arguments="{currentPage: pagination.numberOfPages}">
-                            <f:translate key="LLL:EXT:t3devapi/Resources/Private/Language/locallang.xml:paginate_last"/>
-                        </f:widget.link>
+                </f:then>
+                <f:else>
+                    <f:if condition="{configuration.forceFirstPrevNextlast}">
+                        <f:if condition="{configuration.showFirstLast}">
+                            <li class="pagebrowse-first nolink">
+                                <f:render section="linkFirst" arguments="{pagination: pagination,configuration:configuration,noLink:1}"/>
+                            </li>
+                        </f:if>
+                        <li class="pagebrowse-prev nolink">
+                            <f:render section="linkPrevious" arguments="{pagination: pagination,configuration:configuration,noLink:1}"/>
+                        </li>
+                    </f:if>
+                </f:else>
+            </f:if>
+            <li class="pagebrowse-pages">
+                <ol>
+                    <f:if condition="{pagination.lessPages}">
+                        <li class="pagebrowse-less">...</li>
+                    </f:if>
+                    <f:for each="{pagination.pages}" as="page">
+                        <f:if condition="{page.isCurrent}">
+                            <f:then>
+                                <li class="pagebrowse-current">{page.number}</li>
+                            </f:then>
+                            <f:else>
+                                <li class="pagebrowse-page">
+                                    <f:widget.link arguments="{currentPage: page.number}">{page.number}</f:widget.link>
+                                </li>
+                            </f:else>
+                        </f:if>
+                    </f:for>
+                    <f:if condition="{pagination.morePages}">
+                        <li class="pagebrowse-more">...</li>
+                    </f:if>
+                </ol>
+            </li>
+            <f:if condition="{pagination.nextPage}">
+                <f:then>
+                    <li class="pagebrowse-next">
+                        <f:render section="linkNext" arguments="{pagination: pagination,configuration:configuration}"/>
                     </li>
-                </f:if>
-            </ul>
-        </div>
+                    <f:if condition="{configuration.showFirstLast}">
+                        <li class="pagebrowse-last">
+                            <f:render section="linkLast" arguments="{pagination: pagination,configuration:configuration}"/>
+                        </li>
+                    </f:if>
+                </f:then>
+                <f:else>
+                    <f:if condition="{configuration.forceFirstPrevNextlast}">
+                        <li class="pagebrowse-next nolink">
+                            <f:render section="linkNext" arguments="{pagination: pagination,configuration:configuration,noLink:1}"/>
+                        </li>
+                        <f:if condition="{configuration.showFirstLast}">
+                            <li class="pagebrowse-last nolink">
+                                <f:render section="linkLast" arguments="{pagination: pagination,configuration:configuration,noLink:1}"/>
+                            </li>
+                        </f:if>
+                    </f:if>
+                </f:else>
+            </f:if>
+        </ul>
     </f:if>
 </f:section>

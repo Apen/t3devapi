@@ -332,7 +332,7 @@ class tx_t3devapi_miscellaneous
 	 * @param string $marker_prefix
 	 * @return array
 	 */
-	public function convertToMarkerArray($array, $marker_prefix = '') {
+	public static function convertToMarkerArray($array, $marker_prefix = '') {
 		$temp = array();
 		foreach ($array as $key => $val) {
 			$temp[self::convertToMarker($key, $marker_prefix)] = $val;
@@ -347,7 +347,7 @@ class tx_t3devapi_miscellaneous
 	 * @param string  $marker_prefix
 	 * @return string
 	 */
-	public function convertToMarker($value, $marker_prefix = '') {
+	public static function convertToMarker($value, $marker_prefix = '') {
 		return '###' . strtoupper($marker_prefix . $value) . '###';
 	}
 
@@ -902,6 +902,42 @@ class tx_t3devapi_miscellaneous
 	 */
 	public static function underscoredToUpperCamelCase($string) {
 		return str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($string))));
+	}
+
+	/**
+	 * Returns the 'age' of the tstamp $seconds
+	 *
+	 * @param                  integer        Seconds to return age for. Example: "70" => "1 min", "3601" => "1 hrs"
+	 * @param    string        $labels        are the labels of the individual units. Defaults to : ' min| hrs| days| yrs'
+	 * @return    string        The formatted string
+	 */
+	public static function calcAge($seconds, $labels = NULL) {
+		if (empty($labels)) {
+			$labels = ' min| hrs| days| yrs| min| hour| day| year';
+		} else {
+			$labels = str_replace('"', '', $labels);
+		}
+
+		$labelArr = explode('|', $labels);
+		if (count($labelArr) == 4) {
+			$labelArr = array_merge($labelArr, $labelArr);
+		}
+		$absSeconds = abs($seconds);
+		$sign = ($seconds > 0 ? 1 : -1);
+		if ($absSeconds < 3600) {
+			$val = round($absSeconds / 60);
+			$seconds = ($sign * $val) . ($val == 1 ? $labelArr[4] : $labelArr[0]);
+		} elseif ($absSeconds < 24 * 3600) {
+			$val = round($absSeconds / 3600);
+			$seconds = ($sign * $val) . ($val == 1 ? $labelArr[5] : $labelArr[1]);
+		} elseif ($absSeconds < 365 * 24 * 3600) {
+			$val = round($absSeconds / (24 * 3600));
+			$seconds = ($sign * $val) . ($val == 1 ? $labelArr[6] : $labelArr[2]);
+		} else {
+			$val = round($absSeconds / (365 * 24 * 3600));
+			$seconds = ($sign * $val) . ($val == 1 ? $labelArr[7] : $labelArr[3]);
+		}
+		return $seconds;
 	}
 
 }

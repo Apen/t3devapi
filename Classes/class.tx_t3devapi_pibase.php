@@ -315,10 +315,7 @@ class tx_t3devapi_pibase
 	 */
 	public function getHTMLPageBrowser($numberOfPages) {
 		$conf = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_pagebrowse_pi1.'];
-		$conf += array(
-			'pageParameterName' => $this->prefixId . '|page',
-			'numberOfPages'     => $numberOfPages,
-		);
+		$conf = array_merge($conf, array('pageParameterName' => $this->prefixId . '|page', 'numberOfPages' => $numberOfPages));
 		$cObj = t3lib_div::makeInstance('tslib_cObj');
 		$cObj->start(array(), '');
 		return $cObj->cObjGetSingle('USER', $conf);

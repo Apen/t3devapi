@@ -747,9 +747,10 @@ class tx_t3devapi_miscellaneous
 	 *
 	 * @param string $LLFile
 	 * @param string $langKey
+	 * @param array  $confLL
 	 * @return array
 	 */
-	public function loadLL($LLFile, $langKey = NULL) {
+	public function loadLL($LLFile, $langKey = NULL, $confLL = NULL) {
 		$tsfeLoaded = isset($GLOBALS['TSFE']) && is_object($GLOBALS['TSFE']);
 		$langLoaded = isset($GLOBALS['LANG']) && is_object($GLOBALS['LANG']);
 
@@ -794,6 +795,12 @@ class tx_t3devapi_miscellaneous
 			if (isset($LLArray[$v])) {
 				$finalRes = array_merge($finalRes, $LLArray[$v]);
 				unset($LLArray[$v]);
+				// Overlaying labels from TypoScript
+				if (is_array($confLL)) {
+					if (!empty($confLL[$v . '.'])) {
+						$finalRes = array_merge($finalRes, $confLL[$v . '.']);
+					}
+				}
 			}
 		}
 		unset($LLArray);

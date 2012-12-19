@@ -115,7 +115,7 @@ class tx_t3devapi_pibase
 
 		// locallangs array
 		$this->conf['locallang'] = $this->misc->loadLL(
-			'typo3conf/ext/' . $this->extKey . '/' . dirname($this->scriptRelPath) . '/locallang.xml'
+			'typo3conf/ext/' . $this->extKey . '/' . dirname($this->scriptRelPath) . '/locallang.xml', NULL, $this->conf['_LOCAL_LANG.']
 		);
 		$this->conf['markerslocallang'] = $this->misc->convertToMarkerArray($this->conf['locallang'], 'LLL:');
 

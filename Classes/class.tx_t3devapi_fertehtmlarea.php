@@ -61,6 +61,8 @@ class tx_t3devapi_fertehtmlarea
 	public $thePidValue;
 	public $table;
 	public $field;
+	public $width;
+	public $height;
 
 	/**
 	 * Constructor
@@ -86,6 +88,10 @@ class tx_t3devapi_fertehtmlarea
 			$this->RTEObj = t3lib_div::makeInstance('tx_rtehtmlarea_pi2');
 		}
 		if ($this->RTEObj->isAvailable()) {
+			$this->RTEObj->RTEdivStyle = '';
+			$this->RTEObj->RTEdivStyle .= (!empty($this->width)) ? 'width:' . $this->width . ';' : '';
+			$this->RTEObj->RTEdivStyle .= (!empty($this->height)) ? 'height:' . $this->height . ';' : '';
+
 			$RTEItem = $this->RTEObj->drawRTE($this, $this->table, $this->field, $row = array(), $this->PA, $this->specConf, $this->thisConfig, $this->RTEtypeVal, '', $this->thePidValue);
 			$markerArray['###ADDITIONALJS_PRE###'] = $this->additionalJS_initial . '
 		<script type="text/javascript">' . implode(chr(10), $this->additionalJS_pre) . '
@@ -194,6 +200,42 @@ class tx_t3devapi_fertehtmlarea
 	 */
 	public function setFormName($formName) {
 		$this->formName = $formName;
+	}
+
+	/**
+	 * Set the height
+	 *
+	 * @param string $height
+	 */
+	public function setHeight($height) {
+		$this->height = $height;
+	}
+
+	/**
+	 * Get the height
+	 *
+	 * @return string
+	 */
+	public function getHeight() {
+		return $this->height;
+	}
+
+	/**
+	 * Set the width
+	 *
+	 * @param string $width
+	 */
+	public function setWidth($width) {
+		$this->width = $width;
+	}
+
+	/**
+	 * get the width
+	 *
+	 * @return string
+	 */
+	public function getWidth() {
+		return $this->width;
 	}
 
 }

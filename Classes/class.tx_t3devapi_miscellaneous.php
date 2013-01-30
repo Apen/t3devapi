@@ -632,7 +632,7 @@ class tx_t3devapi_miscellaneous
 	 * @param array  $files
 	 * @return mixed
 	 */
-	public function sendEmail($to, $subject, $message, $type = 'plain', $fromEmail = '', $fromName = '', $charset = 'utf-8', $files = array()) {
+	public static function sendEmail($to, $subject, $message, $type = 'plain', $fromEmail = '', $fromName = '', $charset = 'utf-8', $files = array()) {
 		$useSwiftMailer = t3lib_div::compat_version('4.5');
 		if ($useSwiftMailer) {
 			// new TYPO3 swiftmailer code
@@ -776,7 +776,19 @@ class tx_t3devapi_miscellaneous
 
 		// Loads locallang file
 		if (@is_file($LLFile)) {
-			$LOCAL_LANG = t3lib_div::readLLXMLfile($LLFile, end($langLoadList), $renderCharset);
+			$useXliff = t3lib_div::compat_version('4.6');
+			if ($useXliff) {
+				$localizationParser = t3lib_div::makeInstance('t3lib_l10n_parser_Llxml');
+				$LOCAL_LANG_xliff = $localizationParser->getParsedData($LLFile, end($langLoadList), $renderCharset);
+				$LOCAL_LANG = array();
+				foreach ($LOCAL_LANG_xliff as $currentLang => $langElements) {
+					foreach ($langElements as $key => $value) {
+						$LOCAL_LANG[$currentLang][$key] = (!empty($value[0]['target'])) ? $value[0]['target'] : $value[0]['source'];
+					}
+				}
+			} else {
+				$LOCAL_LANG = t3lib_div::readLLXMLfile($LLFile, end($langLoadList), $renderCharset);
+			}
 		} else {
 			$LOCAL_LANG = array();
 		}
@@ -945,6 +957,43 @@ class tx_t3devapi_miscellaneous
 			$seconds = ($sign * $val) . ($val == 1 ? $labelArr[7] : $labelArr[3]);
 		}
 		return $seconds;
+	}
+	
+	/**
+	 * Tests if the input can be interpreted as integer.
+	 *
+	 * @param mixed Any input variable to test
+	 * @return boolean Returns true if string is an integer
+	 */
+	public static function testInt($var) {
+		if ($var === '') {
+			return FALSE;
+		}
+		return (string) intval($var) === (string) $var;
+	}
+	
+	/**
+	 * Forces the integer $theInt into the boundaries of $min and $max. If the $theInt is 'false' then the $zeroValue is applied.
+	 *
+	 * @param	integer		Input value
+	 * @param	integer		Lower limit
+	 * @param	integer		Higher limit
+	 * @param	integer		Default value if input is false.
+	 * @return	integer		The input value forced into the boundaries of $min and $max
+	 */
+	public static function intInRange($theInt, $min, $max = 2000000000, $zeroValue = 0) {
+			// Returns $theInt as an integer in the integerspace from $min to $max
+		$theInt = intval($theInt);
+		if ($zeroValue && !$theInt) {
+			$theInt = $zeroValue;
+		} // If the input value is zero after being converted to integer, zeroValue may set another default value for it.
+		if ($theInt < $min) {
+			$theInt = $min;
+		}
+		if ($theInt > $max) {
+			$theInt = $max;
+		}
+		return $theInt;
 	}
 
 }

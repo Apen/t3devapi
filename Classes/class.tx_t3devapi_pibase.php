@@ -584,7 +584,7 @@ class tx_t3devapi_pibase
 	public function pi_getFFvalueFromSheetArray($sheetArray, $fieldNameArr, $value) {
 		$tempArr = $sheetArray;
 		foreach ($fieldNameArr as $k => $v) {
-			if (t3lib_div::testInt($v)) {
+			if ($this->misc->testInt($v)) {
 				if (is_array($tempArr)) {
 					$c = 0;
 					foreach ($tempArr as $values) {
@@ -614,13 +614,13 @@ class tx_t3devapi_pibase
 			$pid_list = $GLOBALS['TSFE']->id;
 		}
 
-		$recursive = t3lib_div::intInRange($recursive, 0);
+		$recursive = $this->misc->intInRange($recursive, 0);
 
 		$pid_list_arr = array_unique(t3lib_div::trimExplode(',', $pid_list, 1));
 		$pid_list = array();
 
 		foreach ($pid_list_arr as $val) {
-			$val = t3lib_div::intInRange($val, 0);
+			$val = $this->misc->intInRange($val, 0);
 			if ($val) {
 				$_list = $this->cObj->getTreeList(-1 * $val, $recursive);
 				if ($_list) {

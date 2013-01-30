@@ -26,7 +26,7 @@
  * ViewHelper to use strftime
  *
  * Example
- * <t3devapi:strftime format="%A %e %B %Y">{timestamp}</t3devapi:strftime><
+ * <t3devapi:strftime format="%A %e %B %Y">{timestamp}</t3devapi:strftime>
  *
  * Renders the strftime
  *

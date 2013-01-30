@@ -23,28 +23,28 @@
  ***************************************************************/
 
 /**
- * ViewHelper to check if a variable is set
+ * ViewHelper to get a session variable
  *
  * Example
- * <t3devapi:isset name="{object.var}">...</t3devapi:isset>
+ * <t3devapi:session index="{object.var}" identifier="{object.var}" />
+ * {t3devapi:session(index:'odlannuaireCollab', identifier:'{collaborateur.uid}')}
  *
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_IssetViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractConditionViewHelper
+class Tx_T3devapi_ViewHelpers_SessionViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper
 {
 
 	/**
-	 * Renders else-child or else-argument if variable $name exists
-	 *
-	 * @param string $name
+	 * @param string $index
+	 * @param string $identifier
 	 * @return string
 	 */
-	public function render($name) {
-		if (isset($name)) {
-			return $this->renderThenChild();
+	public function render($index, $identifier) {
+		if (!session_id()) {
+			session_start();
 		}
-		return $this->renderElseChild();
+		return $_SESSION[$index][$identifier];
 	}
 
 }

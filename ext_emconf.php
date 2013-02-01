@@ -3,7 +3,7 @@
 /***************************************************************
  * Extension Manager/Repository config file for ext "t3devapi".
  *
- * Auto generated 06-12-2015 16:26
+ * Auto generated 06-12-2015 16:27
  *
  * Manual updates:
  * Only the data in the array - everything else is removed by next
@@ -15,7 +15,7 @@ $EM_CONF[$_EXTKEY] = array (
 	'description' => 'A Powerful API for your (my ?) TYPO3 developments. No manual but the classes are well documented :-)',
 	'category' => 'misc',
 	'shy' => 0,
-	'version' => '0.5.9',
+	'version' => '0.5.10',
 	'dependencies' => '',
 	'conflicts' => '',
 	'priority' => '',

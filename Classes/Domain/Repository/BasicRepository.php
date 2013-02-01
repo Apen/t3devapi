@@ -75,9 +75,7 @@ class Tx_T3devapi_Domain_Repository_BasicRepository extends Tx_Extbase_Persisten
 			$constraints[] = $query->in('uid', $uidList);
 		}
 
-		if (!empty($this->piVars)) {
-			$constraints = $this->setSearchConstraints($query, $constraints);
-		}
+		$constraints = $this->setSearchConstraints($query, $constraints);
 
 		if (!empty($constraints)) {
 			$query->matching(

@@ -124,7 +124,7 @@ class tx_t3devapi_validate
 	 */
 	public function isAlphabetic($value, $error) {
 		$whiteSpace = '\s';
-		$pattern    = '/[^a-zA-Z' . $whiteSpace . ']/u';
+		$pattern = '/[^a-zA-Z' . $whiteSpace . ']/u';
 		if (preg_replace($pattern, '', (string)$value) !== $value) {
 			$this->setError($error);
 			return FALSE;
@@ -141,7 +141,7 @@ class tx_t3devapi_validate
 	 */
 	public function isAlphanumeric($value, $error) {
 		$whiteSpace = '\s';
-		$pattern    = '/[^a-zA-Z0-9' . $whiteSpace . ']/u';
+		$pattern = '/[^a-zA-Z0-9' . $whiteSpace . ']/u';
 		if (preg_replace($pattern, '', (string)$value) !== $value) {
 			$this->setError($error);
 			return FALSE;
@@ -157,7 +157,7 @@ class tx_t3devapi_validate
 	 * @return bool
 	 */
 	public function isInteger($value, $error) {
-		$locale        = localeconv();
+		$locale = localeconv();
 		$valueFiltered = str_replace($locale['thousands_sep'], '', $value);
 		$valueFiltered = str_replace($locale['mon_thousands_sep'], '', $value);
 		$valueFiltered = str_replace($locale['decimal_point'], '.', $valueFiltered);
@@ -177,7 +177,7 @@ class tx_t3devapi_validate
 	 * @return bool
 	 */
 	public function isFloat($value, $error) {
-		$locale        = localeconv();
+		$locale = localeconv();
 		$valueFiltered = str_replace($locale['thousands_sep'], '', $value);
 		$valueFiltered = str_replace($locale['mon_thousands_sep'], '', $value);
 		$valueFiltered = str_replace($locale['decimal_point'], '.', $valueFiltered);
@@ -206,6 +206,24 @@ class tx_t3devapi_validate
 	}
 
 	/**
+	 * Check if the value is in the list
+	 *
+	 * @param string $value
+	 * @param array  $list
+	 * @param string $error
+	 * @return bool
+	 */
+	public function isInList($value, $list, $error) {
+		if (strpos(',' . $list . ',', ',' . $value . ',') !== FALSE) {
+			return TRUE;
+		} else {
+			$this->setError($error);
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+	/**
 	 * Check if the value is a date correctly formated
 	 *
 	 * @param string $value
@@ -214,10 +232,10 @@ class tx_t3devapi_validate
 	 * @return bool
 	 */
 	public function isDate($value, $format, $error) {
-		$parsedDate      = strptime($value, $format);
-		$parsedDateYear  = $parsedDate['tm_year'] + 1900;
+		$parsedDate = strptime($value, $format);
+		$parsedDateYear = $parsedDate['tm_year'] + 1900;
 		$parsedDateMonth = $parsedDate['tm_mon'] + 1;
-		$parsedDateDay   = $parsedDate['tm_mday'];
+		$parsedDateDay = $parsedDate['tm_mday'];
 		if (!checkdate($parsedDateMonth, $parsedDateDay, $parsedDateYear)) {
 			$this->setError($error);
 			return FALSE;

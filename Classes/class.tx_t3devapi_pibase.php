@@ -342,9 +342,7 @@ class tx_t3devapi_pibase
 	 */
 	public function addCSS($path, $id = '') {
 		if ($this->cObj->getUserObjectType() == tslib_cObj::OBJECTTYPE_USER_INT) {
-			$GLOBALS['TSFE']->additionalHeaderData[$this->extKey . $id . 'css'] = '<link rel="stylesheet" type="text/css" href="' . trim(
-				$path
-			) . '" media="all">';
+			$GLOBALS['TSFE']->additionalHeaderData[$this->extKey . $id . 'css'] = '<link rel="stylesheet" type="text/css" href="' . trim($path) . '" media="all" />';
 		} else {
 			$GLOBALS['TSFE']->pSetup['includeCSS.'][$this->extKey . $id] = trim($path);
 			$GLOBALS['TSFE']->pSetup['includeCSS.'][$this->extKey . $id . '.'] = array('media' => 'screen');
@@ -361,9 +359,7 @@ class tx_t3devapi_pibase
 	 */
 	public function addJS($path, $includeInFooter = FALSE, $id = '') {
 		if ($this->cObj->getUserObjectType() == tslib_cObj::OBJECTTYPE_USER_INT) {
-			$GLOBALS['TSFE']->additionalHeaderData[$this->extKey . $id . 'js'] = '<script src="' . trim(
-				$path
-			) . '" type="text/javascript"></script>';
+			$GLOBALS['TSFE']->additionalHeaderData[$this->extKey . $id . 'js'] = '<script src="' . trim($path) . '" type="text/javascript"></script>';
 		} else {
 			if ($includeInFooter === 1) {
 				$includeJs = 'includeJSFooter.';

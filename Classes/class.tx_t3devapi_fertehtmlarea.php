@@ -89,8 +89,11 @@ class tx_t3devapi_fertehtmlarea
 		}
 		if ($this->RTEObj->isAvailable()) {
 			$this->RTEObj->RTEdivStyle = '';
+			$this->RTEObj->RTEWrapStyle = '';
 			$this->RTEObj->RTEdivStyle .= (!empty($this->width)) ? 'width:' . $this->width . ';' : '';
+			$this->RTEObj->RTEWrapStyle .= (!empty($this->width)) ? 'width:' . $this->width . ';' : '';
 			$this->RTEObj->RTEdivStyle .= (!empty($this->height)) ? 'height:' . $this->height . ';' : '';
+			$this->RTEObj->RTEWrapStyle .= (!empty($this->height)) ? 'height:' . $this->height . ';' : '';
 
 			$RTEItem = $this->RTEObj->drawRTE($this, $this->table, $this->field, $row = array(), $this->PA, $this->specConf, $this->thisConfig, $this->RTEtypeVal, '', $this->thePidValue);
 			$markerArray['###ADDITIONALJS_PRE###'] = $this->additionalJS_initial . '

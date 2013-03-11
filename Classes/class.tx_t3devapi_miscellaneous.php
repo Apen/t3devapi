@@ -329,13 +329,13 @@ class tx_t3devapi_miscellaneous
 	 * This function return an array with ###value###
 	 *
 	 * @param array  $array
-	 * @param string $marker_prefix
+	 * @param string $markerPrefix
 	 * @return array
 	 */
-	public static function convertToMarkerArray($array, $marker_prefix = '') {
+	public static function convertToMarkerArray($array, $markerPrefix = '') {
 		$temp = array();
 		foreach ($array as $key => $val) {
-			$temp[self::convertToMarker($key, $marker_prefix)] = $val;
+			$temp[self::convertToMarker($key, $markerPrefix)] = $val;
 		}
 		return $temp;
 	}
@@ -344,11 +344,11 @@ class tx_t3devapi_miscellaneous
 	 * This function return a string with ###value###
 	 *
 	 * @param string  $value
-	 * @param string  $marker_prefix
+	 * @param string  $markerPrefix
 	 * @return string
 	 */
-	public static function convertToMarker($value, $marker_prefix = '') {
-		return '###' . strtoupper($marker_prefix . $value) . '###';
+	public static function convertToMarker($value, $markerPrefix = '') {
+		return '###' . strtoupper($markerPrefix . $value) . '###';
 	}
 
 	/**
@@ -958,7 +958,7 @@ class tx_t3devapi_miscellaneous
 		}
 		return $seconds;
 	}
-	
+
 	/**
 	 * Tests if the input can be interpreted as integer.
 	 *
@@ -969,20 +969,20 @@ class tx_t3devapi_miscellaneous
 		if ($var === '') {
 			return FALSE;
 		}
-		return (string) intval($var) === (string) $var;
+		return (string)intval($var) === (string)$var;
 	}
-	
+
 	/**
 	 * Forces the integer $theInt into the boundaries of $min and $max. If the $theInt is 'false' then the $zeroValue is applied.
 	 *
-	 * @param	integer		Input value
-	 * @param	integer		Lower limit
-	 * @param	integer		Higher limit
-	 * @param	integer		Default value if input is false.
-	 * @return	integer		The input value forced into the boundaries of $min and $max
+	 * @param    integer        Input value
+	 * @param    integer        Lower limit
+	 * @param    integer        Higher limit
+	 * @param    integer        Default value if input is false.
+	 * @return    integer        The input value forced into the boundaries of $min and $max
 	 */
 	public static function intInRange($theInt, $min, $max = 2000000000, $zeroValue = 0) {
-			// Returns $theInt as an integer in the integerspace from $min to $max
+		// Returns $theInt as an integer in the integerspace from $min to $max
 		$theInt = intval($theInt);
 		if ($zeroValue && !$theInt) {
 			$theInt = $zeroValue;
@@ -994,6 +994,43 @@ class tx_t3devapi_miscellaneous
 			$theInt = $max;
 		}
 		return $theInt;
+	}
+
+	/**
+	 * Strip the dot in a typoscript config array
+	 * For example, it is necessary to merge initial TCA and plugin TCA
+	 *
+	 * @param array $array a classic ts array with $array['tca.']['columns.']
+	 * @return array
+	 */
+	public static function stripDotInTsArray($array) {
+		foreach ($array as $key => $val) {
+			if (is_array($val)) {
+				$res[substr($key, 0, -1)] = self::stripDotInTsArray($val);
+			} else {
+				$res[$key] = $val;
+			}
+		}
+		return $res;
+	}
+
+	/**
+	 * Merge 2 multi-dimensionnal arrays with same key
+	 * For example, it is necessary to merge tca configuration
+	 *
+	 * @param array $src
+	 * @param array $dist
+	 * @return array
+	 */
+	public static function arrayMergeRecursiveReplace($src, $dist) {
+		foreach ($dist as $key => $value) {
+			if (isset($src[$key]) && is_array($value)) {
+				$src[$key] = self::arrayMergeRecursiveReplace(is_array($src[$key]) ? $src[$key] : array(), $value);
+			} else {
+				$src[$key] = $value;
+			}
+		}
+		return $src;
 	}
 
 }

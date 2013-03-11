@@ -23,44 +23,33 @@
  ***************************************************************/
 
 /**
- * ViewHelper to meta tags
+ * ViewHelper to write in header
  *
  * Example
- * <t3devapi:titleTag>{object.title}</t3devapi:titleTag>
+ * <t3devapi:header><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript"></script></t3devapi:header>
  *
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_TitleTagViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper
+class Tx_T3devapi_ViewHelpers_HeaderViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper
 {
 
 	/**
-	 * @var Tx_Extbase_Configuration_ConfigurationManagerInterface
-	 */
-	protected $configurationManager;
-
-	/**
-	 * @param Tx_Extbase_Configuration_ConfigurationManagerInterface An instance of the Configuration Manager
-	 * @return void
-	 */
-	public function injectConfigurationManager(Tx_Extbase_Configuration_ConfigurationManagerInterface $configurationManager) {
-		$this->configurationManager = $configurationManager;
-	}
-
-
-	/**
-	 * Override the title tag
+	 * Render the head addition
 	 *
+	 * @param string $key the key for additionalHeaderData; useful for overriding
 	 * @return void
 	 */
-	public function render() {
+	public function render($key = NULL) {
 		$content = $this->renderChildren();
-		$contentObjectData = $this->configurationManager->getContentObject()->getUserObjectType();
-		if (!empty($content) && ($this->configurationManager->getContentObject()->getUserObjectType() == tslib_cObj::OBJECTTYPE_USER)) {
-			$GLOBALS['TSFE']->page['title'] = $content;
-			$GLOBALS['TSFE']->indexedDocTitle = $content;
+
+		if ($key !== NULL) {
+			$GLOBALS['TSFE']->additionalHeaderData[$key] = $content;
+		} else {
+			$GLOBALS['TSFE']->additionalHeaderData[] = $content;
 		}
 	}
+
 }
 
 ?>

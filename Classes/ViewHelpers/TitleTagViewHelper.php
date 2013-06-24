@@ -31,8 +31,7 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_TitleTagViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper
-{
+class Tx_T3devapi_ViewHelpers_TitleTagViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
 
 	/**
 	 * @var Tx_Extbase_Configuration_ConfigurationManagerInterface
@@ -51,14 +50,20 @@ class Tx_T3devapi_ViewHelpers_TitleTagViewHelper extends Tx_Fluid_Core_ViewHelpe
 	/**
 	 * Override the title tag
 	 *
+	 * @param boolean $concat
 	 * @return void
 	 */
-	public function render() {
+	public function render($concat = FALSE) {
 		$content = $this->renderChildren();
 		$contentObjectData = $this->configurationManager->getContentObject()->getUserObjectType();
 		if (!empty($content) && ($this->configurationManager->getContentObject()->getUserObjectType() == tslib_cObj::OBJECTTYPE_USER)) {
-			$GLOBALS['TSFE']->page['title'] = $content;
-			$GLOBALS['TSFE']->indexedDocTitle = $content;
+			if ($concat === TRUE) {
+				$GLOBALS['TSFE']->page['title'] .= $content;
+				$GLOBALS['TSFE']->indexedDocTitle .= $content;
+			} else {
+				$GLOBALS['TSFE']->page['title'] = $content;
+				$GLOBALS['TSFE']->indexedDocTitle = $content;
+			}
 		}
 	}
 }

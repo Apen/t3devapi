@@ -46,23 +46,19 @@
  * @package climbing_sites
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-
-class tx_Tca_Map
-{
+class tx_Tca_Map {
 
 	/**
 	 * Renders the Google map.
 	 *
-	 * @param array $PA
+	 * @param array          $PA
 	 * @param t3lib_TCEforms $pObj
 	 * @return string
 	 */
 
 	public function render(array &$PA, t3lib_TCEforms $pObj) {
 
-		$version = class_exists('t3lib_utility_VersionNumber')
-				? t3lib_utility_VersionNumber::convertVersionNumberToInteger(TYPO3_version)
-				: t3lib_div::int_from_ver(TYPO3_version);
+		$version = class_exists('t3lib_utility_VersionNumber') ? t3lib_utility_VersionNumber::convertVersionNumberToInteger(TYPO3_version) : t3lib_div::int_from_ver(TYPO3_version);
 		if ($version < 4006000) {
 			$PA['parameters'] = $PA['fieldConf']['config']['parameters'];
 			/*$PA['parameters'] = array(

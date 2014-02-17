@@ -331,7 +331,6 @@ class tx_t3devapi_tceforms
 		if (isset($datas['password']) && empty($datas['password'])) {
 			unset($datas['password']);
 		}
-		//t3lib_div::debug($GLOBALS['TYPO3_DB']->UPDATEquery($this->table, 'uid=' . $this->uid, $datas));
 		$GLOBALS['TYPO3_DB']->exec_UPDATEquery($this->table, 'uid=' . $this->uid, $datas);
 		$this->writeCustomLog('edit', $datas);
 		$this->hookForUpdateRecord($datas);
@@ -387,8 +386,6 @@ class tx_t3devapi_tceforms
 		} else {
 			$content .= tx_t3devapi_html::renderLabel($this->getPrefix($field), $field . ' : ');
 		}
-
-		//t3lib_div::debug(array($this->tca['columns'][$field], $config, $field, $val), $field);
 
 		switch ($config['type']) {
 			case 'input':

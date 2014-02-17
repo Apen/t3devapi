@@ -34,8 +34,7 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class tx_t3devapi_templating
-{
+class tx_t3devapi_templating {
 	// Template object for frontend functions
 	public $templateContent = NULL;
 	// Parent object
@@ -51,7 +50,9 @@ class tx_t3devapi_templating
 		// Store parent object as a class variable
 		$this->pObj = $pObj;
 		$this->misc = new tx_t3devapi_miscellaneous($pObj);
-		require_once(PATH_t3lib . 'class.t3lib_parsehtml.php');
+		if (tx_t3devapi_miscellaneous::intFromVer(TYPO3_version) < 6002000) {
+			require_once(PATH_t3lib . 'class.t3lib_parsehtml.php');
+		}
 	}
 
 	/**
@@ -182,7 +183,7 @@ class tx_t3devapi_templating
 	/**
 	 * Finds view helpers used in the current subpart being worked on.
 	 *
-	 * @param    string   $content A string that should be searched for view helpers.
+	 * @param    string $content A string that should be searched for view helpers.
 	 * @return    array    A list of view helper names used in the template.
 	 */
 	protected function findViewHelpers($content) {
@@ -429,9 +430,9 @@ class tx_t3devapi_templating
 	 *
 	 * Supported operators are ==, !=, <, <=, >, >=, %
 	 *
-	 * @param string $comparand1     First comaprand
-	 * @param string $comparand2     Second comaprand
-	 * @param string $operator       Operator
+	 * @param string $comparand1 First comaprand
+	 * @param string $comparand2 Second comaprand
+	 * @param string $operator   Operator
 	 * @return boolean    Boolean evaluation of the condition.
 	 */
 	protected function evaluateCondition($comparand1, $comparand2, $operator) {
@@ -471,9 +472,9 @@ class tx_t3devapi_templating
 	 * Gets a list of view helper marker arguments for a given view helper from
 	 * the selected subpart.
 	 *
-	 * @param    string   $helperMarker      marker name, can be lower case, doesn't need the ### delimiters
-	 * @param    string   $subpart           subpart markup to search in
-	 * @param    boolean  $removeDuplicates  Optionally determines whether duplicate view helpers are removed. Defaults to TRUE.
+	 * @param    string  $helperMarker     marker name, can be lower case, doesn't need the ### delimiters
+	 * @param    string  $subpart          subpart markup to search in
+	 * @param    boolean $removeDuplicates Optionally determines whether duplicate view helpers are removed. Defaults to TRUE.
 	 * @return    array    array of markers
 	 */
 	protected function getViewHelperArgumentLists($helperMarker, $subpart, $removeDuplicates = TRUE) {

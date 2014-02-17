@@ -34,8 +34,7 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class tx_t3devapi_pibase
-{
+class tx_t3devapi_pibase {
 
 	/**
 	 * @var tslib_cObj
@@ -204,7 +203,12 @@ class tx_t3devapi_pibase
 	public function getRecords($from, $uids, $select = '*') {
 		$query['SELECT'] = $select;
 		$query['FROM'] = $from;
-		$query['WHERE'] = 'uid IN (' . mysql_real_escape_string($uids) . ')';
+		if (self::intFromVer(TYPO3_version) >= 6002000) {
+			$protect = 'mysqli_real_escape_string';
+		} else {
+			$protect = 'mysql_real_escape_string';
+		}
+		$query['WHERE'] = 'uid IN (' . $protect($uids) . ')';
 		$rows = tx_t3devapi_database::exec_SELECTgetRows($query, $this->conf['debug']);
 		return $rows;
 	}
@@ -539,7 +543,7 @@ class tx_t3devapi_pibase
 	/**
 	 * Converts $this->cObj->data['pi_flexform'] from XML string to flexForm array.
 	 *
-	 * @param string $field     Field name to convert
+	 * @param string $field Field name to convert
 	 * @return    void
 	 */
 	public function pi_initPIflexForm($field = 'pi_flexform') {
@@ -555,11 +559,11 @@ class tx_t3devapi_pibase
 	/**
 	 * Return value from somewhere inside a FlexForm structure
 	 *
-	 * @param    array      $T3FlexForm_array     FlexForm data
-	 * @param    string     $fieldName            Field name to extract
-	 * @param    string     $sheet                Sheet pointer, eg. "sDEF"
-	 * @param    string     $lang                 Language pointer, eg. "lDEF"
-	 * @param    string     $value                Value pointer, eg. "vDEF"
+	 * @param    array  $T3FlexForm_array FlexForm data
+	 * @param    string $fieldName        Field name to extract
+	 * @param    string $sheet            Sheet pointer, eg. "sDEF"
+	 * @param    string $lang             Language pointer, eg. "lDEF"
+	 * @param    string $value            Value pointer, eg. "vDEF"
 	 * @return    string        The content
 	 */
 	public function pi_getFFvalue($T3FlexForm_array, $fieldName, $sheet = 'sDEF', $lang = 'lDEF', $value = 'vDEF') {
@@ -572,9 +576,9 @@ class tx_t3devapi_pibase
 	/**
 	 * Returns part of $sheetArray pointed to by the keys in $fieldNameArray
 	 *
-	 * @param    array     $sheetArray      Multidimensiona array, typically FlexForm contents
-	 * @param    array     $fieldNameArr    Array where each value points to a key in the FlexForms content
-	 * @param    string    $value           Value for outermost key, typ. "vDEF" depending on language.
+	 * @param    array  $sheetArray   Multidimensiona array, typically FlexForm contents
+	 * @param    array  $fieldNameArr Array where each value points to a key in the FlexForms content
+	 * @param    string $value        Value for outermost key, typ. "vDEF" depending on language.
 	 * @return    mixed        The value, typ. string.
 	 */
 	public function pi_getFFvalueFromSheetArray($sheetArray, $fieldNameArr, $value) {
@@ -601,8 +605,8 @@ class tx_t3devapi_pibase
 	/**
 	 * Returns a commalist of page ids for a query (eg. 'WHERE pid IN (...)')
 	 *
-	 * @param    string         $pid_list  is a comma list of page ids (if empty current page is used)
-	 * @param    integer        $recursive is an integer >=0 telling how deep to dig for pids under each entry in $pid_list
+	 * @param    string  $pid_list  is a comma list of page ids (if empty current page is used)
+	 * @param    integer $recursive is an integer >=0 telling how deep to dig for pids under each entry in $pid_list
 	 * @return    string        List of PID values (comma separated)
 	 */
 	public function pi_getPidList($pid_list, $recursive = 0) {
@@ -631,7 +635,7 @@ class tx_t3devapi_pibase
 	/**
 	 * Returns the localized label of the LOCAL_LANG key, $key
 	 *
-	 * @param    string  $key      The key from the LOCAL_LANG array for which to return the value.
+	 * @param    string $key The key from the LOCAL_LANG array for which to return the value.
 	 * @return    string        The value from LOCAL_LANG.
 	 */
 	public function pi_getLL($key) {
@@ -641,7 +645,7 @@ class tx_t3devapi_pibase
 	/**
 	 * Wraps the input string in a <div> tag with the class attribute set to the prefixId.
 	 *
-	 * @param    string    $str    HTML content to wrap in the div-tags with the "main class" of the plugin
+	 * @param    string $str HTML content to wrap in the div-tags with the "main class" of the plugin
 	 * @return    string           HTML content wrapped, ready to return to the parent object.
 	 */
 	public function pi_wrapInBaseClass($str) {

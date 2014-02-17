@@ -34,8 +34,7 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class tx_t3devapi_miscellaneous
-{
+class tx_t3devapi_miscellaneous {
 	// Parent object
 	protected $pObj = NULL;
 
@@ -56,7 +55,11 @@ class tx_t3devapi_miscellaneous
 	 * @return void
 	 */
 	public static function debug($var = '', $header = '') {
-		t3lib_div::debug($var, $header);
+		if (class_exists('t3lib_utility_Debug')) {
+			t3lib_utility_Debug::debug($var, $header);
+		} else {
+			t3lib_div::debug($var, $header);
+		}
 	}
 
 	/**
@@ -178,12 +181,12 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * Resize or crop an image with the cImage object
 	 *
-	 * @param string  $image
-	 * @param string  $title
-	 * @param string  $alt
-	 * @param string  $width
-	 * @param string  $height
-	 * @param string  $londDesc
+	 * @param string $image
+	 * @param string $title
+	 * @param string $alt
+	 * @param string $width
+	 * @param string $height
+	 * @param string $londDesc
 	 * @return string the image (HTML)
 	 */
 	public function cImage($image, $title, $alt, $width, $height, $londDesc = '') {
@@ -343,8 +346,8 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function return a string with ###value###
 	 *
-	 * @param string  $value
-	 * @param string  $markerPrefix
+	 * @param string $value
+	 * @param string $markerPrefix
 	 * @return string
 	 */
 	public static function convertToMarker($value, $markerPrefix = '') {
@@ -394,7 +397,9 @@ class tx_t3devapi_miscellaneous
 	 * @return array
 	 */
 	public function loadTS($conf, $content) {
-		require_once(PATH_t3lib . 'class.t3lib_tsparser.php');
+		if (tx_t3devapi_miscellaneous::intFromVer(TYPO3_version) < 6002000) {
+			require_once(PATH_t3lib . 'class.t3lib_tsparser.php');
+		}
 		/** @var $tsparser t3lib_tsparser */
 		$tsparser = t3lib_div::makeInstance('t3lib_tsparser');
 		// Copy conf into existing setup
@@ -413,9 +418,11 @@ class tx_t3devapi_miscellaneous
 	 * @return array
 	 */
 	public function loadTypoScriptForBEModule($pid, $extKey) {
-		require_once(PATH_t3lib . 'class.t3lib_page.php');
-		require_once(PATH_t3lib . 'class.t3lib_tstemplate.php');
-		require_once(PATH_t3lib . 'class.t3lib_tsparser_ext.php');
+		if (tx_t3devapi_miscellaneous::intFromVer(TYPO3_version) < 6002000) {
+			require_once(PATH_t3lib . 'class.t3lib_page.php');
+			require_once(PATH_t3lib . 'class.t3lib_tstemplate.php');
+			require_once(PATH_t3lib . 'class.t3lib_tsparser_ext.php');
+		}
 		/** @var $sysPageObj t3lib_pageSelect */
 		$sysPageObj = t3lib_div::makeInstance('t3lib_pageSelect');
 		$rootLine = $sysPageObj->getRootLine($pid);
@@ -431,9 +438,9 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function return an array of a csv file
 	 *
-	 * @param string   $openFile
-	 * @param boolean  $columnsOnly
-	 * @param string   $delimiters
+	 * @param string  $openFile
+	 * @param boolean $columnsOnly
+	 * @param string  $delimiters
 	 * @return array
 	 */
 	public function csv2array($openFile, $columnsOnly = FALSE, $delimiters = ";") {
@@ -453,10 +460,10 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * This function return csv string of an array
 	 *
-	 * @param array    $buffer
-	 * @param string   $file
-	 * @param string   $delimiters
-	 * @param boolean  $stringonly
+	 * @param array   $buffer
+	 * @param string  $file
+	 * @param string  $delimiters
+	 * @param boolean $stringonly
 	 * @return string
 	 */
 	public function array2csv($buffer, $file, $delimiters = ";", $stringonly = FALSE) {
@@ -599,7 +606,7 @@ class tx_t3devapi_miscellaneous
 	 * @return void
 	 */
 	public function debugQuery() {
-		t3lib_div::debug($GLOBALS['TYPO3_DB']->debug_lastBuiltQuery, 'SQL');
+		self::debug($GLOBALS['TYPO3_DB']->debug_lastBuiltQuery, 'SQL');
 	}
 
 	/**
@@ -611,8 +618,8 @@ class tx_t3devapi_miscellaneous
 	public static function XCLASS($file) {
 		global $TYPO3_CONF_VARS;
 		if (defined(
-			'TYPO3_MODE'
-		) && isset($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS'][$file]) && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS'][$file]
+				'TYPO3_MODE'
+			) && isset($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS'][$file]) && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS'][$file]
 		) {
 			include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS'][$file]);
 		}
@@ -787,7 +794,12 @@ class tx_t3devapi_miscellaneous
 					}
 				}
 			} else {
-				$LOCAL_LANG = t3lib_div::readLLXMLfile($LLFile, end($langLoadList), $renderCharset);
+				if (self::intFromVer(TYPO3_version) < 6000000) {
+					$LOCAL_LANG = t3lib_div::readLLXMLfile($LLFile, end($langLoadList), $renderCharset);
+				} else {
+					$parser = t3lib_div::makeInstance('t3lib_l10n_parser_Llxml');
+					$LOCAL_LANG = $parser->getParsedData($LLFile, $GLOBALS['LANG']->lang);
+				}
 			}
 		} else {
 			$LOCAL_LANG = array();
@@ -823,7 +835,7 @@ class tx_t3devapi_miscellaneous
 	/**
 	 * Determines the rootpage ID for a given page.
 	 *
-	 * @param    int  $pageId  A page ID somewhere in a tree.
+	 * @param    int $pageId A page ID somewhere in a tree.
 	 * @return   int           The page's tree branch's root page ID
 	 */
 	public function getRootPageId($pageId) {
@@ -846,45 +858,37 @@ class tx_t3devapi_miscellaneous
 	 * @param int $pid
 	 * @return void
 	 */
-	public function buildTSFE($pid) {
-		require_once(PATH_t3lib . 'class.t3lib_timetrack.php');
-		require_once(PATH_t3lib . 'class.t3lib_tsparser_ext.php');
-		require_once(PATH_t3lib . 'class.t3lib_page.php');
-		require_once(PATH_t3lib . 'class.t3lib_stdgraphic.php');
-		require_once(PATH_site . 'typo3/sysext/cms/tslib/class.tslib_fe.php');
-		require_once(PATH_site . 'typo3/sysext/cms/tslib/class.tslib_content.php');
-		require_once(PATH_site . 'typo3/sysext/cms/tslib/class.tslib_gifbuilder.php');
-		require_once(PATH_site . 'typo3/sysext/cms/tslib/class.tslib_content.php');
-		require_once(PATH_t3lib . 'class.t3lib_div.php');
-
-		$temp_TSFEclassName = t3lib_div::makeInstanceClassName('tslib_fe');
+	public static function initTSFE($id) {
+		if (tx_additionalreports_util::intFromVer(TYPO3_version) < 6002000) {
+			require_once(PATH_t3lib . 'class.t3lib_befunc.php');
+			require_once(PATH_t3lib . 'stddb/tables.php');
+			require_once(PATH_tslib . 'class.tslib_pagegen.php');
+			require_once(PATH_tslib . 'class.tslib_fe.php');
+			require_once(PATH_t3lib . 'class.t3lib_page.php');
+			require_once(PATH_tslib . 'class.tslib_content.php');
+			require_once(PATH_t3lib . 'class.t3lib_userauth.php');
+			require_once(PATH_tslib . 'class.tslib_feuserauth.php');
+			require_once(PATH_t3lib . 'class.t3lib_tstemplate.php');
+			require_once(PATH_t3lib . 'class.t3lib_cs.php');
+		}
 
 		if (!is_object($GLOBALS['TT'])) {
-			$GLOBALS['TT'] = new t3lib_timeTrack;
-			$GLOBALS['TT']->start();
+			$GLOBALS['TT'] = t3lib_div::makeInstance('t3lib_TimeTrackNull');
 		}
 
-		if (!is_object($GLOBALS['TSFE']) && $pid) {
-			$GLOBALS['TSFE'] = new $temp_TSFEclassName($GLOBALS['TYPO3_CONF_VARS'], $pid, 0, 0, 0, 0, 0, 0);
-			$GLOBALS['TSFE']->tmpl = t3lib_div::makeInstance('t3lib_tsparser_ext');
-			$GLOBALS['TSFE']->sys_page = t3lib_div::makeInstance('t3lib_pageSelect');
-			$GLOBALS['TSFE']->tmpl->tt_track = 0; // Do not log time-performance information
-			$GLOBALS['TSFE']->tmpl->init();
-			$rootLine = $GLOBALS['TSFE']->sys_page->getRootLine($pid);
-			$GLOBALS['TSFE']->tmpl->runThroughTemplates($rootLine, 0);
-			$GLOBALS['TSFE']->tmpl->generateConfig();
-			$GLOBALS['TSFE']->tmpl->loaded = 1;
-			$GLOBALS['TSFE']->getConfigArray();
-			$GLOBALS['TSFE']->linkVars = '' . $GLOBALS['TSFE']->config['config']['linkVars'];
-			if ($GLOBALS['TSFE']->config['config']['simulateStaticDocuments_pEnc_onlyP']) {
-				foreach (t3lib_div::trimExplode(
-					         ',', $GLOBALS['TSFE']->config['config']['simulateStaticDocuments_pEnc_onlyP'], 1
-				         ) as $temp_p) {
-					$GLOBALS['TSFE']->pEncAllowedParamNames[$temp_p] = 1;
-				}
-			}
-			$GLOBALS['TSFE']->newCObj();
+		if (version_compare(TYPO3_version, '4.3.0', '<')) {
+			$tsfeClassName = t3lib_div::makeInstanceClassName('tslib_fe');
+			$GLOBALS['TSFE'] = new $tsfeClassName($GLOBALS['TYPO3_CONF_VARS'], $id, '');
+		} else {
+			$GLOBALS['TSFE'] = t3lib_div::makeInstance('tslib_fe', $GLOBALS['TYPO3_CONF_VARS'], $id, '');
 		}
+		$GLOBALS['TSFE']->connectToDB();
+		$GLOBALS['TSFE']->initFEuser();
+		//$GLOBALS['TSFE']->checkAlternativeIdMethods();
+		$GLOBALS['TSFE']->determineId();
+		$GLOBALS['TSFE']->getCompressedTCarray();
+		$GLOBALS['TSFE']->initTemplate();
+		$GLOBALS['TSFE']->getConfigArray();
 	}
 
 	/**
@@ -894,7 +898,7 @@ class tx_t3devapi_miscellaneous
 	 * will remove non alphanumeric characters from the word, so
 	 * "who's online" will be converted to "WhoSOnline"
 	 *
-	 * @param    string  $word  Word to convert to camel case
+	 * @param    string $word Word to convert to camel case
 	 * @return   string         UpperCamelCasedWord
 	 */
 	public static function camelize($word) {
@@ -905,7 +909,7 @@ class tx_t3devapi_miscellaneous
 	 * Returns a given CamelCasedString as an lowercase string with underscores.
 	 * Example: Converts BlogExample to blog_example, and minimalValue to minimal_value
 	 *
-	 * @param    string   $string String to be converted to lowercase underscore
+	 * @param    string $string String to be converted to lowercase underscore
 	 * @return   string            lowercase_and_underscored_string
 	 */
 	public static function camelCaseToLowerCaseUnderscored($string) {
@@ -916,7 +920,7 @@ class tx_t3devapi_miscellaneous
 	 * Returns a given string with underscores as UpperCamelCase.
 	 * Example: Converts blog_example to BlogExample
 	 *
-	 * @param    string    $string  String to be converted to camel case
+	 * @param    string $string String to be converted to camel case
 	 * @return   string             UpperCamelCasedWord
 	 */
 	public static function underscoredToUpperCamelCase($string) {
@@ -1031,6 +1035,17 @@ class tx_t3devapi_miscellaneous
 			}
 		}
 		return $src;
+	}
+
+	/**
+	 * Returns an integer from a three part version number, eg '4.12.3' -> 4012003
+	 *
+	 * @param    string $verNumberStr number on format x.x.x
+	 * @return   integer   Integer version of version number (where each part can count to 999)
+	 */
+	public static function intFromVer($verNumberStr) {
+		$verParts = explode('.', $verNumberStr);
+		return intval((int)$verParts[0] . str_pad((int)$verParts[1], 3, '0', STR_PAD_LEFT) . str_pad((int)$verParts[2], 3, '0', STR_PAD_LEFT));
 	}
 
 }

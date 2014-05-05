@@ -33,71 +33,81 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class tx_t3devapi_tceforms
-{
+class tx_t3devapi_tceforms {
 
 	/**
 	 * Table name
+	 *
 	 * @var string
 	 */
 	protected $table;
 
 	/**
 	 * List all the fields (string)
+	 *
 	 * @var string
 	 */
 	protected $fields;
 
 	/**
 	 * List all the fields (array)
+	 *
 	 * @var array
 	 */
 	protected $aFields;
 
 	/**
 	 * Current uid of the record (0=new)
+	 *
 	 * @var int
 	 */
 	protected $uid;
 
 	/**
 	 * TCA table of teh current table
+	 *
 	 * @var array
 	 */
 	protected $tca;
 
 	/**
 	 * Ref to the parent plugin
+	 *
 	 * @var $pObj tx_recordsmanagerfe_pi1
 	 */
 	protected $pObj;
 
 	/**
 	 * On submit form code
+	 *
 	 * @var string
 	 */
 	protected $onSubmit;
 
 	/**
 	 * Number of RTE on the page
+	 *
 	 * @var int
 	 */
 	protected $rteCounter;
 
 	/**
 	 * Name of the form
+	 *
 	 * @var string
 	 */
 	protected $formName;
 
 	/**
 	 * URL to submit
+	 *
 	 * @var string
 	 */
 	protected $actionUrl;
 
 	/**
 	 * List the default readonly fields
+	 *
 	 * @var string
 	 */
 	protected $readOnlyFields;
@@ -105,36 +115,42 @@ class tx_t3devapi_tceforms
 	/**
 	 * The current record with all fields
 	 * This is needed for the typoscript mapping
+	 *
 	 * @var array
 	 */
 	protected $currentRecord;
 
 	/**
 	 * Prefix use for URL parameter
+	 *
 	 * @var string
 	 */
 	protected $prefixId;
 
 	/**
 	 * Extension key
+	 *
 	 * @var string
 	 */
 	protected $extKey;
 
 	/**
 	 * Plugin parameters
+	 *
 	 * @var array
 	 */
 	protected $piVars;
 
 	/**
 	 * javascript code to validate fields
+	 *
 	 * @var string
 	 */
 	protected $addJs;
 
 	/**
 	 * Constructor
+	 *
 	 * @param tx_t3devapi_pibase $pObj
 	 */
 	public function __construct($pObj) {
@@ -331,6 +347,7 @@ class tx_t3devapi_tceforms
 		if (isset($datas['password']) && empty($datas['password'])) {
 			unset($datas['password']);
 		}
+		//t3lib_div::debug($GLOBALS['TYPO3_DB']->UPDATEquery($this->table, 'uid=' . $this->uid, $datas));
 		$GLOBALS['TYPO3_DB']->exec_UPDATEquery($this->table, 'uid=' . $this->uid, $datas);
 		$this->writeCustomLog('edit', $datas);
 		$this->hookForUpdateRecord($datas);
@@ -386,6 +403,8 @@ class tx_t3devapi_tceforms
 		} else {
 			$content .= tx_t3devapi_html::renderLabel($this->getPrefix($field), $field . ' : ');
 		}
+
+		//t3lib_div::debug(array($this->tca['columns'][$field], $config, $field, $val), $field);
 
 		switch ($config['type']) {
 			case 'input':
@@ -705,7 +724,38 @@ class tx_t3devapi_tceforms
 				$contentList .= '</ul>';
 			}
 
-			$content .= $contentList . tx_t3devapi_html::renderInputFile($this->getPrefix($field));
+			// $content .= $contentList . tx_t3devapi_html::renderInputFile($this->getPrefix($field));
+
+			// prepare other input file
+			$content .= $contentList;
+			if (!empty($aVal[0])) {
+				$nbToDisplay = $config['maxitems'] - count($aVal);
+			} else {
+				$nbToDisplay = $config['maxitems'];
+			}
+			for ($i = 1; $i <= $nbToDisplay; $i++) {
+				$id = tx_t3devapi_html::cleanId($this->getPrefix($field) . '_' . $i);
+				if ($i === 1) {
+					$content .= tx_t3devapi_html::renderInputFile($this->getPrefix($field) . '[]', array('id' => $id));
+				} else {
+					$content .= tx_t3devapi_html::renderInputFile($this->getPrefix($field) . '[]', array('style' => 'display:none;padding-top:5px;', 'id' => $id));
+				}
+			}
+
+			$content .= '<script type="text/javascript">';
+			$content .= '$(document).ready(function(){';
+			$content .= '$("#' . ($this->extKey . '_' . $this->pObj->cObj->data['uid'] . '_' . $field) . ' input[type=file]").on("change", function(){';
+			$content .= 'if ($(this).next().is("input[type=file]")) {';
+			$content .= 'if ($(this).val() != "") {';
+			$content .= '$(this).next().show();';
+			$content .= '} else {';
+			$content .= '$(this).next().hide();';
+			$content .= '}';
+			$content .= '}';
+			$content .= '});';
+			$content .= '});';
+			$content .= '</script>';
+
 			return $content;
 		}
 
@@ -1075,29 +1125,33 @@ class tx_t3devapi_tceforms
 				}
 			}
 
+			$uploadedFilenames = array_filter($_FILES[$this->prefixId]['name'][$field]);
+			$uploadedTmpFilenames = array_filter($_FILES[$this->prefixId]['tmp_name'][$field]);
 			// upload new file
-			if (!empty($_FILES[$this->prefixId]['name'][$field])) {
+			if (!empty($uploadedFilenames)) {
 				if (!empty($config['maxitems'])) {
 					if (count($existingFiles) == $config['maxitems']) {
 						$this->validation->setError(sprintf($this->getLabel('uploadlimit'), $config['maxitems']));
 					}
 				}
 
-				$file = $_FILES[$this->prefixId]['tmp_name'][$field];
-				$fileFunc = t3lib_div::makeInstance('t3lib_basicFileFunctions');
-				$name = $fileFunc->getUniqueName($_FILES[$this->prefixId]['name'][$field], PATH_site . $config['uploadfolder']);
-				$fileName = substr($name, strlen(PATH_site . $config['uploadfolder']) + 1);
-				$ext = pathinfo($fileName, PATHINFO_EXTENSION);
-				if (!empty($config['allowed'])) {
-					if ($this->validation->isInList($ext, $config['allowed'], sprintf($this->getLabel('errors.fileextension'), $this->getFieldLabel($field), $config['allowed'])
-					) === TRUE
-					) {
+				foreach ($uploadedFilenames as $keyFilename => $filename) {
+					$file = $uploadedTmpFilenames[$keyFilename];
+					$fileFunc = t3lib_div::makeInstance('t3lib_basicFileFunctions');
+					$name = $fileFunc->getUniqueName($filename, PATH_site . $config['uploadfolder']);
+					$fileName = substr($name, strlen(PATH_site . $config['uploadfolder']) + 1);
+					$ext = pathinfo($fileName, PATHINFO_EXTENSION);
+					if (!empty($config['allowed'])) {
+						if ($this->validation->isInList($ext, $config['allowed'], sprintf($this->getLabel('errors.fileextension'), $this->getFieldLabel($field), $config['allowed'])
+							) === TRUE
+						) {
+							t3lib_div::upload_copy_move($file, $name);
+							$existingFiles[] = $fileName;
+						}
+					} else {
 						t3lib_div::upload_copy_move($file, $name);
 						$existingFiles[] = $fileName;
 					}
-				} else {
-					t3lib_div::upload_copy_move($file, $name);
-					$existingFiles[] = $fileName;
 				}
 			}
 
@@ -1312,6 +1366,7 @@ class tx_t3devapi_tceforms
 
 	/**
 	 * Set a prefixId
+	 *
 	 * @param string $prefixId
 	 */
 	public function setPrefixId($prefixId) {
@@ -1321,6 +1376,7 @@ class tx_t3devapi_tceforms
 
 	/**
 	 * Set the extension key
+	 *
 	 * @param string $extKey
 	 */
 	public function setExtKey($extKey) {

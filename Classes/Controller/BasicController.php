@@ -34,8 +34,12 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_Controller_BasicController extends Tx_Extbase_MVC_Controller_ActionController
-{
+class Tx_T3devapi_Controller_BasicController extends Tx_Extbase_MVC_Controller_ActionController {
+
+	/**
+	 * @var array
+	 */
+	protected $piVars = array();
 
 	/**
 	 * Initialize view path if settings is passed (ts, flexform...)
@@ -92,6 +96,7 @@ class Tx_T3devapi_Controller_BasicController extends Tx_Extbase_MVC_Controller_A
 
 		$argKey = strtolower('tx_' . $this->request->getControllerExtensionKey() . '_' . $this->request->getPluginName());
 		$piVars = $this->request->getArguments();
+		$this->piVars = $this->request->getArguments();
 		$pivarsparams = array();
 		foreach ($piVars as $pivarkey => $pivarvalue) {
 			$pivarsparams[$argKey][$pivarkey] = $pivarvalue;

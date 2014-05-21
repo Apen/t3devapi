@@ -78,7 +78,7 @@ class Tx_T3devapi_Controller_BasicController extends Tx_Extbase_MVC_Controller_A
 
 		$this->settings = $originalSettings;
 		$this->view->assign('settings', $this->settings);
-		
+
 		$orderDirection = Tx_Extbase_Persistence_Query::ORDER_DESCENDING;
 		$orderBy = 'title';
 

@@ -64,6 +64,12 @@ class Tx_T3devapi_ViewHelpers_TitleTagViewHelper extends Tx_Fluid_Core_ViewHelpe
 				$GLOBALS['TSFE']->page['title'] = $content;
 				$GLOBALS['TSFE']->indexedDocTitle = $content;
 			}
+		} else {
+			if ($concat === TRUE) {
+				$GLOBALS['TSFE']->content = preg_replace('@<title>(.*?)</title>@i', '<title>' . $content . ' $1</title>', $GLOBALS['TSFE']->content);
+			} else {
+				$GLOBALS['TSFE']->content = preg_replace('@<title>(.*?)</title>@i', '<title>' . $content . '</title>', $GLOBALS['TSFE']->content);
+			}
 		}
 	}
 }

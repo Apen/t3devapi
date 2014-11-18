@@ -36,95 +36,97 @@
  */
 class Tx_T3devapi_Controller_BasicController extends Tx_Extbase_MVC_Controller_ActionController {
 
-	/**
-	 * @var array
-	 */
-	protected $piVars = array();
+    /**
+     * @var array
+     */
+    protected $piVars = array();
 
-	/**
-	 * Initialize view path if settings is passed (ts, flexform...)
-	 *
-	 * @param Tx_Extbase_MVC_View_ViewInterface $view
-	 */
-	protected function initializeView(Tx_Extbase_MVC_View_ViewInterface $view) {
-		if (!empty($this->settings['rootpath'])) {
-			$view->setTemplateRootPath(PATH_site . trim($this->settings['rootpath']));
-		}
-	}
+    /**
+     * Initialize view path if settings is passed (ts, flexform...)
+     *
+     * @param Tx_Extbase_MVC_View_ViewInterface $view
+     */
+    protected function initializeView(Tx_Extbase_MVC_View_ViewInterface $view) {
+        if (!empty($this->settings['rootpath'])) {
+            $view->setTemplateRootPath(PATH_site . trim($this->settings['rootpath']));
+        }
+    }
 
-	/**
-	 * Initialiaze the settings from the flexform
-	 *
-	 * @param $repository string the repository name
-	 * @return void
-	 */
-	protected function initializeSettings($repository) {
-		$extensionName = t3lib_div::camelCaseToLowerCaseUnderscored($this->extensionName);
+    /**
+     * Initialiaze the settings from the flexform
+     *
+     * @param $repository string the repository name
+     * @return void
+     */
+    protected function initializeSettings($repository) {
+        $extensionName = t3lib_div::camelCaseToLowerCaseUnderscored($this->extensionName);
 
-		$tsSettings = $this->configurationManager->getConfiguration(
-			Tx_Extbase_Configuration_ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
-			$extensionName,
-			''
-		);
-		$originalSettings = $this->configurationManager->getConfiguration(
-			Tx_Extbase_Configuration_ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS
-		);
+        $tsSettings = $this->configurationManager->getConfiguration(
+            Tx_Extbase_Configuration_ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
+            $extensionName,
+            ''
+        );
+        $originalSettings = $this->configurationManager->getConfiguration(
+            Tx_Extbase_Configuration_ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS
+        );
 
-		foreach ($tsSettings['settings'] as $settingKey => $settingValue) {
-			if (empty($originalSettings[$settingKey])) {
-				$originalSettings[$settingKey] = $settingValue;
-			}
-		}
+        if (!empty($tsSettings['settings'])) {
+            foreach ($tsSettings['settings'] as $settingKey => $settingValue) {
+                if (empty($originalSettings[$settingKey])) {
+                    $originalSettings[$settingKey] = $settingValue;
+                }
+            }
+        }
 
-		$this->settings = $originalSettings;
-		$this->view->assign('settings', $this->settings);
+        $this->settings = $originalSettings;
+        $this->view->assign('settings', $this->settings);
 
-		$orderDirection = Tx_Extbase_Persistence_Query::ORDER_DESCENDING;
-		$orderBy = 'title';
+        $orderDirection = Tx_Extbase_Persistence_Query::ORDER_DESCENDING;
+        $orderBy = 'title';
 
-		if (!empty($this->settings['orderDirection'])) {
-			switch ($this->settings['orderDirection']) {
-				case 'desc':
-					$orderDirection = Tx_Extbase_Persistence_Query::ORDER_DESCENDING;
-					break;
-				case 'asc':
-					$orderDirection = Tx_Extbase_Persistence_Query::ORDER_ASCENDING;
-					break;
-			}
-		}
+        if (!empty($this->settings['orderDirection'])) {
+            switch ($this->settings['orderDirection']) {
+                case 'desc':
+                    $orderDirection = Tx_Extbase_Persistence_Query::ORDER_DESCENDING;
+                    break;
+                case 'asc':
+                    $orderDirection = Tx_Extbase_Persistence_Query::ORDER_ASCENDING;
+                    break;
+            }
+        }
 
-		if (!empty($this->settings['orderBy'])) {
-			$orderBy = $this->settings['orderBy'];
-			$this->$repository->setQueryOrderings(array($orderBy => $orderDirection));
-		}
+        if (!empty($this->settings['orderBy'])) {
+            $orderBy = $this->settings['orderBy'];
+            $this->$repository->setQueryOrderings(array($orderBy => $orderDirection));
+        }
 
-		if (!empty($this->settings['offset'])) {
-			$this->$repository->setQueryOffset($this->settings['offset']);
-		}
+        if (!empty($this->settings['offset'])) {
+            $this->$repository->setQueryOffset($this->settings['offset']);
+        }
 
-		if (!empty($this->settings['limit'])) {
-			$this->$repository->setQueryLimit($this->settings['limit']);
-		}
+        if (!empty($this->settings['limit'])) {
+            $this->$repository->setQueryLimit($this->settings['limit']);
+        }
 
-		if (!empty($this->settings['startingpoint'])) {
-			$this->$repository->setStoragePage($this->settings['startingpoint']);
-		}
+        if (!empty($this->settings['startingpoint'])) {
+            $this->$repository->setStoragePage($this->settings['startingpoint']);
+        }
 
-		if (!empty($this->settings['listUID'])) {
-			$this->$repository->setUidList($this->settings['listUID']);
-		}
+        if (!empty($this->settings['listUID'])) {
+            $this->$repository->setUidList($this->settings['listUID']);
+        }
 
-		$argKey = strtolower('tx_' . $this->request->getControllerExtensionKey() . '_' . $this->request->getPluginName());
-		$piVars = $this->request->getArguments();
-		$this->piVars = $this->request->getArguments();
-		$pivarsparams = array();
-		foreach ($piVars as $pivarkey => $pivarvalue) {
-			$pivarsparams[$argKey][$pivarkey] = $pivarvalue;
-		}
-		$this->$repository->setPiVars($piVars);
-		$this->view->assign('pivars', $piVars);
-		$this->view->assign('pivarsparams', $pivarsparams);
-		$this->view->assign('argkey', $argKey);
-	}
+        $argKey = strtolower('tx_' . $this->request->getControllerExtensionKey() . '_' . $this->request->getPluginName());
+        $piVars = $this->request->getArguments();
+        $this->piVars = $this->request->getArguments();
+        $pivarsparams = array();
+        foreach ($piVars as $pivarkey => $pivarvalue) {
+            $pivarsparams[$argKey][$pivarkey] = $pivarvalue;
+        }
+        $this->$repository->setPiVars($piVars);
+        $this->view->assign('pivars', $piVars);
+        $this->view->assign('pivarsparams', $pivarsparams);
+        $this->view->assign('argkey', $argKey);
+    }
 
 }

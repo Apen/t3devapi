@@ -34,40 +34,39 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_Utility_Page
-{
-	/**
-	 * Find all ids from given ids and level
-	 *
-	 * @param string  $pidList   comma seperated list of ids
-	 * @param integer $recursive recursive levels
-	 * @return string comma seperated list of ids
-	 */
-	public static function extendPidListByChildren($pidList = '', $recursive = 0) {
-		if ($recursive <= 0) {
-			return $pidList;
-		}
+class Tx_T3devapi_Utility_Page {
+    /**
+     * Find all ids from given ids and level
+     *
+     * @param string  $pidList   comma seperated list of ids
+     * @param integer $recursive recursive levels
+     * @return string comma seperated list of ids
+     */
+    public static function extendPidListByChildren($pidList = '', $recursive = 0) {
+        if ($recursive <= 0) {
+            return $pidList;
+        }
 
-		$cObj = t3lib_div::makeInstance('tslib_cObj');
+        $cObj = t3lib_div::makeInstance('tslib_cObj');
 
-		$recursive = Tx_T3devapi_Utility_Compatibility::forceIntegerInRange($recursive, 0);
+        $recursive = Tx_T3devapi_Utility_Compatibility::forceIntegerInRange($recursive, 0);
 
-		$pidList = array_unique(t3lib_div::trimExplode(',', $pidList, 1));
+        $pidList = array_unique(t3lib_div::trimExplode(',', $pidList, 1));
 
-		$result = array();
+        $result = array();
 
-		foreach ($pidList as $pid) {
-			$pid = Tx_T3devapi_Utility_Compatibility::forceIntegerInRange($pid, 0);
-			if ($pid) {
-				$children = $cObj->getTreeList(-1 * $pid, $recursive);
-				if ($children) {
-					$result[] = $children;
-				}
-			}
-		}
+        foreach ($pidList as $pid) {
+            $pid = Tx_T3devapi_Utility_Compatibility::forceIntegerInRange($pid, 0);
+            if ($pid) {
+                $children = $cObj->getTreeList(-1 * $pid, $recursive, 0, TRUE);
+                if ($children) {
+                    $result[] = $children;
+                }
+            }
+        }
 
-		return implode(',', $result);
-	}
+        return implode(',', $result);
+    }
 }
 
 ?>

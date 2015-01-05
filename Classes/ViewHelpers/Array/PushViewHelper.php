@@ -50,7 +50,10 @@ class Tx_T3devapi_ViewHelpers_Array_PushViewHelper extends Tx_Fluid_Core_ViewHel
     public function render() {
         $name = $this->arguments['as'];
         $value = NULL;
-        if (!empty($this->arguments['array']) && !empty($this->arguments['value'])) {
+        if (empty($this->arguments['array'])) {
+            $this->arguments['array'] = array();
+        }
+        if (!empty($this->arguments['value'])) {
             array_push($this->arguments['array'], $this->arguments['value']);
             $value = $this->arguments['array'];
         }

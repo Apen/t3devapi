@@ -2,7 +2,7 @@
 
 $EM_CONF[$_EXTKEY] = array(
     'title'            => 'TYPO3 Developer API',
-    'description'      => 'A Powerful API for your (my ?) TYPO3 developments. No manual but the classes are well documented :-)',
+    'description'      => '!!! No more features added, just some maintenance release to follow the LTS !!! A Powerful API for your (my ?) TYPO3 developments. No manual but the classes are well documented :-) ',
     'category'         => 'misc',
     'version'          => '1.1.0',
     'state'            => 'stable',

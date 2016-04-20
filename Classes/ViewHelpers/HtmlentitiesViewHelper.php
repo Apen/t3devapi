@@ -31,37 +31,39 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_HtmlentitiesViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class Tx_T3devapi_ViewHelpers_HtmlentitiesViewHelper extends TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
+{
 
-	/**
-	 * Disable the escaping interceptor because otherwise the child nodes would be escaped before this view helper
-	 * can decode the text's entities.
-	 *
-	 * @var boolean
-	 */
-	protected $escapingInterceptorEnabled = FALSE;
+    /**
+     * Disable the escaping interceptor because otherwise the child nodes would be escaped before this view helper
+     * can decode the text's entities.
+     *
+     * @var boolean
+     */
+    protected $escapingInterceptorEnabled = false;
 
-	/**
-	 * Escapes special characters with their escaped counterparts as needed using PHPs htmlentities() function.
-	 *
-	 * @param string  $value        string to format
-	 * @param boolean $keepQuotes   if TRUE, single and double quotes won&#39;t be replaced (sets ENT_NOQUOTES flag)
-	 * @param string  $encoding
-	 * @param boolean $doubleEncode If FALSE existing html entities won&#39;t be encoded, the default is to convert everything.
-	 * @return string the altered string
-	 * @see http://www.php.net/manual/function.htmlentities.php
-	 * @api
-	 */
-	public function render($value = NULL, $keepQuotes = FALSE, $encoding = 'UTF-8', $doubleEncode = TRUE) {
-		if ($value === NULL) {
-			$value = $this->renderChildren();
-		}
-		if (!is_string($value)) {
-			return $value;
-		}
-		$flags = $keepQuotes ? ENT_NOQUOTES : ENT_COMPAT;
-		return htmlentities($value, $flags, $encoding, $doubleEncode);
-	}
+    /**
+     * Escapes special characters with their escaped counterparts as needed using PHPs htmlentities() function.
+     *
+     * @param string  $value        string to format
+     * @param boolean $keepQuotes   if TRUE, single and double quotes won&#39;t be replaced (sets ENT_NOQUOTES flag)
+     * @param string  $encoding
+     * @param boolean $doubleEncode If FALSE existing html entities won&#39;t be encoded, the default is to convert everything.
+     * @return string the altered string
+     * @see http://www.php.net/manual/function.htmlentities.php
+     * @api
+     */
+    public function render($value = null, $keepQuotes = false, $encoding = 'UTF-8', $doubleEncode = true)
+    {
+        if ($value === null) {
+            $value = $this->renderChildren();
+        }
+        if (!is_string($value)) {
+            return $value;
+        }
+        $flags = $keepQuotes ? ENT_NOQUOTES : ENT_COMPAT;
+        return htmlentities($value, $flags, $encoding, $doubleEncode);
+    }
 
 }
 

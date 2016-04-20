@@ -19,9 +19,11 @@
  * @subpackage Fluid
  * @version
  */
-class Tx_T3devapi_ViewHelpers_Powermail_CorrectTextAnswerViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class Tx_T3devapi_ViewHelpers_Powermail_CorrectTextAnswerViewHelper extends TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
+{
 
-    public function render(\In2code\Powermail\Domain\Model\Answer $answer = NULL) {
+    public function render(\In2code\Powermail\Domain\Model\Answer $answer = null)
+    {
 
         $textAnswer = '';
 
@@ -39,11 +41,13 @@ class Tx_T3devapi_ViewHelpers_Powermail_CorrectTextAnswerViewHelper extends Tx_F
                     $i = 0;
                     foreach ($answerValue as $value) {
                         foreach ($possibleAnswers as $possibleAnswer) {
-                            if ($possibleAnswer['value'] == $value)
+                            if ($possibleAnswer['value'] == $value) {
                                 $textAnswer .= $possibleAnswer['label'];
+                            }
                         }
-                        if ($i == (count($possibleAnswers) - 1))
+                        if ($i == (count($possibleAnswers) - 1)) {
                             $textAnswer .= ', ';
+                        }
                         $i++;
                     }
                     break;

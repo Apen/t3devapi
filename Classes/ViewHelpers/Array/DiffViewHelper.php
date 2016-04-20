@@ -28,7 +28,8 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_Array_DiffViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class Tx_T3devapi_ViewHelpers_Array_DiffViewHelper extends TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
+{
 
     /**
      * Initialize arguments.
@@ -36,10 +37,11 @@ class Tx_T3devapi_ViewHelpers_Array_DiffViewHelper extends Tx_Fluid_Core_ViewHel
      * @return void
      * @api
      */
-    public function initializeArguments() {
-        $this->registerArgument('as', 'string', 'Template variable name to use', TRUE, NULL);
-        $this->registerArgument('array1', 'array', 'First array', TRUE, NULL);
-        $this->registerArgument('array2', 'array', 'First array', TRUE, NULL);
+    public function initializeArguments()
+    {
+        $this->registerArgument('as', 'string', 'Template variable name to use', true, null);
+        $this->registerArgument('array1', 'array', 'First array', true, null);
+        $this->registerArgument('array2', 'array', 'First array', true, null);
     }
 
     /**
@@ -47,13 +49,14 @@ class Tx_T3devapi_ViewHelpers_Array_DiffViewHelper extends Tx_Fluid_Core_ViewHel
      *
      * @return array
      */
-    public function render() {
+    public function render()
+    {
         $name = $this->arguments['as'];
-        $value = NULL;
+        $value = null;
         if (!empty($this->arguments['array1']) && !empty($this->arguments['array1'])) {
             $value = array_diff($this->arguments['array1'], $this->arguments['array2']);
         }
-        if ($name === NULL) {
+        if ($name === null) {
             return $value;
         } else {
             if ($this->templateVariableContainer->exists($name)) {
@@ -61,7 +64,7 @@ class Tx_T3devapi_ViewHelpers_Array_DiffViewHelper extends Tx_Fluid_Core_ViewHel
             }
             $this->templateVariableContainer->add($name, $value);
         }
-        return NULL;
+        return null;
     }
 
 }

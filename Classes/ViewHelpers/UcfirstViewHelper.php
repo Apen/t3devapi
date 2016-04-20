@@ -33,19 +33,20 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_UcfirstViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper
+class Tx_T3devapi_ViewHelpers_UcfirstViewHelper extends TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {
 
-	/**
-	 * @param string $string
-	 * @return string
-	 */
-	public function render($string = NULL) {
-		if ($string === NULL) {
-			$string = $this->renderChildren();
-		}
-		return ucfirst($string);
-	}
+    /**
+     * @param string $string
+     * @return string
+     */
+    public function render($string = null)
+    {
+        if ($string === null) {
+            $string = $this->renderChildren();
+        }
+        return ucfirst($string);
+    }
 
 }
 

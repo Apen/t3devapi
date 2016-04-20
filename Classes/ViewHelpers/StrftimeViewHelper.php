@@ -33,41 +33,42 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_StrftimeViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper
+class Tx_T3devapi_ViewHelpers_StrftimeViewHelper extends TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {
 
-	/**
-	 * Render the supplied DateTime object as a formatted date using strftime.
-	 *
-	 * @param mixed  $date   either a DateTime object or a string (UNIX-Timestamp)
-	 * @param string $format Format String which is taken to format the Date/Time
-	 * @return string Formatted date
-	 */
-	public function render($date = NULL, $format = '%A, %d. %B %Y') {
-		if ($date === NULL) {
-			$date = $this->renderChildren();
-			if ($date === NULL) {
-				// current timestamp
-				$date = time();
-			}
-		}
+    /**
+     * Render the supplied DateTime object as a formatted date using strftime.
+     *
+     * @param mixed  $date   either a DateTime object or a string (UNIX-Timestamp)
+     * @param string $format Format String which is taken to format the Date/Time
+     * @return string Formatted date
+     */
+    public function render($date = null, $format = '%A, %d. %B %Y')
+    {
+        if ($date === null) {
+            $date = $this->renderChildren();
+            if ($date === null) {
+                // current timestamp
+                $date = time();
+            }
+        }
 
-		$locales = setlocale(LC_ALL, '0');
+        $locales = setlocale(LC_ALL, '0');
 
-		if ($date instanceof DateTime) {
-			$content = strftime($format, $date->format('U'));
-			if (stristr($locales, 'utf-8') !== FALSE) {
-				return $content;
-			}
-			return utf8_encode($content);
-		}
+        if ($date instanceof DateTime) {
+            $content = strftime($format, $date->format('U'));
+            if (stristr($locales, 'utf-8') !== false) {
+                return $content;
+            }
+            return utf8_encode($content);
+        }
 
-		$content = strftime($format, (int)$date);
-		if (stristr($locales, 'utf-8') !== FALSE) {
-			return $content;
-		}
-		return utf8_encode($content);
-	}
+        $content = strftime($format, (int)$date);
+        if (stristr($locales, 'utf-8') !== false) {
+            return $content;
+        }
+        return utf8_encode($content);
+    }
 
 }
 

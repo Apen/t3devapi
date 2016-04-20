@@ -34,23 +34,25 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_Utility_Page {
+class Tx_T3devapi_Utility_Page
+{
 
     /**
      * Find all ids from given ids and level
      *
-     * @param string $pidList comma separated list of ids
+     * @param string  $pidList   comma separated list of ids
      * @param integer $recursive recursive levels
      * @return string comma separated list of ids
      */
-    public static function extendPidListByChildren($pidList = '', $recursive = 0) {
+    public static function extendPidListByChildren($pidList = '', $recursive = 0)
+    {
         $recursive = (int)$recursive;
         if ($recursive <= 0) {
             return $pidList;
         }
-        $queryGenerator = t3lib_div::makeInstance('t3lib_queryGenerator');
+        $queryGenerator = TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Database\\QueryGenerator');
         $recursiveStoragePids = $pidList;
-        $storagePids = t3lib_div::intExplode(',', $pidList);
+        $storagePids = \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode(',', $pidList);
         foreach ($storagePids as $startPid) {
             $pids = $queryGenerator->getTreeList($startPid, $recursive, 0, 'hidden=0');
             if (strlen($pids) > 0) {

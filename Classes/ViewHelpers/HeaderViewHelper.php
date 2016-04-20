@@ -31,24 +31,25 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_HeaderViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper
+class Tx_T3devapi_ViewHelpers_HeaderViewHelper extends TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {
 
-	/**
-	 * Render the head addition
-	 *
-	 * @param string $key the key for additionalHeaderData; useful for overriding
-	 * @return void
-	 */
-	public function render($key = NULL) {
-		$content = $this->renderChildren();
+    /**
+     * Render the head addition
+     *
+     * @param string $key the key for additionalHeaderData; useful for overriding
+     * @return void
+     */
+    public function render($key = null)
+    {
+        $content = $this->renderChildren();
 
-		if ($key !== NULL) {
-			$GLOBALS['TSFE']->additionalHeaderData[$key] = $content;
-		} else {
-			$GLOBALS['TSFE']->additionalHeaderData[] = $content;
-		}
-	}
+        if ($key !== null) {
+            $GLOBALS['TSFE']->additionalHeaderData[$key] = $content;
+        } else {
+            $GLOBALS['TSFE']->additionalHeaderData[] = $content;
+        }
+    }
 
 }
 

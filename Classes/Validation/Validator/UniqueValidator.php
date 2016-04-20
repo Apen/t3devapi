@@ -34,39 +34,42 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_Validation_Validator_UniqueValidator extends Tx_Extbase_Validation_Validator_AbstractValidator {
+class Tx_T3devapi_Validation_Validator_UniqueValidator extends Tx_Extbase_Validation_Validator_AbstractValidator
+{
 
-	/**
-	 * @var Tx_Extbase_Object_ObjectManager
-	 */
-	protected $objectManager;
+    /**
+     * @var Tx_Extbase_Object_ObjectManager
+     */
+    protected $objectManager;
 
-	/**
-	 * Inject the objectManager
-	 *
-	 * @param Tx_Extbase_Object_ObjectManager objectManager
-	 * @return void
-	 */
-	public function injectObjectManager(Tx_Extbase_Object_ObjectManager $objectManager) {
-		$this->objectManager = $objectManager;
-	}
+    /**
+     * Inject the objectManager
+     *
+     * @param Tx_Extbase_Object_ObjectManager objectManager
+     * @return void
+     */
+    public function injectObjectManager(Tx_Extbase_Object_ObjectManager $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
 
-	/**
-	 * @param string $value
-	 * @return bool
-	 */
-	public function isValid($value) {
-		if ($this->options['repository'] && $this->options['property']) {
-			$repository = $this->objectManager->get($this->options['repository']);
-			$methodName = 'countBy' . ucfirst($this->options['property']);
-			$count = $repository->$methodName($value);
-			if ($count == 0) {
-				return TRUE;
-			} else {
-				$this->addError($this->options['property'] . ' is not unique', 1398325655);
-				return FALSE;
-			}
-		}
-	}
+    /**
+     * @param string $value
+     * @return bool
+     */
+    public function isValid($value)
+    {
+        if ($this->options['repository'] && $this->options['property']) {
+            $repository = $this->objectManager->get($this->options['repository']);
+            $methodName = 'countBy' . ucfirst($this->options['property']);
+            $count = $repository->$methodName($value);
+            if ($count == 0) {
+                return true;
+            } else {
+                $this->addError($this->options['property'] . ' is not unique', 1398325655);
+                return false;
+            }
+        }
+    }
 
 }

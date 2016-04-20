@@ -34,18 +34,15 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_Utility_CompatibilityExtension {
+class Tx_T3devapi_Utility_CompatibilityExtension
+{
 
-	public static function includeLocalLang($extKey) {
-		if (Tx_T3devapi_Utility_Compatibility::isGreaterThanOrEqual('6.0')) {
-			$llFile = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($extKey) . 'locallang.xml';
-			$localLangParser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Localization\Parser\LocallangXmlParser');
-			$LOCAL_LANG = $localLangParser->getParsedData($llFile, $GLOBALS['LANG']->lang);
-		} else {
-			$llFile = t3lib_extMgm::extPath($extKey) . 'locallang.xml';
-			$LOCAL_LANG = t3lib_div::readLLXMLfile($llFile, $GLOBALS['LANG']->lang);
-		}
-		return $LOCAL_LANG;
-	}
+    public static function includeLocalLang($extKey)
+    {
+        $llFile = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($extKey) . 'locallang.xml';
+        $localLangParser = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\CMS\Core\Localization\Parser\LocallangXmlParser');
+        $LOCAL_LANG = $localLangParser->getParsedData($llFile, $GLOBALS['LANG']->lang);
+        return $LOCAL_LANG;
+    }
 
 }

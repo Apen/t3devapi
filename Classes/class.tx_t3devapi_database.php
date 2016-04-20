@@ -36,194 +36,202 @@
  */
 class tx_t3devapi_database
 {
-	/**
-	 * Constructor
-	 */
-	public function __construct() {
-	}
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+    }
 
 
-	/**
-	 * Executes a select based on input query parts array
-	 *
-	 * @param    array    $queryParts    Query parts array
-	 * @param    boolean  $debug
-	 * @return   pointer        MySQL select result pointer / DBAL object
-	 * @see exec_SELECTquery()
-	 */
-	public static function exec_SELECT_queryArray($queryParts, $debug = FALSE) {
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
+    /**
+     * Executes a select based on input query parts array
+     *
+     * @param    array   $queryParts Query parts array
+     * @param    boolean $debug
+     * @return   pointer        MySQL select result pointer / DBAL object
+     * @see exec_SELECTquery()
+     */
+    public static function exec_SELECT_queryArray($queryParts, $debug = false)
+    {
+        $res = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($queryParts);
 
-		if (($GLOBALS['TYPO3_DB']->sql_error()) || ($debug === TRUE)) {
-			$debug = array();
-			$debug['queryParts'] = $queryParts;
-			$debug['sql'] = self::SELECT_queryArray($queryParts);
-			$debug['error'] = $GLOBALS['TYPO3_DB']->sql_error();
-			$debug['php'] = tx_t3devapi_miscellaneous::get_caller_method();
-			tx_t3devapi_miscellaneous::debug($debug, $GLOBALS['TYPO3_DB']->sql_error());
-		}
+        if (($GLOBALS['TYPO3_DB']->sql_error()) || ($debug === true)) {
+            $debug = array();
+            $debug['queryParts'] = $queryParts;
+            $debug['sql'] = self::SELECT_queryArray($queryParts);
+            $debug['error'] = $GLOBALS['TYPO3_DB']->sql_error();
+            $debug['php'] = tx_t3devapi_miscellaneous::get_caller_method();
+            tx_t3devapi_miscellaneous::debug($debug, $GLOBALS['TYPO3_DB']->sql_error());
+        }
 
-		return $res;
-	}
+        return $res;
+    }
 
-	/**
-	 * Return a select based on input query parts array
-	 *
-	 * @param    array  $queryParts      Query parts array
-	 * @return    pointer        MySQL select result pointer / DBAL object
-	 * @see exec_SELECTquery()
-	 */
-	public static function SELECT_queryArray($queryParts) {
-		return $GLOBALS['TYPO3_DB']->SELECTquery(
-			$queryParts['SELECT'],
-			$queryParts['FROM'],
-			$queryParts['WHERE'],
-			$queryParts['GROUPBY'],
-			$queryParts['ORDERBY'],
-			$queryParts['LIMIT']
-		);
-	}
+    /**
+     * Return a select based on input query parts array
+     *
+     * @param    array $queryParts Query parts array
+     * @return    pointer        MySQL select result pointer / DBAL object
+     * @see exec_SELECTquery()
+     */
+    public static function SELECT_queryArray($queryParts)
+    {
+        return $GLOBALS['TYPO3_DB']->SELECTquery(
+            $queryParts['SELECT'],
+            $queryParts['FROM'],
+            $queryParts['WHERE'],
+            $queryParts['GROUPBY'],
+            $queryParts['ORDERBY'],
+            $queryParts['LIMIT']
+        );
+    }
 
-	/**
-	 * Creates and executes a SELECT SQL-statement AND traverse result set and returns array with records in.
-	 *
-	 * @param    array    $queryParts      Query parts array
-	 * @param    boolean  $debug
-	 * @return    array        Array of rows
-	 */
-	public static function exec_SELECTgetRows($queryParts, $debug) {
-		$res = self::exec_SELECT_queryArray($queryParts, $debug);
-		if (!$GLOBALS['TYPO3_DB']->sql_error()) {
-			$output = array();
-			while ($output[] = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
-				;
-			}
-			array_pop($output);
-			$GLOBALS['TYPO3_DB']->sql_free_result($res);
-		}
-		return $output;
-	}
+    /**
+     * Creates and executes a SELECT SQL-statement AND traverse result set and returns array with records in.
+     *
+     * @param    array   $queryParts Query parts array
+     * @param    boolean $debug
+     * @return    array        Array of rows
+     */
+    public static function exec_SELECTgetRows($queryParts, $debug)
+    {
+        $res = self::exec_SELECT_queryArray($queryParts, $debug);
+        if (!$GLOBALS['TYPO3_DB']->sql_error()) {
+            $output = array();
+            while ($output[] = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+                ;
+            }
+            array_pop($output);
+            $GLOBALS['TYPO3_DB']->sql_free_result($res);
+        }
+        return $output;
+    }
 
-	/**
-	 * Get all the data according to the TCA (time,relation, etc...) from a sql ressource.
-	 * Example :
-	 * $result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($query);
-	 * $records = t3lib_div::makeInstance('tx_t3devapi_database');
-	 * $rows = $records->getAllResults($result, $query['FROM']);
-	 *
-	 * @param  pointer $res
-	 * @param  string  $table
-	 * @param  boolean $convertData
-	 * @return array
-	 */
-	public static function getAllResults($res, $table, $convertData = TRUE) {
-		$first = 1;
-		$recordList = array();
-		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
-			if ($first) {
-				$first = 0;
-				$recordList[] = self::getResultRowTitles($row, $table);
-			}
-			if ($convertData === TRUE) {
-				$recordList[] = self::getResultRow($row, $table);
-			} else {
-				$recordList[] = $row;
-			}
-		}
-		$GLOBALS['TYPO3_DB']->sql_free_result($res);
-		return $recordList;
-	}
+    /**
+     * Get all the data according to the TCA (time,relation, etc...) from a sql ressource.
+     * Example :
+     * $result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($query);
+     * $records = TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_t3devapi_database');
+     * $rows = $records->getAllResults($result, $query['FROM']);
+     *
+     * @param  pointer $res
+     * @param  string  $table
+     * @param  boolean $convertData
+     * @return array
+     */
+    public static function getAllResults($res, $table, $convertData = true)
+    {
+        $first = 1;
+        $recordList = array();
+        while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+            if ($first) {
+                $first = 0;
+                $recordList[] = self::getResultRowTitles($row, $table);
+            }
+            if ($convertData === true) {
+                $recordList[] = self::getResultRow($row, $table);
+            } else {
+                $recordList[] = $row;
+            }
+        }
+        $GLOBALS['TYPO3_DB']->sql_free_result($res);
+        return $recordList;
+    }
 
-	/**
-	 * Get all the data according to the TCA (time,relation, etc...) from a sql ressource.
-	 * With the List view style
-	 *
-	 * Example :
-	 * $result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($query);
-	 * $records = t3lib_div::makeInstance('tx_t3devapi_database');
-	 * $rows = $records->getAllResults($result, $query['FROM']);
-	 *
-	 * @param  pointer $res
-	 * @param  string  $table
-	 * @param  string  $title
-	 * @return array
-	 */
-	public static function formatAllResults($res, $table, $title) {
-		$content = '';
+    /**
+     * Get all the data according to the TCA (time,relation, etc...) from a sql ressource.
+     * With the List view style
+     *
+     * Example :
+     * $result = $GLOBALS['TYPO3_DB']->exec_SELECT_queryArray($query);
+     * $records = TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_t3devapi_database');
+     * $rows = $records->getAllResults($result, $query['FROM']);
+     *
+     * @param  pointer $res
+     * @param  string  $table
+     * @param  string  $title
+     * @return array
+     */
+    public static function formatAllResults($res, $table, $title)
+    {
+        $content = '';
 
-		$content .= '<table cellspacing="1" cellpadding="2" border="0" class="typo3-dblist">';
-		$content .= '<tr class="t3-row-header"><td colspan="100">';
-		$content .= $title;
-		$content .= '</td></tr>';
+        $content .= '<table cellspacing="1" cellpadding="2" border="0" class="typo3-dblist">';
+        $content .= '<tr class="t3-row-header"><td colspan="100">';
+        $content .= $title;
+        $content .= '</td></tr>';
 
-		$first = 1;
+        $first = 1;
 
-		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
-			if ($first) {
-				$first = 0;
-				$headers = self::getResultRowTitles($row, $table);
-				$content .= '<tr class="c-headLine">';
-				foreach ($headers as $header) {
-					$content .= '<td class="cell">' . $header . '</td>';
-				}
-				$content .= '</tr>';
-			}
-			$records = self::getResultRow($row, $table);
-			$content .= '<tr class="db_list_normal">';
-			foreach ($records as $record) {
-				$content .= '<td class="cell">' . $record . '</td>';
-			}
-			$content .= '</tr>';
-		}
+        while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+            if ($first) {
+                $first = 0;
+                $headers = self::getResultRowTitles($row, $table);
+                $content .= '<tr class="c-headLine">';
+                foreach ($headers as $header) {
+                    $content .= '<td class="cell">' . $header . '</td>';
+                }
+                $content .= '</tr>';
+            }
+            $records = self::getResultRow($row, $table);
+            $content .= '<tr class="db_list_normal">';
+            foreach ($records as $record) {
+                $content .= '<td class="cell">' . $record . '</td>';
+            }
+            $content .= '</tr>';
+        }
 
-		$content .= '</table>';
+        $content .= '</table>';
 
-		$GLOBALS['TYPO3_DB']->sql_free_result($res);
+        $GLOBALS['TYPO3_DB']->sql_free_result($res);
 
-		return $content;
-	}
+        return $content;
+    }
 
-	/**
-	 * Get the row titles
-	 *
-	 * @param  array  $row
-	 * @param  string $table
-	 * @return array
-	 */
-	public static function getResultRowTitles($row, $table) {
-		global $TCA;
-		$tableHeader = array();
-		$conf = $TCA[$table];
-		foreach ($row as $fieldName => $fieldValue) {
-			$title = $GLOBALS['LANG']->sL(
-				$conf['columns'][$fieldName]['label'] ? $conf['columns'][$fieldName]['label']
-					: $fieldName, 1
-			);
-			$tableHeader[$fieldName] = $title;
-		}
-		return $tableHeader;
-	}
+    /**
+     * Get the row titles
+     *
+     * @param  array  $row
+     * @param  string $table
+     * @return array
+     */
+    public static function getResultRowTitles($row, $table)
+    {
+        global $TCA;
+        $tableHeader = array();
+        $conf = $TCA[$table];
+        foreach ($row as $fieldName => $fieldValue) {
+            $title = $GLOBALS['LANG']->sL(
+                $conf['columns'][$fieldName]['label'] ? $conf['columns'][$fieldName]['label']
+                    : $fieldName, 1
+            );
+            $tableHeader[$fieldName] = $title;
+        }
+        return $tableHeader;
+    }
 
-	/**
-	 * Get the result row with getProcessedValueExtra()
-	 * It allow you to respect the TCA rules
-	 *
-	 * @param  array  $row
-	 * @param  string $table
-	 * @return array
-	 */
-	public static function getResultRow($row, $table) {
-		$record = array();
-		foreach ($row as $fieldName => $fieldValue) {
-			if ((TYPO3_MODE == 'FE')) {
-				$GLOBALS['TSFE']->includeTCA();
-				$GLOBALS['LANG'] = t3lib_div::makeInstance('language');
-				$GLOBALS['LANG']->init($GLOBALS['TSFE']->tmpl->setup['config.']['language']);
-			}
-			$record[$fieldName] = t3lib_BEfunc::getProcessedValueExtra($table, $fieldName, $fieldValue, 0, $row['uid']);
-		}
-		return $record;
-	}
+    /**
+     * Get the result row with getProcessedValueExtra()
+     * It allow you to respect the TCA rules
+     *
+     * @param  array  $row
+     * @param  string $table
+     * @return array
+     */
+    public static function getResultRow($row, $table)
+    {
+        $record = array();
+        foreach ($row as $fieldName => $fieldValue) {
+            if ((TYPO3_MODE == 'FE')) {
+                // $GLOBALS['TSFE']->includeTCA();
+                $GLOBALS['LANG'] = TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Lang\\LanguageService');
+                $GLOBALS['LANG']->init($GLOBALS['TSFE']->tmpl->setup['config.']['language']);
+            }
+            $record[$fieldName] = \TYPO3\CMS\Backend\Utility\BackendUtility::getProcessedValueExtra($table, $fieldName, $fieldValue, 0, $row['uid']);
+        }
+        return $record;
+    }
 
 }
 

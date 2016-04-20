@@ -29,212 +29,230 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_Widget_Controller_PaginateController extends Tx_Fluid_Core_Widget_AbstractWidgetController
+class Tx_T3devapi_ViewHelpers_Widget_Controller_PaginateController extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetController
 {
 
-	/**
-	 * @var array
-	 */
-	protected $configuration = array(
-		'itemsPerPage'           => 10,
-		'insertAbove'            => FALSE,
-		'insertBelow'            => TRUE,
-		'pagesAfter'             => 3,
-		'pagesBefore'            => 3,
-		'lessPages'              => TRUE,
-		'forcedNumberOfLinks'    => 5,
-		'forceFirstPrevNextlast' => FALSE,
-		'showFirstLast'          => TRUE
-	);
+    /**
+     * @var array
+     */
+    protected $configuration = array(
+        'itemsPerPage'           => 10,
+        'insertAbove'            => false,
+        'insertBelow'            => true,
+        'pagesAfter'             => 3,
+        'pagesBefore'            => 3,
+        'lessPages'              => true,
+        'forcedNumberOfLinks'    => 5,
+        'forceFirstPrevNextlast' => false,
+        'showFirstLast'          => true
+    );
 
-	/**
-	 * @var Tx_Extbase_Persistence_QueryResultInterface
-	 */
-	protected $objects;
+    /**
+     * @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+     */
+    protected $objects;
 
-	/**
-	 * @var integer
-	 */
-	protected $currentPage = 1;
+    /**
+     * @var integer
+     */
+    protected $currentPage = 1;
 
-	/**
-	 * @var integer
-	 */
-	protected $pagesBefore = 1;
+    /**
+     * @var integer
+     */
+    protected $pagesBefore = 1;
 
-	/**
-	 * @var integer
-	 */
-	protected $pagesAfter = 1;
+    /**
+     * @var integer
+     */
+    protected $pagesAfter = 1;
 
-	/**
-	 * @var boolean
-	 */
-	protected $lessPages = FALSE;
+    /**
+     * @var boolean
+     */
+    protected $lessPages = false;
 
-	/**
-	 * @var integer
-	 */
-	protected $forcedNumberOfLinks = 10;
+    /**
+     * @var integer
+     */
+    protected $forcedNumberOfLinks = 10;
 
-	/**
-	 * @var integer
-	 */
-	protected $numberOfPages = 1;
+    /**
+     * @var integer
+     */
+    protected $numberOfPages = 1;
 
-	/**
-	 * Initialize the action and get correct configuration
-	 *
-	 * @return void
-	 */
-	public function initializeAction() {
-		$this->objects = $this->widgetConfiguration['objects'];
-		$this->configuration = t3lib_div::array_merge_recursive_overrule(
-			$this->configuration,
-			(array)$this->widgetConfiguration['configuration'],
-			TRUE
-		);
-		$this->numberOfPages = ceil(count($this->objects) / (integer)$this->configuration['itemsPerPage']);
-		$this->pagesBefore = (integer)$this->configuration['pagesBefore'];
-		$this->pagesAfter = (integer)$this->configuration['pagesAfter'];
-		$this->lessPages = (boolean)$this->configuration['lessPages'];
-		$this->forcedNumberOfLinks = (integer)$this->configuration['forcedNumberOfLinks'];
-	}
+    /**
+     * Initialize the action and get correct configuration
+     *
+     * @return void
+     */
+    public function initializeAction()
+    {
+        $this->objects = $this->widgetConfiguration['objects'];
+        \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
+            $this->configuration,
+            (array)$this->widgetConfiguration['configuration'],
+            true
+        );
+        $this->numberOfPages = ceil(count($this->objects) / (integer)$this->configuration['itemsPerPage']);
+        $this->pagesBefore = (integer)$this->configuration['pagesBefore'];
+        $this->pagesAfter = (integer)$this->configuration['pagesAfter'];
+        $this->lessPages = (boolean)$this->configuration['lessPages'];
+        $this->forcedNumberOfLinks = (integer)$this->configuration['forcedNumberOfLinks'];
+    }
 
-	/**
-	 * If a certain number of links should be displayed, adjust before and after
-	 * amounts accordingly.
-	 *
-	 * @return void
-	 */
-	protected function adjustForForcedNumberOfLinks() {
-		$forcedNumberOfLinks = $this->forcedNumberOfLinks;
-		if ($forcedNumberOfLinks > $this->numberOfPages) {
-			$forcedNumberOfLinks = $this->numberOfPages;
-		}
-		$totalNumberOfLinks = min($this->currentPage, $this->pagesBefore) +
-			min($this->pagesAfter, $this->numberOfPages - $this->currentPage) + 1;
-		if ($totalNumberOfLinks <= $forcedNumberOfLinks) {
-			$delta = intval(ceil(($forcedNumberOfLinks - $totalNumberOfLinks) / 2));
-			$incr = ($forcedNumberOfLinks & 1) == 0 ? 1 : 0;
-			if ($this->currentPage - ($this->pagesBefore + $delta) < 1) {
-				// Too little from the right to adjust
-				$this->pagesAfter = $forcedNumberOfLinks - $this->currentPage - 1;
-				$this->pagesBefore = $forcedNumberOfLinks - $this->pagesAfter - 1;
-			} elseif ($this->currentPage + ($this->pagesAfter + $delta) >= $this->numberOfPages) {
-				$this->pagesBefore = $forcedNumberOfLinks - ($this->numberOfPages - $this->currentPage);
-				$this->pagesAfter = $forcedNumberOfLinks - $this->pagesBefore - 1;
-			} else {
-				$this->pagesBefore += $delta;
-				$this->pagesAfter += $delta - $incr;
-			}
-		}
+    /**
+     * If a certain number of links should be displayed, adjust before and after
+     * amounts accordingly.
+     *
+     * @return void
+     */
+    protected function adjustForForcedNumberOfLinks()
+    {
+        $forcedNumberOfLinks = $this->forcedNumberOfLinks;
+        if ($forcedNumberOfLinks > $this->numberOfPages) {
+            $forcedNumberOfLinks = $this->numberOfPages;
+        }
+        $totalNumberOfLinks = min($this->currentPage, $this->pagesBefore) +
+            min($this->pagesAfter, $this->numberOfPages - $this->currentPage) + 1;
+        if ($totalNumberOfLinks <= $forcedNumberOfLinks) {
+            $delta = intval(ceil(($forcedNumberOfLinks - $totalNumberOfLinks) / 2));
+            $incr = ($forcedNumberOfLinks & 1) == 0 ? 1 : 0;
+            if ($this->currentPage - ($this->pagesBefore + $delta) < 1) {
+                // Too little from the right to adjust
+                $this->pagesAfter = $forcedNumberOfLinks - $this->currentPage - 1;
+                $this->pagesBefore = $forcedNumberOfLinks - $this->pagesAfter - 1;
+            } elseif ($this->currentPage + ($this->pagesAfter + $delta) >= $this->numberOfPages) {
+                $this->pagesBefore = $forcedNumberOfLinks - ($this->numberOfPages - $this->currentPage);
+                $this->pagesAfter = $forcedNumberOfLinks - $this->pagesBefore - 1;
+            } else {
+                $this->pagesBefore += $delta;
+                $this->pagesAfter += $delta - $incr;
+            }
+        }
 
-	}
+    }
 
-	/**
-	 * Main action which does all the fun
-	 *
-	 * @param integer $currentPage
-	 * @return void
-	 */
-	public function indexAction($currentPage = 1) {
-		// set current page
-		$this->currentPage = (integer)$currentPage;
-		if ($this->currentPage < 1) {
-			$this->currentPage = 1;
-		} elseif ($this->currentPage > $this->numberOfPages) {
-			$this->currentPage = $this->numberOfPages;
-		}
+    /**
+     * Main action which does all the fun
+     *
+     * @param integer $currentPage
+     * @return void
+     */
+    public function indexAction($currentPage = 1)
+    {
+        // set current page
+        $this->currentPage = (integer)$currentPage;
+        if ($this->currentPage < 1) {
+            $this->currentPage = 1;
+        } elseif ($this->currentPage > $this->numberOfPages) {
+            $this->currentPage = $this->numberOfPages;
+        }
 
-		// modify query
-		$itemsPerPage = (integer)$this->configuration['itemsPerPage'];
-		$query = $this->objects->getQuery();
+        // modify query
+        $itemsPerPage = (integer)$this->configuration['itemsPerPage'];
 
-		// limit should only be used if needed and pagination only if results > itemsPerPage
-		if ($itemsPerPage < $this->objects->count()) {
-			$query->setLimit($itemsPerPage);
-		}
+        if (is_a($this->objects, '\TYPO3\CMS\Extbase\Persistence\QueryResultInterface') || is_a($this->objects, 'TYPO3\\CMS\\Extbase\\Persistence\\QueryResultInterface')) {
+            $query = $this->objects->getQuery();
 
-		if ($this->currentPage > 1) {
-			$query->setOffset((integer)($itemsPerPage * ($this->currentPage - 1)));
-		}
-		$modifiedObjects = $query->execute();
+            // limit should only be used if needed and pagination only if results > itemsPerPage
+            if ($itemsPerPage < $this->objects->count()) {
+                $query->setLimit($itemsPerPage);
+            }
 
-		$this->view->assign('contentArguments', array($this->widgetConfiguration['as'] => $modifiedObjects));
-		$this->view->assign('configuration', $this->configuration);
-		$this->view->assign('pagination', $this->buildPagination());
-	}
+            if ($this->currentPage > 1) {
+                $query->setOffset((integer)($itemsPerPage * ($this->currentPage - 1)));
+            }
+            $modifiedObjects = $query->execute();
+        } else {
+            if (empty($this->objects)) {
+                return null;
+            }
 
-	/**
-	 * Returns an array with the keys
-	 * "pages", "current", "numberOfPages", "nextPage" & "previousPage"
-	 *
-	 * @return array
-	 */
-	public function buildPagination() {
-		$this->adjustForForcedNumberOfLinks();
+            $offset = 0;
+            if ($this->currentPage > 1) {
+                $offset = ((integer)($itemsPerPage * ($this->currentPage - 1)));
+            }
+            $modifiedObjects = array_slice($this->objects, $offset, (integer)$itemsPerPage);
+        }
 
-		$pages = array();
-		$start = max($this->currentPage - $this->pagesBefore, 0);
-		$end = min($this->numberOfPages, $this->currentPage + $this->pagesAfter + 1);
-		for ($i = $start; $i < $end; $i++) {
-			$j = $i + 1;
-			$pages[] = array('number' => $j, 'isCurrent' => (intval($j) === intval($this->currentPage)));
-		}
+        $this->view->assign('contentArguments', array($this->widgetConfiguration['as'] => $modifiedObjects));
+        $this->view->assign('configuration', $this->configuration);
+        $this->view->assign('pagination', $this->buildPagination());
+    }
 
-		$pagination = array(
-			'pages'         => $pages,
-			'current'       => $this->currentPage,
-			'numberOfPages' => $this->numberOfPages,
-			'numberOfItems' => count($this->objects),
-			'pagesBefore'   => $this->pagesBefore,
-			'pagesAfter'    => $this->pagesAfter,
-			'firstPageItem' => ($this->currentPage - 1) * (int)$this->configuration['itemsPerPage'] + 1
-		);
-		if ($this->currentPage < $this->numberOfPages) {
-			$pagination['nextPage'] = $this->currentPage + 1;
-			$pagination['lastPageItem'] = $this->currentPage * (integer)$this->configuration['itemsPerPage'];
-		} else {
-			$pagination['lastPageItem'] = $pagination['numberOfItems'];
-		}
+    /**
+     * Returns an array with the keys
+     * "pages", "current", "numberOfPages", "nextPage" & "previousPage"
+     *
+     * @return array
+     */
+    public function buildPagination()
+    {
+        $this->adjustForForcedNumberOfLinks();
 
-		// previous pages
-		if ($this->currentPage > 1) {
-			$pagination['previousPage'] = $this->currentPage - 1;
-		}
+        $pages = array();
+        $start = max($this->currentPage - $this->pagesBefore, 0);
+        $end = min($this->numberOfPages, $this->currentPage + $this->pagesAfter + 1);
+        for ($i = $start; $i < $end; $i++) {
+            $j = $i + 1;
+            $pages[] = array('number' => $j, 'isCurrent' => (intval($j) === intval($this->currentPage)));
+        }
 
-		// less pages (before current)
-		if ($start > 0 && $this->lessPages) {
-			$pagination['lessPages'] = TRUE;
-		}
+        $pagination = array(
+            'pages'         => $pages,
+            'current'       => $this->currentPage,
+            'numberOfPages' => $this->numberOfPages,
+            'numberOfItems' => count($this->objects),
+            'pagesBefore'   => $this->pagesBefore,
+            'pagesAfter'    => $this->pagesAfter,
+            'firstPageItem' => ($this->currentPage - 1) * (int)$this->configuration['itemsPerPage'] + 1
+        );
+        if ($this->currentPage < $this->numberOfPages) {
+            $pagination['nextPage'] = $this->currentPage + 1;
+            $pagination['lastPageItem'] = $this->currentPage * (integer)$this->configuration['itemsPerPage'];
+        } else {
+            $pagination['lastPageItem'] = $pagination['numberOfItems'];
+        }
 
-		// next pages (after current)
-		if ($end != $this->numberOfPages && $this->lessPages) {
-			$pagination['morePages'] = TRUE;
-		}
+        // previous pages
+        if ($this->currentPage > 1) {
+            $pagination['previousPage'] = $this->currentPage - 1;
+        }
 
-		return $pagination;
-	}
-	
-	/**
-	 * Fix for setViewConfiguration to override the path
-	 * plugin.tx_xxx.view.widget.Tx_T3devapi_ViewHelpers_Widget_PaginateViewHelper.templateRootPath = EXT:xxx/Resources/Private/Templates/
-	 *
-	 * @param Tx_Extbase_MVC_View_ViewInterface $view
-	 * @return void
-	 */
-	protected function setViewConfiguration(Tx_Extbase_MVC_View_ViewInterface $view) {
-		$extbaseFrameworkConfiguration = $this->configurationManager->getConfiguration(Tx_Extbase_Configuration_ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
-		$widgetViewHelperClassName = $this->request->getWidgetContext()->getWidgetViewHelperClassName();
-		if (isset($extbaseFrameworkConfiguration['view']['widget'][$widgetViewHelperClassName]['templateRootPath'])
-			&& strlen($extbaseFrameworkConfiguration['view']['widget'][$widgetViewHelperClassName]['templateRootPath']) > 0
-			&& method_exists($view, 'setTemplateRootPath')
-		) {
-			$view->setTemplateRootPath(t3lib_div::getFileAbsFileName($extbaseFrameworkConfiguration['view']['widget'][$widgetViewHelperClassName]['templateRootPath']));
-		}
-	}
-	
+        // less pages (before current)
+        if ($start > 0 && $this->lessPages) {
+            $pagination['lessPages'] = true;
+        }
+
+        // next pages (after current)
+        if ($end != $this->numberOfPages && $this->lessPages) {
+            $pagination['morePages'] = true;
+        }
+
+        return $pagination;
+    }
+
+    /**
+     * Fix for setViewConfiguration to override the path
+     * plugin.tx_xxx.view.widget.Tx_T3devapi_ViewHelpers_Widget_PaginateViewHelper.templateRootPath = EXT:xxx/Resources/Private/Templates/
+     *
+     * @param TYPO3\CMS\Fluid\View\TemplateView $view
+     * @return void
+     */
+    protected function setViewConfiguration(TYPO3\CMS\Fluid\View\TemplateView $view)
+    {
+        $extbaseFrameworkConfiguration = $this->configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+        $widgetViewHelperClassName = $this->request->getWidgetContext()->getWidgetViewHelperClassName();
+        if (isset($extbaseFrameworkConfiguration['view']['widget'][$widgetViewHelperClassName]['templateRootPath'])
+            && strlen($extbaseFrameworkConfiguration['view']['widget'][$widgetViewHelperClassName]['templateRootPath']) > 0
+            && method_exists($view, 'setTemplateRootPath')
+        ) {
+            $view->setTemplateRootPath(\TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($extbaseFrameworkConfiguration['view']['widget'][$widgetViewHelperClassName]['templateRootPath']));
+        }
+    }
+
 }
 
 ?>

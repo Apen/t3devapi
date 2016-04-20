@@ -31,47 +31,50 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_TitleTagViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class Tx_T3devapi_ViewHelpers_TitleTagViewHelper extends TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
+{
 
-	/**
-	 * @var Tx_Extbase_Configuration_ConfigurationManagerInterface
-	 */
-	protected $configurationManager;
+    /**
+     * @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
+     */
+    protected $configurationManager;
 
-	/**
-	 * @param Tx_Extbase_Configuration_ConfigurationManagerInterface An instance of the Configuration Manager
-	 * @return void
-	 */
-	public function injectConfigurationManager(Tx_Extbase_Configuration_ConfigurationManagerInterface $configurationManager) {
-		$this->configurationManager = $configurationManager;
-	}
+    /**
+     * @param \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface An instance of the Configuration Manager
+     * @return void
+     */
+    public function injectConfigurationManager(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager)
+    {
+        $this->configurationManager = $configurationManager;
+    }
 
 
-	/**
-	 * Override the title tag
-	 *
-	 * @param boolean $concat
-	 * @return void
-	 */
-	public function render($concat = FALSE) {
-		$content = $this->renderChildren();
-		$contentObjectData = $this->configurationManager->getContentObject()->getUserObjectType();
-		if (!empty($content) && ($this->configurationManager->getContentObject()->getUserObjectType() == tslib_cObj::OBJECTTYPE_USER)) {
-			if ($concat === TRUE) {
-				$GLOBALS['TSFE']->page['title'] .= $content;
-				$GLOBALS['TSFE']->indexedDocTitle .= $content;
-			} else {
-				$GLOBALS['TSFE']->page['title'] = $content;
-				$GLOBALS['TSFE']->indexedDocTitle = $content;
-			}
-		} else {
-			if ($concat === TRUE) {
-				$GLOBALS['TSFE']->content = preg_replace('@<title>(.*?)</title>@i', '<title>' . $content . ' $1</title>', $GLOBALS['TSFE']->content);
-			} else {
-				$GLOBALS['TSFE']->content = preg_replace('@<title>(.*?)</title>@i', '<title>' . $content . '</title>', $GLOBALS['TSFE']->content);
-			}
-		}
-	}
+    /**
+     * Override the title tag
+     *
+     * @param boolean $concat
+     * @return void
+     */
+    public function render($concat = false)
+    {
+        $content = $this->renderChildren();
+        $contentObjectData = $this->configurationManager->getContentObject()->getUserObjectType();
+        if (!empty($content) && ($this->configurationManager->getContentObject()->getUserObjectType() == \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::OBJECTTYPE_USER)) {
+            if ($concat === true) {
+                $GLOBALS['TSFE']->page['title'] .= $content;
+                $GLOBALS['TSFE']->indexedDocTitle .= $content;
+            } else {
+                $GLOBALS['TSFE']->page['title'] = $content;
+                $GLOBALS['TSFE']->indexedDocTitle = $content;
+            }
+        } else {
+            if ($concat === true) {
+                $GLOBALS['TSFE']->content = preg_replace('@<title>(.*?)</title>@i', '<title>' . $content . ' $1</title>', $GLOBALS['TSFE']->content);
+            } else {
+                $GLOBALS['TSFE']->content = preg_replace('@<title>(.*?)</title>@i', '<title>' . $content . '</title>', $GLOBALS['TSFE']->content);
+            }
+        }
+    }
 }
 
 ?>

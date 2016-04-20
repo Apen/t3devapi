@@ -31,21 +31,40 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_IssetViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractConditionViewHelper
+class Tx_T3devapi_ViewHelpers_IssetViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper
 {
 
-	/**
-	 * Renders else-child or else-argument if variable $name exists
-	 *
-	 * @param string $name
-	 * @return string
-	 */
-	public function render($name) {
-		if (isset($name)) {
-			return $this->renderThenChild();
-		}
-		return $this->renderElseChild();
-	}
+    /**
+     * Renders else-child or else-argument if variable $name exists
+     *
+     * @param string $name
+     * @return string
+     */
+    public function render($name)
+    {
+        $evaluation = static::evaluateCondition($this->arguments);
+
+        if (false !== $evaluation) {
+            return $this->renderThenChild();
+        } else {
+            return $this->renderElseChild();
+        }
+    }
+
+    /**
+     * This method decides if the condition is TRUE or FALSE. It can be overriden in extending viewhelpers to adjust functionality.
+     *
+     * @param array $arguments ViewHelper arguments to evaluate the condition for this ViewHelper, allows for flexiblity in overriding this method.
+     * @return bool
+     */
+    static protected function evaluateCondition($arguments = null)
+    {
+        if (isset($arguments['name'])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 }
 

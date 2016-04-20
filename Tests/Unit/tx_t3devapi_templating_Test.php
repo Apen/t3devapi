@@ -173,7 +173,7 @@ class Tx_T3devapi_Templating_Test extends Tx_Phpunit_TestCase
 	 * @return string
 	 */
 	protected function getContentTemplateFile($file) {
-		return t3lib_div::getURL(PATH_site . 'typo3conf/ext/t3devapi/Tests/Resources/' . $file);
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::getUrl(PATH_site . 'typo3conf/ext/t3devapi/Tests/Resources/' . $file);
 	}
 }
 

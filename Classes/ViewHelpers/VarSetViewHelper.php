@@ -31,24 +31,26 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_VarSetViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class Tx_T3devapi_ViewHelpers_VarSetViewHelper extends TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
+{
 
-	/**
-	 * Set (override) the variable in $name.
-	 *
-	 * @param string $name
-	 * @param mixed  $value
-	 */
-	public function render($name, $value = NULL) {
-		if ($value === NULL) {
-			$value = $this->renderChildren();
-		}
-		if ($this->templateVariableContainer->exists($name) === TRUE) {
-			$this->templateVariableContainer->remove($name);
-		}
-		$this->templateVariableContainer->add($name, $value);
-		return NULL;
-	}
+    /**
+     * Set (override) the variable in $name.
+     *
+     * @param string $name
+     * @param mixed  $value
+     */
+    public function render($name, $value = null)
+    {
+        if ($value === null) {
+            $value = $this->renderChildren();
+        }
+        if ($this->templateVariableContainer->exists($name) === true) {
+            $this->templateVariableContainer->remove($name);
+        }
+        $this->templateVariableContainer->add($name, $value);
+        return null;
+    }
 
 }
 

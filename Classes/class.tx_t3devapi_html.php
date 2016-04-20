@@ -38,436 +38,457 @@
 class tx_t3devapi_html
 {
 
-	/**
-	 * Render a label
-	 *
-	 * @param string $for
-	 * @param string $content
-	 * @return string
-	 */
-	public static function renderLabel($for, $content) {
-		$tag = new tx_t3devapi_tagbuilder();
-		$tag->setTagName('label');
-		$tag->addAttribute('for', self::cleanId($for));
-		$tag->setContent($content);
-		return $tag->render();
-	}
+    /**
+     * Render a label
+     *
+     * @param string $for
+     * @param string $content
+     * @return string
+     */
+    public static function renderLabel($for, $content)
+    {
+        $tag = new tx_t3devapi_tagbuilder();
+        $tag->setTagName('label');
+        $tag->addAttribute('for', self::cleanId($for));
+        $tag->setContent($content);
+        return $tag->render();
+    }
 
-	/**
-	 * Render a generic input (used by all the input type)
-	 *
-	 * @param string $type
-	 * @param string $name
-	 * @param string $value
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderInput($type, $name, $value = '', $attributes = array()) {
-		$tag = new tx_t3devapi_tagbuilder();
-		$tag->setTagName('input');
-		$tag->addAttribute('type', $type);
-		if (!isset($attributes['name'])) {
-			$tag->addAttribute('name', $name);
-		}
-		if (!isset($attributes['id'])) {
-			$tag->addAttribute('id', self::cleanId($name));
-		}
-		$tag->addAttribute('value', $value);
-		$tag->addAttributes($attributes);
-		return $tag->render();
-	}
+    /**
+     * Render a generic input (used by all the input type)
+     *
+     * @param string $type
+     * @param string $name
+     * @param string $value
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderInput($type, $name, $value = '', $attributes = array())
+    {
+        $tag = new tx_t3devapi_tagbuilder();
+        $tag->setTagName('input');
+        $tag->addAttribute('type', $type);
+        if (!isset($attributes['name'])) {
+            $tag->addAttribute('name', $name);
+        }
+        if (!isset($attributes['id'])) {
+            $tag->addAttribute('id', self::cleanId($name));
+        }
+        $tag->addAttribute('value', $value);
+        $tag->addAttributes($attributes);
+        return $tag->render();
+    }
 
-	/**
-	 * Render a input type text
-	 *
-	 * @param string $name
-	 * @param string $value
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderText($name, $value = '', $attributes = array()) {
-		return self::renderInput('text', $name, $value, $attributes);
-	}
+    /**
+     * Render a input type text
+     *
+     * @param string $name
+     * @param string $value
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderText($name, $value = '', $attributes = array())
+    {
+        return self::renderInput('text', $name, $value, $attributes);
+    }
 
-	/**
-	 * Render a input type hidden
-	 *
-	 * @param string $name
-	 * @param string $value
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderHidden($name, $value = '', $attributes = array()) {
-		return self::renderInput('hidden', $name, $value, $attributes);
-	}
+    /**
+     * Render a input type hidden
+     *
+     * @param string $name
+     * @param string $value
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderHidden($name, $value = '', $attributes = array())
+    {
+        return self::renderInput('hidden', $name, $value, $attributes);
+    }
 
-	/**
-	 * Render a input type button
-	 *
-	 * @param string $name
-	 * @param string $value
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderButton($name, $value = '', $attributes = array()) {
-		return self::renderInput('button', $name, $value, $attributes);
-	}
+    /**
+     * Render a input type button
+     *
+     * @param string $name
+     * @param string $value
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderButton($name, $value = '', $attributes = array())
+    {
+        return self::renderInput('button', $name, $value, $attributes);
+    }
 
-	/**
-	 * Render a input type password
-	 *
-	 * @param string $name
-	 * @param string $value
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderPassword($name, $value = '', $attributes = array()) {
-		return self::renderInput('password', $name, $value, $attributes);
-	}
+    /**
+     * Render a input type password
+     *
+     * @param string $name
+     * @param string $value
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderPassword($name, $value = '', $attributes = array())
+    {
+        return self::renderInput('password', $name, $value, $attributes);
+    }
 
-	/**
-	 * Render a input type reset
-	 *
-	 * @param string $name
-	 * @param string $value
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderReset($name, $value = '', $attributes = array()) {
-		return self::renderInput('reset', $name, $value, $attributes);
-	}
+    /**
+     * Render a input type reset
+     *
+     * @param string $name
+     * @param string $value
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderReset($name, $value = '', $attributes = array())
+    {
+        return self::renderInput('reset', $name, $value, $attributes);
+    }
 
-	/**
-	 * Render a input type submit
-	 *
-	 * @param string $name
-	 * @param string $value
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderSubmit($name, $value = '', $attributes = array()) {
-		return self::renderInput('submit', $name, $value, $attributes);
-	}
+    /**
+     * Render a input type submit
+     *
+     * @param string $name
+     * @param string $value
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderSubmit($name, $value = '', $attributes = array())
+    {
+        return self::renderInput('submit', $name, $value, $attributes);
+    }
 
-	/**
-	 * Render a input type file
-	 *
-	 * @param string $name
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderInputFile($name, $attributes = array()) {
-		$tag = new tx_t3devapi_tagbuilder();
-		$tag->setTagName('input');
-		$tag->addAttribute('type', 'file');
-		if (!isset($attributes['name'])) {
-			$tag->addAttribute('name', $name);
-		}
-		if (!isset($attributes['id'])) {
-			$tag->addAttribute('id', self::cleanId($name));
-		}
-		$tag->addAttributes($attributes);
-		return $tag->render();
-	}
+    /**
+     * Render a input type file
+     *
+     * @param string $name
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderInputFile($name, $attributes = array())
+    {
+        $tag = new tx_t3devapi_tagbuilder();
+        $tag->setTagName('input');
+        $tag->addAttribute('type', 'file');
+        if (!isset($attributes['name'])) {
+            $tag->addAttribute('name', $name);
+        }
+        if (!isset($attributes['id'])) {
+            $tag->addAttribute('id', self::cleanId($name));
+        }
+        $tag->addAttributes($attributes);
+        return $tag->render();
+    }
 
-	/**
-	 * Render a textarea
-	 *
-	 * @param string $name
-	 * @param string $value
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderTextArea($name, $value = '', $attributes = array()) {
-		$tag = new tx_t3devapi_tagbuilder();
-		$tag->setTagName('textarea');
-		$tag->forceClosingTag(TRUE);
-		if (!isset($attributes['name'])) {
-			$tag->addAttribute('name', $name);
-		}
-		if (!isset($attributes['id'])) {
-			$tag->addAttribute('id', self::cleanId($name));
-		}
-		$tag->setContent($value);
-		$tag->addAttributes($attributes);
-		return $tag->render();
-	}
+    /**
+     * Render a textarea
+     *
+     * @param string $name
+     * @param string $value
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderTextArea($name, $value = '', $attributes = array())
+    {
+        $tag = new tx_t3devapi_tagbuilder();
+        $tag->setTagName('textarea');
+        $tag->forceClosingTag(true);
+        if (!isset($attributes['name'])) {
+            $tag->addAttribute('name', $name);
+        }
+        if (!isset($attributes['id'])) {
+            $tag->addAttribute('id', self::cleanId($name));
+        }
+        $tag->setContent($value);
+        $tag->addAttributes($attributes);
+        return $tag->render();
+    }
 
-	/**
-	 * Render a DIV
-	 *
-	 * @param string $name
-	 * @param string $value
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderDiv($name, $value = '', $attributes = array()) {
-		$tag = new tx_t3devapi_tagbuilder();
-		$tag->setTagName('div');
-		$tag->forceClosingTag(TRUE);
-		if (!isset($attributes['id'])) {
-			$tag->addAttribute('id', self::cleanId($name));
-		}
-		$tag->setContent($value);
-		$tag->addAttributes($attributes);
-		return $tag->render();
-	}
+    /**
+     * Render a DIV
+     *
+     * @param string $name
+     * @param string $value
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderDiv($name, $value = '', $attributes = array())
+    {
+        $tag = new tx_t3devapi_tagbuilder();
+        $tag->setTagName('div');
+        $tag->forceClosingTag(true);
+        if (!isset($attributes['id'])) {
+            $tag->addAttribute('id', self::cleanId($name));
+        }
+        $tag->setContent($value);
+        $tag->addAttributes($attributes);
+        return $tag->render();
+    }
 
-	/**
-	 * Render a SCRIPT
-	 *
-	 * @param string $value
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderScriptJs($value = '', $attributes = array()) {
-		$tag = new tx_t3devapi_tagbuilder();
-		$tag->setTagName('script');
-		$tag->forceClosingTag(TRUE);
-		$tag->addAttribute('type', 'text/javascript');
-		$tag->setContent($value);
-		$tag->addAttributes($attributes);
-		return $tag->render();
-	}
+    /**
+     * Render a SCRIPT
+     *
+     * @param string $value
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderScriptJs($value = '', $attributes = array())
+    {
+        $tag = new tx_t3devapi_tagbuilder();
+        $tag->setTagName('script');
+        $tag->forceClosingTag(true);
+        $tag->addAttribute('type', 'text/javascript');
+        $tag->setContent($value);
+        $tag->addAttributes($attributes);
+        return $tag->render();
+    }
 
-	/**
-	 * Render a FORM
-	 *
-	 * @param string $name
-	 * @param string $value
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderForm($name, $value = '', $attributes = array()) {
-		$tag = new tx_t3devapi_tagbuilder();
-		$tag->setTagName('form');
-		$tag->forceClosingTag(TRUE);
-		if (!isset($attributes['name'])) {
-			$tag->addAttribute('name', $name);
-		}
-		if (!isset($attributes['method'])) {
-			$tag->addAttribute('method', 'post');
-		}
-		$tag->setContent($value);
-		$tag->addAttributes($attributes);
-		return $tag->render();
-	}
+    /**
+     * Render a FORM
+     *
+     * @param string $name
+     * @param string $value
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderForm($name, $value = '', $attributes = array())
+    {
+        $tag = new tx_t3devapi_tagbuilder();
+        $tag->setTagName('form');
+        $tag->forceClosingTag(true);
+        if (!isset($attributes['name'])) {
+            $tag->addAttribute('name', $name);
+        }
+        if (!isset($attributes['method'])) {
+            $tag->addAttribute('method', 'post');
+        }
+        $tag->setContent($value);
+        $tag->addAttributes($attributes);
+        return $tag->render();
+    }
 
-	/**
-	 * Render a checbox
-	 *
-	 * @param string $name
-	 * @param string $content
-	 * @param array  $arrayOfValues
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderCheckbox($name, $content, $arrayOfValues = array(), $attributes = array()) {
-		$tag = new tx_t3devapi_tagbuilder();
-		$tag->setTagName('input');
-		$tag->addAttribute('type', 'checkbox');
-		$tag->addAttribute('value', $content);
-		if (!isset($attributes['name'])) {
-			$tag->addAttribute('name', $name);
-		}
-		if (!isset($attributes['id'])) {
-			$tag->addAttribute('id', self::cleanId($name));
-		}
-		if (is_array($arrayOfValues)) {
-			if (in_array($content, $arrayOfValues)) {
-				$tag->addAttribute('checked', 'checked');
-			}
-		}
-		$tag->addAttributes($attributes);
-		return $tag->render();
-	}
+    /**
+     * Render a checbox
+     *
+     * @param string $name
+     * @param string $content
+     * @param array  $arrayOfValues
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderCheckbox($name, $content, $arrayOfValues = array(), $attributes = array())
+    {
+        $tag = new tx_t3devapi_tagbuilder();
+        $tag->setTagName('input');
+        $tag->addAttribute('type', 'checkbox');
+        $tag->addAttribute('value', $content);
+        if (!isset($attributes['name'])) {
+            $tag->addAttribute('name', $name);
+        }
+        if (!isset($attributes['id'])) {
+            $tag->addAttribute('id', self::cleanId($name));
+        }
+        if (is_array($arrayOfValues)) {
+            if (in_array($content, $arrayOfValues)) {
+                $tag->addAttribute('checked', 'checked');
+            }
+        }
+        $tag->addAttributes($attributes);
+        return $tag->render();
+    }
 
-	/**
-	 * Render a radio button
-	 *
-	 * @param string $name
-	 * @param string $content
-	 * @param array  $arrayOfValues
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderRadio($name, $content, $arrayOfValues = array(), $attributes = array()) {
-		$tag = new tx_t3devapi_tagbuilder();
-		$tag->setTagName('input');
-		$tag->addAttribute('type', 'radio');
-		$tag->addAttribute('value', $content);
-		if (!isset($attributes['name'])) {
-			$tag->addAttribute('name', $name);
-		}
-		if (!isset($attributes['id'])) {
-			$tag->addAttribute('id', self::cleanId($name));
-		}
-		if (in_array($content, $arrayOfValues)) {
-			$tag->addAttribute('checked', 'checked');
-		}
-		$tag->addAttributes($attributes);
-		return $tag->render();
-	}
+    /**
+     * Render a radio button
+     *
+     * @param string $name
+     * @param string $content
+     * @param array  $arrayOfValues
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderRadio($name, $content, $arrayOfValues = array(), $attributes = array())
+    {
+        $tag = new tx_t3devapi_tagbuilder();
+        $tag->setTagName('input');
+        $tag->addAttribute('type', 'radio');
+        $tag->addAttribute('value', $content);
+        if (!isset($attributes['name'])) {
+            $tag->addAttribute('name', $name);
+        }
+        if (!isset($attributes['id'])) {
+            $tag->addAttribute('id', self::cleanId($name));
+        }
+        if (in_array($content, $arrayOfValues)) {
+            $tag->addAttribute('checked', 'checked');
+        }
+        $tag->addAttributes($attributes);
+        return $tag->render();
+    }
 
-	/**
-	 * Render a select
-	 *
-	 * @param string $name
-	 * @param array  $content
-	 * @param string $value
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderSelect($name, $content = array(), $value = '', $attributes = array()) {
-		$tag = new tx_t3devapi_tagbuilder();
-		$tag->forceClosingTag(TRUE);
-		$tag->setTagName('select');
-		if (!isset($attributes['name'])) {
-			$tag->addAttribute('name', $name);
-		}
-		if (!isset($attributes['id'])) {
-			$tag->addAttribute('id', self::cleanId($name));
-		}
-		$options = '';
-		if (array_key_exists($value, $content) === FALSE) {
-			$keys = array_keys($content);
-			$value = $keys[0];
-		}
-		foreach ($content as $key => $entry) {
-			if ($value == $key) {
-				$options .= self::renderOptionTag($key, $entry, TRUE);
-			} else {
-				$options .= self::renderOptionTag($key, $entry, FALSE);
-			}
+    /**
+     * Render a select
+     *
+     * @param string $name
+     * @param array  $content
+     * @param string $value
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderSelect($name, $content = array(), $value = '', $attributes = array())
+    {
+        $tag = new tx_t3devapi_tagbuilder();
+        $tag->forceClosingTag(true);
+        $tag->setTagName('select');
+        if (!isset($attributes['name'])) {
+            $tag->addAttribute('name', $name);
+        }
+        if (!isset($attributes['id'])) {
+            $tag->addAttribute('id', self::cleanId($name));
+        }
+        $options = '';
+        if (array_key_exists($value, $content) === false) {
+            $keys = array_keys($content);
+            $value = $keys[0];
+        }
+        foreach ($content as $key => $entry) {
+            if ($value == $key) {
+                $options .= self::renderOptionTag($key, $entry, true);
+            } else {
+                $options .= self::renderOptionTag($key, $entry, false);
+            }
 
-		}
-		$tag->setContent($options);
-		$tag->addAttributes($attributes);
-		return $tag->render();
-	}
+        }
+        $tag->setContent($options);
+        $tag->addAttributes($attributes);
+        return $tag->render();
+    }
 
-	/**
-	 * Render a multiple select
-	 *
-	 * @param string $name
-	 * @param array  $content
-	 * @param array  $arrayOfValues
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderMultipleSelect($name, $content = array(), $arrayOfValues = array(), $attributes = array()) {
-		$tag = new tx_t3devapi_tagbuilder();
-		$tag->forceClosingTag(TRUE);
-		$tag->setTagName('select');
-		$tag->addAttribute('multiple', 'multiple');
-		if (!isset($attributes['name'])) {
-			$tag->addAttribute('name', $name);
-		}
-		if (!isset($attributes['id'])) {
-			$tag->addAttribute('id', self::cleanId($name));
-		}
-		$options = '';
-		foreach ($content as $key => $entry) {
-			if (is_array($arrayOfValues)) {
-				if (in_array($key, $arrayOfValues)) {
-					$options .= self::renderOptionTag($key, $entry, TRUE);
-				} else {
-					$options .= self::renderOptionTag($key, $entry, FALSE);
-				}
-			} else {
-				$options .= self::renderOptionTag($key, $entry, FALSE);
-			}
-		}
-		$tag->setContent($options);
-		$tag->addAttributes($attributes);
-		return $tag->render();
-	}
+    /**
+     * Render a multiple select
+     *
+     * @param string $name
+     * @param array  $content
+     * @param array  $arrayOfValues
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderMultipleSelect($name, $content = array(), $arrayOfValues = array(), $attributes = array())
+    {
+        $tag = new tx_t3devapi_tagbuilder();
+        $tag->forceClosingTag(true);
+        $tag->setTagName('select');
+        $tag->addAttribute('multiple', 'multiple');
+        if (!isset($attributes['name'])) {
+            $tag->addAttribute('name', $name);
+        }
+        if (!isset($attributes['id'])) {
+            $tag->addAttribute('id', self::cleanId($name));
+        }
+        $options = '';
+        foreach ($content as $key => $entry) {
+            if (is_array($arrayOfValues)) {
+                if (in_array($key, $arrayOfValues)) {
+                    $options .= self::renderOptionTag($key, $entry, true);
+                } else {
+                    $options .= self::renderOptionTag($key, $entry, false);
+                }
+            } else {
+                $options .= self::renderOptionTag($key, $entry, false);
+            }
+        }
+        $tag->setContent($options);
+        $tag->addAttributes($attributes);
+        return $tag->render();
+    }
 
-	/**
-	 * Render a multiple select with option group
-	 *
-	 * @param string $name
-	 * @param array  $content
-	 * @param array  $arrayOfValues
-	 * @param array  $attributes
-	 * @return string
-	 */
-	public static function renderMultipleSelectWithGroup($name, $content = array(), $arrayOfValues = array(), $attributes = array()) {
-		$tag = new tx_t3devapi_tagbuilder();
-		$tag->forceClosingTag(TRUE);
-		$tag->setTagName('select');
-		$tag->addAttribute('multiple', 'multiple');
-		if (!isset($attributes['name'])) {
-			$tag->addAttribute('name', $name);
-		}
-		if (!isset($attributes['id'])) {
-			$tag->addAttribute('id', self::cleanId($name));
-		}
-		$contentGroup = '';
-		foreach ($content as $key => $option) {
-			$options = '';
-			foreach ($option as $entryKey => $entryValue) {
-				if (is_array($arrayOfValues)) {
-					if (in_array($entryKey, $arrayOfValues)) {
-						$options .= self::renderOptionTag($entryKey, $entryValue, TRUE);
-					} else {
-						$options .= self::renderOptionTag($entryKey, $entryValue, FALSE);
-					}
-				} else {
-					$options .= self::renderOptionTag($entryKey, $entryValue, FALSE);
-				}
-			}
-			$contentGroup .= self::renderOptionGroup($key, $options);
-		}
-		$tag->setContent($contentGroup);
-		$tag->addAttributes($attributes);
-		return $tag->render();
-	}
+    /**
+     * Render a multiple select with option group
+     *
+     * @param string $name
+     * @param array  $content
+     * @param array  $arrayOfValues
+     * @param array  $attributes
+     * @return string
+     */
+    public static function renderMultipleSelectWithGroup($name, $content = array(), $arrayOfValues = array(), $attributes = array())
+    {
+        $tag = new tx_t3devapi_tagbuilder();
+        $tag->forceClosingTag(true);
+        $tag->setTagName('select');
+        $tag->addAttribute('multiple', 'multiple');
+        if (!isset($attributes['name'])) {
+            $tag->addAttribute('name', $name);
+        }
+        if (!isset($attributes['id'])) {
+            $tag->addAttribute('id', self::cleanId($name));
+        }
+        $contentGroup = '';
+        foreach ($content as $key => $option) {
+            $options = '';
+            foreach ($option as $entryKey => $entryValue) {
+                if (is_array($arrayOfValues)) {
+                    if (in_array($entryKey, $arrayOfValues)) {
+                        $options .= self::renderOptionTag($entryKey, $entryValue, true);
+                    } else {
+                        $options .= self::renderOptionTag($entryKey, $entryValue, false);
+                    }
+                } else {
+                    $options .= self::renderOptionTag($entryKey, $entryValue, false);
+                }
+            }
+            $contentGroup .= self::renderOptionGroup($key, $options);
+        }
+        $tag->setContent($contentGroup);
+        $tag->addAttributes($attributes);
+        return $tag->render();
+    }
 
-	/**
-	 * Render one option tag
-	 *
-	 * @param string  $value      value attribute of the option tag (will be escaped)
-	 * @param string  $label      content of the option tag (will be escaped)
-	 * @param boolean $isSelected specifies wheter or not to add selected attribute
-	 * @return string the rendered option tag
-	 */
-	public static function renderOptionTag($value, $label, $isSelected) {
-		$output = '<option value="' . htmlspecialchars($value) . '"';
-		if ($isSelected) {
-			$output .= ' selected="selected"';
-		}
-		$output .= '>' . htmlspecialchars($label) . '</option>';
+    /**
+     * Render one option tag
+     *
+     * @param string  $value      value attribute of the option tag (will be escaped)
+     * @param string  $label      content of the option tag (will be escaped)
+     * @param boolean $isSelected specifies wheter or not to add selected attribute
+     * @return string the rendered option tag
+     */
+    public static function renderOptionTag($value, $label, $isSelected)
+    {
+        $output = '<option value="' . htmlspecialchars($value) . '"';
+        if ($isSelected) {
+            $output .= ' selected="selected"';
+        }
+        $output .= '>' . htmlspecialchars($label) . '</option>';
 
-		return $output;
-	}
+        return $output;
+    }
 
-	/**
-	 * Render an option group
-	 *
-	 * @param string $label
-	 * @param string $value
-	 * @return string
-	 */
-	public static function renderOptionGroup($label, $value) {
-		$output = '<optgroup label="' . htmlspecialchars($label) . '">';
-		$output .= $value;
-		$output .= '</optgroup>';
-		return $output;
-	}
+    /**
+     * Render an option group
+     *
+     * @param string $label
+     * @param string $value
+     * @return string
+     */
+    public static function renderOptionGroup($label, $value)
+    {
+        $output = '<optgroup label="' . htmlspecialchars($label) . '">';
+        $output .= $value;
+        $output .= '</optgroup>';
+        return $output;
+    }
 
-	/**
-	 * Clean an ID string (ex: without [])
-	 *
-	 * @param string $text
-	 * @return mixed
-	 */
-	public static function cleanId($text) {
-		$text = preg_replace('/\[\]/', '', $text);
-		$text = preg_replace('/\]/', '', $text);
-		$text = preg_replace('/\[/', '_', $text);
-		return $text;
-	}
+    /**
+     * Clean an ID string (ex: without [])
+     *
+     * @param string $text
+     * @return mixed
+     */
+    public static function cleanId($text)
+    {
+        $text = preg_replace('/\[\]/', '', $text);
+        $text = preg_replace('/\]/', '', $text);
+        $text = preg_replace('/\[/', '_', $text);
+        return $text;
+    }
 
 }
 

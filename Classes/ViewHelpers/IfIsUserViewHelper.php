@@ -34,23 +34,44 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_IfIsUserViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractConditionViewHelper {
+class Tx_T3devapi_ViewHelpers_IfIsUserViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper
+{
 
-	/**
-	 * renders <f:then> child if the current logged in FE user is the passed id
-	 * otherwise renders <f:else> child.
-	 *
-	 * @param string $roles The usergroup list uid
-	 * @return string the rendered string
-	 * @api
-	 */
-	public function render($uid) {
-		if ($GLOBALS['TSFE']->fe_user->user['uid'] == $uid) {
-			return $this->renderThenChild();
-		} else {
-			return $this->renderElseChild();
-		}
-	}
+    /**
+     * renders <f:then> child if the current logged in FE user is the passed id
+     * otherwise renders <f:else> child.
+     *
+     * @param string $roles The usergroup list uid
+     * @return string the rendered string
+     * @api
+     */
+    public function render($uid)
+    {
+        $evaluation = static::evaluateCondition($this->arguments);
+
+        if (false !== $evaluation) {
+            return $this->renderThenChild();
+        } else {
+            return $this->renderElseChild();
+        }
+
+    }
+
+    /**
+     * This method decides if the condition is TRUE or FALSE. It can be overriden in extending viewhelpers to adjust functionality.
+     *
+     * @param array $arguments ViewHelper arguments to evaluate the condition for this ViewHelper, allows for flexiblity in overriding this method.
+     * @return bool
+     */
+    static protected function evaluateCondition($arguments = null)
+    {
+        if ($GLOBALS['TSFE']->fe_user->user['uid'] == $arguments['uid']) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
 }
 

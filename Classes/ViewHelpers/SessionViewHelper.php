@@ -32,20 +32,21 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_SessionViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper
+class Tx_T3devapi_ViewHelpers_SessionViewHelper extends TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {
 
-	/**
-	 * @param string $index
-	 * @param string $identifier
-	 * @return string
-	 */
-	public function render($index, $identifier) {
-		if (!session_id()) {
-			session_start();
-		}
-		return $_SESSION[$index][$identifier];
-	}
+    /**
+     * @param string $index
+     * @param string $identifier
+     * @return string
+     */
+    public function render($index, $identifier)
+    {
+        if (!session_id()) {
+            session_start();
+        }
+        return $_SESSION[$index][$identifier];
+    }
 
 }
 

@@ -53,42 +53,43 @@
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class Tx_T3devapi_ViewHelpers_Form_RadioViewHelper extends Tx_Fluid_ViewHelpers_Form_RadioViewHelper
+class Tx_T3devapi_ViewHelpers_Form_RadioViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Form\RadioViewHelper
 {
 
-	/**
-	 * Renders the radio
-	 *
-	 * @param boolean $checked Specifies that the input element should be preselected
-	 *
-	 * @return string
-	 */
-	public function render($checked = NULL) {
-		$this->tag->addAttribute('type', 'radio');
+    /**
+     * Renders the radio
+     *
+     * @param boolean $checked Specifies that the input element should be preselected
+     *
+     * @return string
+     */
+    public function render($checked = null)
+    {
+        $this->tag->addAttribute('type', 'radio');
 
-		$nameAttribute = $this->getName();
-		$valueAttribute = $this->getValue();
+        $nameAttribute = $this->getName();
+        $valueAttribute = $this->getValue();
 
-		// fix for bug with if ($checked === NULL && $this->isObjectAccessorMode()) {
-		if ($checked === NULL && $this->isObjectAccessorMode() && $this->viewHelperVariableContainer->exists('Tx_Fluid_ViewHelpers_FormViewHelper', 'formObject')) {
-			$this->addAdditionalIdentityPropertiesIfNeeded();
-			$propertyValue = $this->getPropertyValue();
+        // fix for bug with if ($checked === NULL && $this->isObjectAccessorMode()) {
+        if ($checked === null && $this->isObjectAccessorMode() && $this->viewHelperVariableContainer->exists('Tx_Fluid_ViewHelpers_FormViewHelper', 'formObject')) {
+            $this->addAdditionalIdentityPropertiesIfNeeded();
+            $propertyValue = $this->getPropertyValue();
 
-			// no type-safe comparisation by intention
-			$checked = $propertyValue == $valueAttribute;
-		}
+            // no type-safe comparisation by intention
+            $checked = $propertyValue == $valueAttribute;
+        }
 
-		$this->registerFieldNameForFormTokenGeneration($nameAttribute);
-		$this->tag->addAttribute('name', $nameAttribute);
-		$this->tag->addAttribute('value', $valueAttribute);
-		if ($checked) {
-			$this->tag->addAttribute('checked', 'checked');
-		}
+        $this->registerFieldNameForFormTokenGeneration($nameAttribute);
+        $this->tag->addAttribute('name', $nameAttribute);
+        $this->tag->addAttribute('value', $valueAttribute);
+        if ($checked) {
+            $this->tag->addAttribute('checked', 'checked');
+        }
 
-		$this->setErrorClassAttribute();
+        $this->setErrorClassAttribute();
 
-		return $this->tag->render();
-	}
+        return $this->tag->render();
+    }
 }
 
 ?>

@@ -36,62 +36,65 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-require_once(t3lib_extMgm::extPath('rtehtmlarea') . 'pi2/class.tx_rtehtmlarea_pi2.php');
+require_once(TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('rtehtmlarea') . 'pi2/class.tx_rtehtmlarea_pi2.php');
 
-class Tx_T3devapi_ViewHelpers_RteViewHelper extends Tx_Fluid_ViewHelpers_Form_AbstractFormFieldViewHelper {
+class Tx_T3devapi_ViewHelpers_RteViewHelper extends Tx_Fluid_ViewHelpers_Form_AbstractFormFieldViewHelper
+{
 
-	/**
-	 * Return RTE
-	 *
-	 * @param    string  $name       Field name
-	 * @param    string  $namePrefix Name prefix (tx_ext_pi1[object])
-	 * @param    boolean $isLast     Is last flag (generate JavaScript only for the last RTE)
-	 * @param    string  $value      Any value
-	 * @param    string  $width      Width
-	 * @param    string  $height     height
-	 * @return   string    Generated RTE content
-	 */
-	public function render($name, $namePrefix, $isLast = 1, $value = '', $width = '400px', $height = '300px') {
-		require_once(t3lib_extMgm::extPath('rtehtmlarea') . 'pi2/class.tx_rtehtmlarea_pi2.php');
-		require_once(PATH_site . 'typo3conf/ext/t3devapi/Classes/class.tx_t3devapi_fertehtmlarea.php');
+    /**
+     * Return RTE
+     *
+     * @param    string  $name       Field name
+     * @param    string  $namePrefix Name prefix (tx_ext_pi1[object])
+     * @param    boolean $isLast     Is last flag (generate JavaScript only for the last RTE)
+     * @param    string  $value      Any value
+     * @param    string  $width      Width
+     * @param    string  $height     height
+     * @return   string    Generated RTE content
+     */
+    public function render($name, $namePrefix, $isLast = 1, $value = '', $width = '400px', $height = '300px')
+    {
+        require_once(TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('rtehtmlarea') . 'pi2/class.tx_rtehtmlarea_pi2.php');
+        require_once(PATH_site . 'typo3conf/ext/t3devapi/Classes/class.tx_t3devapi_fertehtmlarea.php');
 
-		if ($this->viewHelperVariableContainer->exists('Tx_T3devapi_ViewHelpers_RteViewHelper', 'rte')) {
-			$rteObject = $this->viewHelperVariableContainer->get('Tx_T3devapi_ViewHelpers_RteViewHelper', 'rte');
-		} else {
-			$rteObject = array();
-			$rteObject['counter'] = 1;
-			$rteObject['onsubmit'] = '';
-		}
+        if ($this->viewHelperVariableContainer->exists('Tx_T3devapi_ViewHelpers_RteViewHelper', 'rte')) {
+            $rteObject = $this->viewHelperVariableContainer->get('Tx_T3devapi_ViewHelpers_RteViewHelper', 'rte');
+        } else {
+            $rteObject = array();
+            $rteObject['counter'] = 1;
+            $rteObject['onsubmit'] = '';
+        }
 
-		$rte = new tx_t3devapi_fertehtmlarea();
-		$rte->setField($name);
-		$rte->setPA(array('itemFormElName' => $namePrefix . '[' . $name . ']', 'itemFormElValue' => $value));
-		$this->registerFieldNameForFormTokenGeneration($namePrefix . '[' . $name . ']');
-		$this->registerFieldNameForFormTokenGeneration($namePrefix . '[_TRANSFORM_' . $name . ']');
-		$rte->setRTEcounter($rteObject['counter']);
-		$rte->setWidth($width);
-		$rte->setHeight($height);
-		$markerArray = $rte->drawRTE();
+        $rte = new tx_t3devapi_fertehtmlarea();
+        $rte->setField($name);
+        $rte->setPA(array('itemFormElName' => $namePrefix . '[' . $name . ']', 'itemFormElValue' => $value));
+        $this->registerFieldNameForFormTokenGeneration($namePrefix . '[' . $name . ']');
+        $this->registerFieldNameForFormTokenGeneration($namePrefix . '[_TRANSFORM_' . $name . ']');
+        $rte->setRTEcounter($rteObject['counter']);
+        $rte->setWidth($width);
+        $rte->setHeight($height);
+        $markerArray = $rte->drawRTE();
 
-		$rteObject['counter']++;
-		$rteObject['onsubmit'] .= $markerArray['###ADDITIONALJS_SUBMIT###'];
+        $rteObject['counter']++;
+        $rteObject['onsubmit'] .= $markerArray['###ADDITIONALJS_SUBMIT###'];
 
-		if ($isLast == 1) {
-			$rteObject['onsubmit'] = '<script type="text/javascript">function rteMove(){' . $rteObject['onsubmit'] . '}</script>';
-			//t3lib_div::debug($markerArray['###ADDITIONALJS_PRE###'] . $markerArray['###FORM_RTE_ENTRY###'] . $markerArray['###ADDITIONALJS_POST###'] . $rteObject['onsubmit'],'*');
-			return $markerArray['###ADDITIONALJS_PRE###'] . $markerArray['###FORM_RTE_ENTRY###'] . $markerArray['###ADDITIONALJS_POST###'] . $rteObject['onsubmit'];
-		} else {
-			$this->viewHelperVariableContainer->addOrUpdate('Tx_T3devapi_ViewHelpers_RteViewHelper', 'rte', $rteObject);
-			return $markerArray['###ADDITIONALJS_PRE###'] . $markerArray['###FORM_RTE_ENTRY###'] . $markerArray['###ADDITIONALJS_POST###'];
-		}
+        if ($isLast == 1) {
+            $rteObject['onsubmit'] = '<script type="text/javascript">function rteMove(){' . $rteObject['onsubmit'] . '}</script>';
+            //t3lib_div::debug($markerArray['###ADDITIONALJS_PRE###'] . $markerArray['###FORM_RTE_ENTRY###'] . $markerArray['###ADDITIONALJS_POST###'] . $rteObject['onsubmit'],'*');
+            return $markerArray['###ADDITIONALJS_PRE###'] . $markerArray['###FORM_RTE_ENTRY###'] . $markerArray['###ADDITIONALJS_POST###'] . $rteObject['onsubmit'];
+        } else {
+            $this->viewHelperVariableContainer->addOrUpdate('Tx_T3devapi_ViewHelpers_RteViewHelper', 'rte', $rteObject);
+            return $markerArray['###ADDITIONALJS_PRE###'] . $markerArray['###FORM_RTE_ENTRY###'] . $markerArray['###ADDITIONALJS_POST###'];
+        }
 
-	}
+    }
 
-	/**
-	 * Initialize the arguments.
-	 */
-	public function initializeArguments() {
-	}
+    /**
+     * Initialize the arguments.
+     */
+    public function initializeArguments()
+    {
+    }
 }
 
 ?>

@@ -38,35 +38,37 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_Widget_PaginateViewHelper extends Tx_Fluid_Core_Widget_AbstractWidgetViewHelper
+class Tx_T3devapi_ViewHelpers_Widget_PaginateViewHelper extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper
 {
 
-	/**
-	 * @var Tx_T3devapi_ViewHelpers_Widget_Controller_PaginateController
-	 */
-	protected $controller;
+    /**
+     * @var Tx_T3devapi_ViewHelpers_Widget_Controller_PaginateController
+     */
+    protected $controller;
 
-	/**
-	 * Inject controller
-	 *
-	 * @param Tx_T3devapi_ViewHelpers_Widget_Controller_PaginateController $controller
-	 * @return void
-	 */
-	public function injectController(Tx_T3devapi_ViewHelpers_Widget_Controller_PaginateController $controller) {
-		$this->controller = $controller;
-	}
+    /**
+     * Inject controller
+     *
+     * @param Tx_T3devapi_ViewHelpers_Widget_Controller_PaginateController $controller
+     * @return void
+     */
+    public function injectController(Tx_T3devapi_ViewHelpers_Widget_Controller_PaginateController $controller)
+    {
+        $this->controller = $controller;
+    }
 
-	/**
-	 * Render everything
-	 *
-	 * @param Tx_Extbase_Persistence_QueryResultInterface $objects
-	 * @param string                                      $as
-	 * @param mixed                                       $configuration
-	 * @return string
-	 */
-	public function render(Tx_Extbase_Persistence_QueryResultInterface $objects, $as, $configuration = array('itemsPerPage' => 10, 'insertAbove' => FALSE, 'insertBelow' => TRUE)) {
-		return $this->initiateSubRequest();
-	}
+    /**
+     * Render everything
+     *
+     * @param \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $objects
+     * @param string                                              $as
+     * @param mixed                                               $configuration
+     * @return string
+     */
+    public function render($objects, $as, $configuration = array('itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true))
+    {
+        return $this->initiateSubRequest();
+    }
 }
 
 ?>

@@ -34,115 +34,129 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_Domain_Repository_BasicRepository extends Tx_Extbase_Persistence_Repository
+class Tx_T3devapi_Domain_Repository_BasicRepository extends TYPO3\CMS\Extbase\Persistence\Repository
 {
-	protected $queryOffset = NULL;
-	protected $queryLimit = NULL;
-	protected $queryOrderings = array();
-	protected $storagePage = NULL;
-	protected $uidList = NULL;
-	protected $piVars = array();
+    protected $queryOffset = null;
+    protected $queryLimit = null;
+    protected $queryOrderings = array();
+    protected $storagePage = null;
+    protected $uidList = null;
+    protected $piVars = array();
 
-	/**
-	 * Returns a query for objects of this repository
-	 *
-	 * @return Tx_Extbase_Persistence_QueryInterface
-	 */
-	public function createQuery() {
-		$query = parent::createQuery();
-		$constraints = array();
+    /**
+     * Returns a query for objects of this repository
+     *
+     * @return Tx_Extbase_Persistence_QueryInterface
+     */
+    public function createQuery()
+    {
+        $query = parent::createQuery();
+        $constraints = array();
 
-		if (!empty($this->queryOffset)) {
-			$query->setOffset((int)$this->queryOffset);
-		}
+        if (!empty($this->queryOffset)) {
+            $query->setOffset((int)$this->queryOffset);
+        }
 
-		if (!empty($this->queryLimit)) {
-			$query->setLimit((int)$this->queryLimit);
-		}
+        if (!empty($this->queryLimit)) {
+            $query->setLimit((int)$this->queryLimit);
+        }
 
-		if (!empty($this->queryOrderings)) {
-			$query->setOrderings($this->queryOrderings);
-		}
+        if (!empty($this->queryOrderings)) {
+            $query->setOrderings($this->queryOrderings);
+        }
 
-		if (!empty($this->storagePage)) {
-			$query->getQuerySettings()->setRespectStoragePage(FALSE);
-			$pidList = t3lib_div::intExplode(',', Tx_T3devapi_Utility_Page::extendPidListByChildren($this->storagePage, 9999), TRUE);
-			$constraints[] = $query->in('pid', $pidList);
-		}
+        if (!empty($this->storagePage)) {
+            $query->getQuerySettings()->setRespectStoragePage(false);
+            $pidList = \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode(',', Tx_T3devapi_Utility_Page::extendPidListByChildren($this->storagePage, 9999), true);
+            $constraints[] = $query->in('pid', $pidList);
+        }
 
-		if (!empty($this->uidList)) {
-			$uidList = t3lib_div::intExplode(',', $this->uidList, TRUE);
-			$constraints[] = $query->in('uid', $uidList);
-		}
+        if (!empty($this->uidList)) {
+            $uidList = \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode(',', $this->uidList, true);
+            $constraints[] = $query->in('uid', $uidList);
+        }
 
-		$constraints = $this->setSearchConstraints($query, $constraints);
+        $constraints = $this->setSearchConstraints($query, $constraints);
 
-		if (!empty($constraints)) {
-			$query->matching(
-				$query->logicalAnd($constraints)
-			);
-		}
+        if (!empty($constraints)) {
+            $query->matching(
+                $query->logicalAnd($constraints)
+            );
+        }
 
-		return $query;
-	}
+        return $query;
+    }
 
-	/**
-	 * Add constraints to the query
-	 * Overload this function to add your process
-	 *
-	 * @param $query
-	 * @param $constraints
-	 * @return array
-	 */
-	public function setSearchConstraints($query, $constraints) {
-		return $constraints;
-	}
+    /**
+     * Add constraints to the query
+     * Overload this function to add your process
+     *
+     * @param $query
+     * @param $constraints
+     * @return array
+     */
+    public function setSearchConstraints($query, $constraints)
+    {
+        return $constraints;
+    }
 
-	public function setQueryLimit($queryLimit) {
-		$this->queryLimit = $queryLimit;
-	}
+    public function setQueryLimit($queryLimit)
+    {
+        $this->queryLimit = $queryLimit;
+    }
 
-	public function getQueryLimit() {
-		return $this->queryLimit;
-	}
+    public function getQueryLimit()
+    {
+        return $this->queryLimit;
+    }
 
-	public function setQueryOffset($queryOffset) {
-		$this->queryOffset = $queryOffset;
-	}
+    public function setQueryOffset($queryOffset)
+    {
+        $this->queryOffset = $queryOffset;
+    }
 
-	public function getQueryOffset() {
-		return $this->queryOffset;
-	}
+    public function getQueryOffset()
+    {
+        return $this->queryOffset;
+    }
 
-	public function setQueryOrderings($queryOrderings) {
-		$this->queryOrderings = $queryOrderings;
-	}
+    public function setQueryOrderings($queryOrderings)
+    {
+        $this->queryOrderings = $queryOrderings;
+    }
 
-	public function getQueryOrderings() {
-		return $this->queryOrderings;
-	}
+    public function getQueryOrderings()
+    {
+        return $this->queryOrderings;
+    }
 
-	public function setStoragePage($storagePage) {
-		$this->storagePage = $storagePage;
-	}
+    public function setStoragePage($storagePage)
+    {
+        $this->storagePage = $storagePage;
+    }
 
-	public function getStoragePage() {
-		return $this->storagePage;
-	}
+    public function getStoragePage()
+    {
+        return $this->storagePage;
+    }
 
-	public function setUidList($uidList) {
-		$this->uidList = $uidList;
-	}
+    public function setUidList($uidList)
+    {
+        $this->uidList = $uidList;
+    }
 
-	public function getUidList() {
-		return $this->uidList;
-	}
+    public function getUidList()
+    {
+        return $this->uidList;
+    }
 
-	public function setPiVars($piVars) {
-		$this->piVars = $piVars;
-	}
+    public function setPiVars($piVars)
+    {
+        $this->piVars = $piVars;
+    }
 
-	public function getPiVars() {
-		return $this->piVars;
-	}
+    public function getPiVars()
+    {
+        return $this->piVars;
+    }
 }

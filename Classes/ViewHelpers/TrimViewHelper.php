@@ -31,17 +31,19 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_TrimViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractViewHelper {
+class Tx_T3devapi_ViewHelpers_TrimViewHelper extends TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
+{
 
-	/**
-	 * Remove whitespace in a string but respect HTML Tags
-	 *
-	 * @param string $key the tag; useful for overriding
-	 * @return string
-	 */
-	public function render($key = NULL) {
-		return trim($this->renderChildren());
-	}
+    /**
+     * Remove whitespace in a string but respect HTML Tags
+     *
+     * @param string $key the tag; useful for overriding
+     * @return string
+     */
+    public function render($key = null)
+    {
+        return trim($this->renderChildren());
+    }
 
 }
 

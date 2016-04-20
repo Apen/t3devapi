@@ -34,45 +34,52 @@
  * @package    TYPO3
  * @subpackage t3devapi
  */
-class Tx_T3devapi_ViewHelpers_IfHasRolesViewHelper extends Tx_Fluid_Core_ViewHelper_AbstractConditionViewHelper {
+class Tx_T3devapi_ViewHelpers_IfHasRolesViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper
+{
 
-	/**
-	 * renders <f:then> child if the current logged in FE user belongs to the specified roles (aka usergroup)
-	 * otherwise renders <f:else> child.
-	 *
-	 * @param string $roles The usergroup list uid
-	 * @return string the rendered string
-	 * @api
-	 */
-	public function render($roles) {
-		if ($this->frontendUserHasRoles($roles)) {
-			return $this->renderThenChild();
-		} else {
-			return $this->renderElseChild();
-		}
-	}
+    /**
+     * renders <f:then> child if the current logged in FE user belongs to the specified roles (aka usergroup)
+     * otherwise renders <f:else> child.
+     *
+     * @param string $roles The usergroup list uid
+     * @return string the rendered string
+     * @api
+     */
+    public function render($roles)
+    {
+        $evaluation = static::evaluateCondition($this->arguments);
 
-	/**
-	 * Determines whether the currently logged in FE user belongs to the specified usergroup
-	 *
-	 * @param string $roles The usergroup list uid
-	 * @return boolean TRUE if the currently logged in FE user belongs to $role
-	 */
-	protected function frontendUserHasRoles($roles) {
-		if (!isset($GLOBALS['TSFE']) || !$GLOBALS['TSFE']->loginUser) {
-			return FALSE;
-		}
-		$rolesArray = explode(',', $roles);
-		$find = FALSE;
-		foreach ($rolesArray as $fegroupsUid) {
-			if (is_numeric($fegroupsUid)) {
-				if (is_array($GLOBALS['TSFE']->fe_user->groupData['uid']) && in_array($fegroupsUid, $GLOBALS['TSFE']->fe_user->groupData['uid'])) {
-					$find = TRUE;
-				}
-			}
-		}
-		return $find;
-	}
+        if (false !== $evaluation) {
+            return $this->renderThenChild();
+        } else {
+            return $this->renderElseChild();
+        }
+    }
+
+    /**
+     * This method decides if the condition is TRUE or FALSE. It can be overriden in extending viewhelpers to adjust functionality.
+     * Determines whether the currently logged in FE user belongs to the specified usergroup
+     *
+     * @param array $arguments ViewHelper arguments to evaluate the condition for this ViewHelper, allows for flexiblity in overriding this method.
+     * @return bool
+     */
+    static protected function evaluateCondition($arguments = null)
+    {
+        if (!isset($GLOBALS['TSFE']) || !$GLOBALS['TSFE']->loginUser) {
+            return false;
+        }
+        $rolesArray = explode(',', $arguments['roles']);
+        $find = false;
+        foreach ($rolesArray as $fegroupsUid) {
+            if (is_numeric($fegroupsUid)) {
+                if (is_array($GLOBALS['TSFE']->fe_user->groupData['uid']) && in_array($fegroupsUid, $GLOBALS['TSFE']->fe_user->groupData['uid'])) {
+                    $find = true;
+                }
+            }
+        }
+        return $find;
+    }
+
 }
 
 ?>

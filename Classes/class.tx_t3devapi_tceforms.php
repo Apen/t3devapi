@@ -156,14 +156,14 @@ class tx_t3devapi_tceforms
      */
     public function __construct($pObj)
     {
-        require_once(PATH_site . 'typo3conf/ext/t3devapi/Classes/class.tx_t3devapi_fertehtmlarea.php');
+        //require_once(PATH_site . 'typo3conf/ext/t3devapi/Classes/class.tx_t3devapi_fertehtmlarea.php');
         $this->pObj = $pObj;
-        $this->rteCounter = 0;
+        //$this->rteCounter = 0;
         $this->formName = 'txT3devapiTceforms';
         $this->actionUrl = '';
         $this->validation = new tx_t3devapi_validate();
         $this->readOnlyFields = 'uid,pid,deleted,cruser_id';
-        $GLOBALS['LANG'] = TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Lang\\LanguageService');
+        $GLOBALS['LANG'] = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Lang\\LanguageService');
         $GLOBALS['LANG']->init($GLOBALS['TSFE']->tmpl->setup['config.']['language']);
     }
 
@@ -1007,10 +1007,10 @@ class tx_t3devapi_tceforms
         $config = $this->getFieldConfig($field);
 
         if (\TYPO3\CMS\Core\Utility\GeneralUtility::inList($config['eval'], 'password')) {
-            if (TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('saltedpasswords') && $GLOBALS['TYPO3_CONF_VARS']['FE']['loginSecurityLevel']) {
-                $saltedpasswords = tx_saltedpasswords_div::returnExtConf();
+            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('saltedpasswords') && $GLOBALS['TYPO3_CONF_VARS']['FE']['loginSecurityLevel']) {
+                $saltedpasswords = \TYPO3\CMS\Saltedpasswords\Utility\SaltedPasswordsUtility::returnExtConf();
                 if ($saltedpasswords['enabled']) {
-                    $txSaltedpasswords = TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance($saltedpasswords['saltedPWHashingMethod']);
+                    $txSaltedpasswords = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance($saltedpasswords['saltedPWHashingMethod']);
                     $val = $txSaltedpasswords->getHashedPassword($val);
                 }
             }
@@ -1057,7 +1057,7 @@ class tx_t3devapi_tceforms
         if ($countCheckFields > 1) {
             $binString = '';
             for ($i = 0; $i < $countCheckFields; $i++) {
-                if (in_array($i, $val)) {
+                if (!empty($val) && in_array($i, $val)) {
                     $binString .= '1';
                 } else {
                     $binString .= '0';
@@ -1174,7 +1174,7 @@ class tx_t3devapi_tceforms
 
                 foreach ($uploadedFilenames as $keyFilename => $filename) {
                     $file = $uploadedTmpFilenames[$keyFilename];
-                    $fileFunc = TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_basicFileFunctions');
+                    $fileFunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Utility\\File\\BasicFileUtility');
                     $name = $fileFunc->getUniqueName($filename, PATH_site . $config['uploadfolder']);
                     $fileName = substr($name, strlen(PATH_site . $config['uploadfolder']) + 1);
                     $ext = pathinfo($fileName, PATHINFO_EXTENSION);
@@ -1229,7 +1229,7 @@ class tx_t3devapi_tceforms
                             break;
                         }
                     default:
-                        $lCobj = TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
+                        $lCobj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
                         $lCobj->start($this->currentRecord, $this->table);
                         $datas[$name] = $lCobj->cObjGetSingle($extraField[$name], $extraField[$name . '.']);
                         break;
